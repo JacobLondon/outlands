@@ -6,7 +6,7 @@ TARGET=lands.exe
 
 FILES=\
 	imger.c \
-	man.c \
+	scene.c \
 	so.c \
 	util.c \
 	main.c

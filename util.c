@@ -7,39 +7,39 @@
 void *(*allocate)(size_t size) = malloc;
 void (*freedom)(void *p) = free;
 
-static size_t poolloc_index = 0;
-static size_t poolloc_size = 0;
-static void *poolloc_begin = NULL;
+static size_t pool_index = 0;
+static size_t pool_size = 0;
+static void *pool_begin = NULL;
 
 void pool_init(size_t kilobytes)
 {
-	assert(poolloc_begin == NULL);
-	poolloc_begin = malloc(kilobytes * 1024);
-	assert(poolloc_begin);
-	poolloc_size = kilobytes * 1024;
-	memset(poolloc_begin, 0, poolloc_size);
+	assert(pool_begin == NULL);
+	pool_begin = malloc(kilobytes * 1024);
+	assert(pool_begin);
+	pool_size = kilobytes * 1024;
+	memset(pool_begin, 0, pool_size);
 	allocate = poolloc;
 	freedom = poolfree;
 }
 
 void pool_cleanup(void)
 {
-	assert(poolloc_begin);
-	memset(poolloc_begin, 0, poolloc_size);
-	free(poolloc_begin);
+	assert(pool_begin);
+	memset(pool_begin, 0, pool_size);
+	free(pool_begin);
 }
 
 void pool_usage(void)
 {
-	printf("%.3f KB / %.3f KB", poolloc_index / 1000.0f, poolloc_size / 1000.0f);
+	printf("%.3f KB / %.3f KB\n", pool_index / 1000.0f, pool_size / 1000.0f);
 }
 
 void *poolloc(size_t size)
 {
 	void *addr;
-	assert(("Not enough memory", poolloc_index + size < poolloc_size));
-	addr = (void *)&((unsigned char *)poolloc_begin)[poolloc_index];
-	poolloc_index += size;
+	assert(("Not enough memory", pool_index + size < pool_size));
+	addr = (void *)&((unsigned char *)pool_begin)[pool_index];
+	pool_index += size;
 
 	return addr;
 }

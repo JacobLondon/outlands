@@ -10,13 +10,14 @@
 typedef struct so_tag {
 	Vector2 pos;
 	float bobrate;
+	float bobdelta;
+	bool is_offscreen;
 	struct {
 		so_movement movement;
 		bool *trigger;
 		float amt;
 	} movements[MOVEMENTS_MAX];
 	Texture2D *texture;
-	bool is_offscreen;
 } so;
 
 
@@ -29,6 +30,7 @@ so *so_new(Texture2D *png)
 	memset(self->movements, 0, sizeof(self->movements));
 	self->texture = png;
 	self->is_offscreen = false;
+	self->bobdelta = 0;
 	self->bobrate = 0.001;
 	return self;
 }
@@ -175,24 +177,22 @@ void so_move_down(so *self, float amt, bool *trigger)
 
 void so_move_bob_vrt(so *self, float amt, bool *trigger)
 {
-	static float delta = 0;
 	if (trigger == NULL || *trigger == true) {
-		self->pos.y += amt * sinf(delta);
-		delta += self->bobrate;
-		if (delta > 2 * PI) {
-			delta = 0;
+		self->pos.y += amt * sinf(self->bobdelta);
+		self->bobdelta += self->bobrate;
+		if (self->bobdelta > 2 * PI) {
+			self->bobdelta = 0;
 		}
 	}
 }
 
 void so_move_bob_hrz(so *self, float amt, bool *trigger)
 {
-	static float delta = 0;
 	if (trigger == NULL || *trigger == true) {
-		self->pos.x += amt * cosf(delta);
-		delta += self->bobrate;
-		if (delta > 2 * PI) {
-			delta = 0;
+		self->pos.x += amt * cosf(self->bobdelta);
+		self->bobdelta += self->bobrate;
+		if (self->bobdelta > 2 * PI) {
+			self->bobdelta = 0;
 		}
 	}
 }

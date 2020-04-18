@@ -1,31 +1,46 @@
 #include <assert.h>
 #include <memory.h>
-#include "man.h"
+#include "scene.h"
 #include "util.h"
 
 #define SO_MAX 512
 
-typedef struct man_tag {
+typedef struct scene_tag {
 	so *sos[SO_MAX];
-} man;
+	char *name;
+	void (*init)(struct scene_tag *self);
+	void (*cleanup)(struct scene_tag *self);
+} scene;
 
-man *man_new(void )
+
+// TODO: Make inits and cleanups for different scenes
+scene *scene_new(char *name, scenectlr init, scenectlr cleanup)
 {
-	man *self = allocate(sizeof(man));
+	scene *self = allocate(sizeof(scene));
 	assert(self);
 	memset(self->sos, 0, sizeof(self->sos));
+	self->name = name;
+	self->init = init;
+	self->cleanup = cleanup;
+
+	if (self->init) {
+		self->init(self);
+	}
 	return self;
 }
 
-void man_del(man *self)
+void scene_del(scene *self)
 {
 	int i;
 	assert(self);
-	man_scene_clear(self);
+	scene_clear(self);
+	if (self->cleanup) {
+		self->cleanup(self);
+	}
 	freedom(self);
 }
 
-void man_scene_load(man *self, so *s)
+void scene_load_so(scene *self, so *s)
 {
 	int i;
 	assert(self);
@@ -36,10 +51,10 @@ void man_scene_load(man *self, so *s)
 			break;
 		}
 	}
-	assert(("Too many scene objects", i != SO_MAX));
+	assert(("Too sceney scene objects", i != SO_MAX));
 }
 
-void man_scene_clear(man *self)
+void scene_clear(scene *self)
 {
 	int i;
 	assert(self);
@@ -51,7 +66,7 @@ void man_scene_clear(man *self)
 	}
 }
 
-void man_scene_draw(man *self)
+void scene_draw(scene *self)
 {
 	int i;
 	assert(self);
@@ -62,7 +77,7 @@ void man_scene_draw(man *self)
 	}
 }
 
-void man_scene_update(man *self)
+void scene_update(scene *self)
 {
 	int i;
 	assert(self);
