@@ -4,9 +4,21 @@
 #include "scene_object.h"
 
 typedef struct scene_tag scene;
-typedef void (*scene_cb)(struct scene_tag *self, void *args);
+typedef void (*scene_cb)(struct scene_tag *self);
 
-scene *scene_new(char *name, size_t max_objects, scene_cb init, void *cb_args);
+
+/* Args to pass into scene_new. Can define
+ * a scene without loading until 'new' is
+ * called. An additional way to create a
+ * scene */
+typedef struct scene_definition_tag {
+	char *name;
+	size_t max_objects;
+	scene_cb init;
+} scene_definition;
+
+scene *scene_new(char *name, size_t max_objects, scene_cb init);
+scene *scene_new_def(scene_definition *def);
 void scene_del(scene *self);
 
 /* Give ownership to the scene */

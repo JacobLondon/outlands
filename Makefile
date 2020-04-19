@@ -5,12 +5,14 @@ CFLAGS=-lmsvcrt -lraylib -lopengl32 -lgdi32 -lwinmm -lkernel32 -lshell32 -luser3
 TARGET=lands.exe
 
 FILES=\
+	globals.c \
 	imger.c \
+	main.c \
 	scene_manager.c \
+	scene_object.c \
 	scene.c \
 	scene_object.c \
 	util.c \
-	main.c
 
 .PHONY: clean
 

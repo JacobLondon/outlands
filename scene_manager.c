@@ -5,22 +5,38 @@
 #include "imger.h"
 #include "scene_manager.h"
 #include "util.h"
+#include "globals.h"
 
 /* max number of scenes to use at once */
 #define ACTIVE_SCENES_MAX 16
 
-static void scene_paragon(scene *self, void *args);
-static void scene_beetle_fleet(scene *self, void *args);
+
+/* Take ownership of scene. Remove scene on unload, draw on man_draw,
+ * update on man_update, etc... Set visible to true by default */
+static void take(scene *other);
+
+/* Create a new scene and give it directly to the scene manager */
+#define emplace(Name, MaxObjects, SceneCb_Init) \
+	take(scene_new((Name), (MaxObjects), (SceneCb_Init))
+
+#define emplace_def(SceneDefinition) \
+	take(scene_new_def(SceneDefinition))
+
+
+static void init_paragon_cb(scene *self);
+static void init_beetle_fleet_cb(scene *self);
+
+static scene_definition defs[] = {
+	{ "Paragon", 3, init_paragon_cb },
+	{ "Beetles", 200, init_beetle_fleet_cb },
+	{ NULL, 0, NULL }
+};
+
 
 static imger *img = NULL;
 static scene *active_scenes[ACTIVE_SCENES_MAX] = { NULL };
-static bool active_visible[ACTIVE_SCENES_MAX] = { false }; /* visibility */
+static bool *active_visibility[ACTIVE_SCENES_MAX] = { false }; /* visibility */
 
-/* extern, tells how to load each scene */
-struct scene_cbs_tag scenes = {
-	.paragon = scene_paragon,
-	.beetle_fleet = scene_beetle_fleet
-};
 
 void scene_man_init(void)
 {
@@ -45,26 +61,32 @@ void scene_man_cleanup(void)
 	memset(active_scenes, 0, sizeof(active_scenes));
 }
 
-void scene_man_take(scene *other)
+void scene_man_load(char **names)
 {
+	scene_definition *d;
 	int i;
 
-	assert(("Must pass an existing scene", other != NULL));
+	for (i = 0; names[i] != NULL; i++) {
+		for (d = defs; d->name; d++) {
+			if (streq(names[i], d->name)) {
+				emplace_def(d);
+				break;
+			}
+		}
 
-	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
-		if (active_scenes[i] == NULL) {
-			active_scenes[i] = other;
-			active_visible[i] = true;
-			break;
+		/* should not get to the end of defs */
+		if (d->name == NULL) {
+			assert(("Scene definition not found", 0));
 		}
 	}
-
-	assert(("Too many scenes", i != ACTIVE_SCENES_MAX));
 }
 
 void scene_man_update(void)
 {
 	int i;
+
+	assert(img != NULL);
+
 	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
 		if (active_scenes[i]) {
 			scene_update(active_scenes[i]);
@@ -75,30 +97,71 @@ void scene_man_update(void)
 void scene_man_draw(void)
 {
 	int i;
+
+	assert(img != NULL);
+
 	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
-		if (active_scenes[i] && active_visible[i]) {
+		if (!active_scenes[i]) {
+			continue;
+		}
+
+		if (active_visibility[i] == NULL || *active_visibility[i]) {
 			scene_draw(active_scenes[i]);
 		}
 	}
 }
 
-void scene_man_set_visible(char *scene_name, bool is_visible)
+void scene_man_tie_visibility(char *scene_name, bool *is_visible)
 {
 	int i;
+
+	assert(img != NULL);
+	assert(scene_name != NULL);
+	assert(is_visible != NULL);
+
 	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
 		if (!active_scenes[i]) {
 			continue;
 		}
 
 		if (streq(scene_name, scene_get_name(active_scenes[i]))) {
-			active_visible[i] = is_visible;
+			active_visibility[i] = is_visible;
 			break;
 		}
 	}
 	assert(("Cannot find scene to set visibility", i != ACTIVE_SCENES_MAX));
 }
 
-static void scene_paragon(scene *self, void *args)
+static void take(scene *other)
+{
+	int i;
+
+	assert(img != NULL);
+	assert(("Must pass an existing scene", other != NULL));
+
+	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
+		if (active_scenes[i] == NULL) {
+			active_scenes[i] = other;
+			active_visibility[i] = NULL;
+			break;
+		}
+	}
+
+	assert(("Too many scenes", i != ACTIVE_SCENES_MAX));
+}
+
+
+/*****************************************************************************
+ * 
+ * Scene Callback Definitions
+ * 
+ * Scene init callbacks defined here. Ensure each callback is statically
+ * loaded into 'definitions'
+ * 
+ ****************************************************************************/
+
+
+static void init_paragon_cb(scene *self)
 {
 	so *tmp;
 
@@ -113,17 +176,16 @@ static void scene_paragon(scene *self, void *args)
 	scene_load_object(self, tmp);
 }
 
-static void scene_beetle_fleet(scene *self, void *args)
+static void init_beetle_fleet_cb(scene *self)
 {
 	int i;
 	so *tmp, *template;
-	bool *trigger = (bool *)args;
 
 	assert(img != NULL);
 
 	template = so_new(imger_load(img, "assets/beetle-sml.png"));
-	so_newmov(template, so_move_loop_up, 10, trigger);
-	so_newmov(template, so_move_bob_hrz, 10, trigger);
+	so_newmov(template, so_move_loop_up, 10, &beetles_launch);
+	so_newmov(template, so_move_bob_hrz, 10, &beetles_launch);
 	scene_load_object(self, template);
 	for (i = 0; i < 50; i++) {
 		tmp = so_copy(template);

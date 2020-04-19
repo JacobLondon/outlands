@@ -10,7 +10,7 @@ typedef struct scene_tag {
 	size_t max_objects;
 } scene;
 
-scene *scene_new(char *name, size_t max_objects, scene_cb init, void *cb_args)
+scene *scene_new(char *name, size_t max_objects, scene_cb init)
 {
 	scene *self = allocate(sizeof(scene));
 	assert(self);
@@ -21,9 +21,14 @@ scene *scene_new(char *name, size_t max_objects, scene_cb init, void *cb_args)
 	self->max_objects = max_objects;
 
 	if (self->init) {
-		self->init(self, cb_args);
+		self->init(self);
 	}
 	return self;
+}
+
+scene *scene_new_def(scene_definition *def)
+{
+	return scene_new(def->name, def->max_objects, def->init);
 }
 
 void scene_del(scene *self)
