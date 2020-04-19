@@ -2,7 +2,7 @@
 #include <math.h>
 #include <memory.h>
 #include <raylib.h>
-#include "so.h"
+#include "scene_object.h"
 #include "util.h"
 
 #define MOVEMENTS_MAX 4

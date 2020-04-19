@@ -30,6 +30,8 @@ void imger_del(imger *self)
 			self->pngs[i] = NULL;
 		}
 	}
+	freedom(self);
+	*((imger **)self) = NULL;
 }
 
 Texture2D *imger_load(imger *self, const char *png)

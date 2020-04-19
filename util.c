@@ -60,3 +60,13 @@ float rand_uniform(void)
 {
 	return (float)rand() / (float)RAND_MAX;
 }
+
+int streq(char *s1, char *s2)
+{
+	for (; *s1 || *s2; s1++, s2++) {
+		if (*s1 != *s2) {
+			return 0;
+		}
+	}
+	return 1;
+}

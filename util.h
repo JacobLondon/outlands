@@ -14,4 +14,7 @@ extern void (*freedom)(void *p);
 int rand_range(int min, int max);
 float rand_uniform(void);
 
+/* 0 -> false, 1-> true */
+int streq(char *s1, char *s2);
+
 #endif // OUTLANDS_UTIL_H_
