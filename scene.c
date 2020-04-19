@@ -36,7 +36,7 @@ void scene_del(scene *self)
 	int i;
 	assert(self);
 	scene_clear(self);
-	freedom(self);
+	dealloc(self);
 }
 
 void scene_load_object(scene *self, so *s)

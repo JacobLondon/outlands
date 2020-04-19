@@ -5,7 +5,7 @@
 #include "util.h"
 
 void *(*allocate)(size_t size) = malloc;
-void (*freedom)(void *p) = free;
+void (*dealloc)(void *p) = free;
 
 static size_t pool_index = 0;
 static size_t pool_size = 0;
@@ -19,7 +19,7 @@ void pool_init(size_t kilobytes)
 	pool_size = kilobytes * 1024;
 	memset(pool_begin, 0, pool_size);
 	allocate = poolloc;
-	freedom = poolfree;
+	dealloc = poolfree;
 }
 
 void pool_cleanup(void)

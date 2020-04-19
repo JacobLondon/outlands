@@ -29,9 +29,9 @@ void scene_man_draw(void);
  * is_visible == NULL means always draw
  * 
  * Control scene visibility at the manager level. Scenes
- * themselves do not know about visibility as that is not
- * their job. They just draw when told to. The manager
- * can decide who is told. */
+ * themselves (and scene objects for that matter) do not
+ * know about visibility as that is not their job. They
+ * just draw when told to. The manager can decide who is told. */
 void scene_man_tie_visibility(char *scene_name, bool *is_visible);
 
 #endif // OUTLANDS_MANAGER_H_

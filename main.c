@@ -27,7 +27,7 @@ int main(void)
 
 	while (!WindowShouldClose()) {
 
-		beetles_launch = IsKeyDown(KEY_SPACE);
+		beetles_launch = !IsKeyDown(KEY_SPACE);
 
 		if (IsKeyPressed(KEY_A)) {
 			beetles_visible = true;

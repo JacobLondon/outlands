@@ -29,16 +29,16 @@ void so_move(so *self);
 
 /* self is already asserted... */
 
-void so_move_left(so *self, float amt, bool *trigger);
-void so_move_right(so *self, float amt, bool *trigger);
-void so_move_up(so *self, float amt, bool *trigger);
-void so_move_down(so *self, float amt, bool *trigger);
-void so_move_bob_vrt(so *self, float amt, bool *trigger);
-void so_move_bob_hrz(so *self, float amt, bool *trigger);
-void so_move_loop_left(so *self, float amt, bool *trigger);
-void so_move_loop_right(so *self, float amt, bool *trigger);
-void so_move_loop_up(so *self, float amt, bool *trigger);
-void so_move_loop_down(so *self, float amt, bool *trigger);
+void so_cb_left(so *self, float amt, bool *trigger);
+void so_cb_right(so *self, float amt, bool *trigger);
+void so_cb_up(so *self, float amt, bool *trigger);
+void so_cb_down(so *self, float amt, bool *trigger);
+void so_cb_bob_vrt(so *self, float amt, bool *trigger);
+void so_cb_bob_hrz(so *self, float amt, bool *trigger);
+void so_cb_loop_left(so *self, float amt, bool *trigger);
+void so_cb_loop_right(so *self, float amt, bool *trigger);
+void so_cb_loop_up(so *self, float amt, bool *trigger);
+void so_cb_loop_down(so *self, float amt, bool *trigger);
 
 
 #endif // OUTLANDS_SO_H_

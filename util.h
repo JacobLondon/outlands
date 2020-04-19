@@ -9,7 +9,7 @@ void *poolloc(size_t size);
 void poolfree(void *p);
 
 extern void *(*allocate)(size_t size);
-extern void (*freedom)(void *p);
+extern void (*dealloc)(void *p);
 
 int rand_range(int min, int max);
 float rand_uniform(void);

@@ -30,11 +30,11 @@ void imger_del(imger *self)
 			self->pngs[i] = NULL;
 		}
 	}
-	freedom(self);
+	dealloc(self);
 	*((imger **)self) = NULL;
 }
 
-Texture2D *imger_load(imger *self, const char *png)
+Texture2D *imger_get(imger *self, const char *png)
 {
 	int i;
 	assert(self);

@@ -13,29 +13,29 @@
 
 /* Take ownership of scene. Remove scene on unload, draw on man_draw,
  * update on man_update, etc... Set visible to true by default */
-static void take(scene *other);
+static void take_scene(scene *other);
 
 /* Create a new scene and give it directly to the scene manager */
-#define emplace(Name, MaxObjects, SceneCb_Init) \
-	take(scene_new((Name), (MaxObjects), (SceneCb_Init))
+#define emplace_scene(Name, MaxObjects, SceneCb_Init) \
+	take_scene(scene_new((Name), (MaxObjects), (SceneCb_Init))
 
-#define emplace_def(SceneDefinition) \
-	take(scene_new_def(SceneDefinition))
+#define emplace_scene_def(SceneDefinition) \
+	take_scene(scene_new_def(SceneDefinition))
 
 
-static void init_paragon_cb(scene *self);
-static void init_beetle_fleet_cb(scene *self);
+static void init_cb_paragon(scene *self);
+static void init_cb_beetle_fleet(scene *self);
 
 static scene_definition defs[] = {
-	{ "Paragon", 3, init_paragon_cb },
-	{ "Beetles", 200, init_beetle_fleet_cb },
+	{ "Paragon", 3, init_cb_paragon },
+	{ "Beetles", 200, init_cb_beetle_fleet },
 	{ NULL, 0, NULL }
 };
 
 
 static imger *img = NULL;
 static scene *active_scenes[ACTIVE_SCENES_MAX] = { NULL };
-static bool *active_visibility[ACTIVE_SCENES_MAX] = { false }; /* visibility */
+static bool *active_visibility[ACTIVE_SCENES_MAX] = { false };
 
 
 void scene_man_init(void)
@@ -65,11 +65,13 @@ void scene_man_load(char **names)
 {
 	scene_definition *d;
 	int i;
+	assert(names != NULL);
+	assert(img != NULL);
 
 	for (i = 0; names[i] != NULL; i++) {
 		for (d = defs; d->name; d++) {
 			if (streq(names[i], d->name)) {
-				emplace_def(d);
+				emplace_scene_def(d);
 				break;
 			}
 		}
@@ -88,7 +90,8 @@ void scene_man_update(void)
 	assert(img != NULL);
 
 	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
-		if (active_scenes[i]) {
+		// only update the scene if it's visible
+		if (active_scenes[i] && (active_visibility[i] == NULL || *active_visibility[i])) {
 			scene_update(active_scenes[i]);
 		}
 	}
@@ -105,6 +108,7 @@ void scene_man_draw(void)
 			continue;
 		}
 
+		// only draw the scene if it's visible
 		if (active_visibility[i] == NULL || *active_visibility[i]) {
 			scene_draw(active_scenes[i]);
 		}
@@ -132,7 +136,7 @@ void scene_man_tie_visibility(char *scene_name, bool *is_visible)
 	assert(("Cannot find scene to set visibility", i != ACTIVE_SCENES_MAX));
 }
 
-static void take(scene *other)
+static void take_scene(scene *other)
 {
 	int i;
 
@@ -156,36 +160,50 @@ static void take(scene *other)
  * Scene Callback Definitions
  * 
  * Scene init callbacks defined here. Ensure each callback is statically
- * loaded into 'definitions'
+ * loaded into 'definitions'. These callbacks should create
+ * 'so' or 'screen objects'. After each screen object is created with
+ * 'so_newmov' / 'so_set_pos' / etc... Call 'scene_load_object(self, YOUR SO)'
+ * This will properly insert a screen object into the system.
+ * 
+ * example:
+ * 
+ * static void init_cb_picture1(scene *self)
+ * {
+ *     // note that imger_get gets the Texture2D whether it was alloc'ed before or not
+ *     so *myso = so_new(imger_get(img, "assets/picture1.png"));
+ *     so_set_pos(myso, GetScreenWidth() / 2, GetScreenHeight() / 2);
+ *     so_newmov(myso, so_cb_bob_hrz, 0.1, &global_variable_controlling_this);
+ *     scene_load_object(self, myso);
+ * }
  * 
  ****************************************************************************/
 
 
-static void init_paragon_cb(scene *self)
+static void init_cb_paragon(scene *self)
 {
 	so *tmp;
 
 	assert(img != NULL);
 
-	tmp = so_new(imger_load(img, "assets/star 3.png"));
+	tmp = so_new(imger_get(img, "assets/star 3.png"));
 	so_set_pos(tmp, 0, 0);
 	scene_load_object(self, tmp);
 
-	tmp = so_new(imger_load(img, "assets/Lyra Paragon.png"));
-	so_newmov(tmp, so_move_loop_left, 0.1, NULL);
+	tmp = so_new(imger_get(img, "assets/Lyra Paragon.png"));
+	so_newmov(tmp, so_cb_loop_left, 0.1, NULL);
 	scene_load_object(self, tmp);
 }
 
-static void init_beetle_fleet_cb(scene *self)
+static void init_cb_beetle_fleet(scene *self)
 {
 	int i;
 	so *tmp, *template;
 
 	assert(img != NULL);
 
-	template = so_new(imger_load(img, "assets/beetle-sml.png"));
-	so_newmov(template, so_move_loop_up, 10, &beetles_launch);
-	so_newmov(template, so_move_bob_hrz, 10, &beetles_launch);
+	template = so_new(imger_get(img, "assets/beetle-sml.png"));
+	so_newmov(template, so_cb_loop_up, 10, &beetles_launch);
+	so_newmov(template, so_cb_bob_hrz, 10, &beetles_launch);
 	scene_load_object(self, template);
 	for (i = 0; i < 50; i++) {
 		tmp = so_copy(template);

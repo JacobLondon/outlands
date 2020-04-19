@@ -38,7 +38,7 @@ so *so_new(Texture2D *png)
 void so_del(so *self)
 {
 	assert(self);
-	freedom(self);
+	dealloc(self);
 }
 
 so *so_copy(so *other)
@@ -119,7 +119,7 @@ void so_move(so *self)
 }
 
 
-void so_move_left(so *self, float amt, bool *trigger)
+void so_cb_left(so *self, float amt, bool *trigger)
 {
 	if (trigger == NULL || *trigger == true) {
 		self->pos.x -= amt;
@@ -133,7 +133,7 @@ void so_move_left(so *self, float amt, bool *trigger)
 	}
 }
 
-void so_move_right(so *self, float amt, bool *trigger)
+void so_cb_right(so *self, float amt, bool *trigger)
 {
 	if (trigger == NULL || *trigger == true) {
 		self->pos.x += amt;
@@ -147,7 +147,7 @@ void so_move_right(so *self, float amt, bool *trigger)
 	}
 }
 
-void so_move_up(so *self, float amt, bool *trigger)
+void so_cb_up(so *self, float amt, bool *trigger)
 {
 	if (trigger == NULL || *trigger == true) {
 		self->pos.y -= amt;
@@ -161,7 +161,7 @@ void so_move_up(so *self, float amt, bool *trigger)
 	}
 }
 
-void so_move_down(so *self, float amt, bool *trigger)
+void so_cb_down(so *self, float amt, bool *trigger)
 {
 	if (trigger == NULL || *trigger == true) {
 		self->pos.y += amt;
@@ -175,7 +175,7 @@ void so_move_down(so *self, float amt, bool *trigger)
 	}
 }
 
-void so_move_bob_vrt(so *self, float amt, bool *trigger)
+void so_cb_bob_vrt(so *self, float amt, bool *trigger)
 {
 	if (trigger == NULL || *trigger == true) {
 		self->pos.y += amt * sinf(self->bobdelta);
@@ -186,7 +186,7 @@ void so_move_bob_vrt(so *self, float amt, bool *trigger)
 	}
 }
 
-void so_move_bob_hrz(so *self, float amt, bool *trigger)
+void so_cb_bob_hrz(so *self, float amt, bool *trigger)
 {
 	if (trigger == NULL || *trigger == true) {
 		self->pos.x += amt * cosf(self->bobdelta);
@@ -197,33 +197,33 @@ void so_move_bob_hrz(so *self, float amt, bool *trigger)
 	}
 }
 
-void so_move_loop_left(so *self, float amt, bool *trigger)
+void so_cb_loop_left(so *self, float amt, bool *trigger)
 {
-	so_move_left(self, amt, trigger);
+	so_cb_left(self, amt, trigger);
 	if (self->is_offscreen) {
 		self->pos.x = GetScreenWidth();
 	}
 }
 
-void so_move_loop_right(so *self, float amt, bool *trigger)
+void so_cb_loop_right(so *self, float amt, bool *trigger)
 {
-	so_move_right(self, amt, trigger);
+	so_cb_right(self, amt, trigger);
 	if (self->is_offscreen) {
 		self->pos.x = 0 - self->texture->width;
 	}
 }
 
-void so_move_loop_up(so *self, float amt, bool *trigger)
+void so_cb_loop_up(so *self, float amt, bool *trigger)
 {
-	so_move_up(self, amt, trigger);
+	so_cb_up(self, amt, trigger);
 	if (self->is_offscreen) {
 		self->pos.y = GetScreenHeight();
 	}
 }
 
-void so_move_loop_down(so *self, float amt, bool *trigger)
+void so_cb_loop_down(so *self, float amt, bool *trigger)
 {
-	so_move_down(self, amt, trigger);
+	so_cb_down(self, amt, trigger);
 	if (self->is_offscreen) {
 		self->pos.y = 0 - self->texture->height;
 	}
