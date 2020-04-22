@@ -17,18 +17,18 @@ typedef struct so_tag {
 		bool *trigger;
 		float amt;
 	} movements[MOVEMENTS_MAX];
-	Texture2D *texture;
+	anim *animation;
 } so;
 
 
-so *so_new(Texture2D *png)
+so *so_new(anim *animation)
 {
-	assert(png);
+	assert(animation);
 	so *self = allocate(sizeof(so));
 	assert(self);
 	self->pos = (Vector2){GetScreenWidth() / 2, 0};
 	memset(self->movements, 0, sizeof(self->movements));
-	self->texture = png;
+	self->animation = animation;
 	self->is_offscreen = false;
 	self->bobdelta = 0;
 	self->bobrate = 0.001;
@@ -100,10 +100,7 @@ void so_draw(so *self)
 	if (self->is_offscreen) {
 		return;
 	}
-	DrawTextureRec(
-		*self->texture,
-		(Rectangle){0.0f, 0.0f, self->texture->width, self->texture->height},
-		self->pos, WHITE);
+	anim_draw(self->animation, self->pos);
 }
 
 void so_move(so *self)
@@ -124,7 +121,7 @@ void so_cb_left(so *self, float amt, bool *trigger)
 	if (trigger == NULL || *trigger == true) {
 		self->pos.x -= amt;
 
-		if (self->pos.x + self->texture->width < 0) {
+		if (self->pos.x + anim_get_width(self->animation) < 0) {
 			self->is_offscreen = true;
 		}
 		else {
@@ -152,7 +149,7 @@ void so_cb_up(so *self, float amt, bool *trigger)
 	if (trigger == NULL || *trigger == true) {
 		self->pos.y -= amt;
 
-		if (self->pos.y + self->texture->height < 0) {
+		if (self->pos.y + anim_get_height(self->animation) < 0) {
 			self->is_offscreen = true;
 		}
 		else {
@@ -209,7 +206,7 @@ void so_cb_loop_right(so *self, float amt, bool *trigger)
 {
 	so_cb_right(self, amt, trigger);
 	if (self->is_offscreen) {
-		self->pos.x = 0 - self->texture->width;
+		self->pos.x = 0 - anim_get_width(self->animation);
 	}
 }
 
@@ -225,6 +222,6 @@ void so_cb_loop_down(so *self, float amt, bool *trigger)
 {
 	so_cb_down(self, amt, trigger);
 	if (self->is_offscreen) {
-		self->pos.y = 0 - self->texture->height;
+		self->pos.y = 0 - anim_get_height(self->animation);
 	}
 }

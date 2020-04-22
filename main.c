@@ -9,7 +9,7 @@ const int screen_width = 1600;
 const int screen_height = 900;
 
 char *default_scene[] = {
-	"Paragon", "Beetles", NULL
+	"Paragon", "Beetles", "Explosion", NULL
 };
 
 int main(void)

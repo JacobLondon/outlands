@@ -2,6 +2,7 @@
 #define OUTLANDS_SO_H_
 
 #include <stdbool.h>
+#include "anim.h"
 
 /* Scene Object
  * Controls all scene objects and
@@ -11,9 +12,7 @@ typedef struct so_tag so;
 /* Move scene object if trigger == NULL or *trigger == true */
 typedef void (*so_movement)(so *self, float amt, bool *trigger);
 
-typedef struct Texture2D Texture2D;
-
-so *so_new(Texture2D *png);
+so *so_new(anim *animation);
 void so_del(so *self);
 so *so_copy(so *other);
 void so_newmov(so *self, so_movement movement, float amt, bool *trigger);

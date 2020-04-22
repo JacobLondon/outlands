@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <memory.h>
 #include <raylib.h>
+#include "anim.h"
 #include "imger.h"
 #include "util.h"
 
@@ -8,7 +9,7 @@
 
 typedef struct imger_tag {
 	char *pngs[IMGS_MAX];
-	Texture2D textures[IMGS_MAX];
+	anim *animations[IMGS_MAX];
 } imger;
 
 imger *imger_new(void)
@@ -25,8 +26,7 @@ void imger_del(imger *self)
 	assert(self);
 	for (i = 0; i < IMGS_MAX; i++) {
 		if (self->pngs[i]) {
-			UnloadTexture(self->textures[i]);
-			memset(&self->textures[i], 0, sizeof(Texture2D));
+			anim_del(self->animations[i]);
 			self->pngs[i] = NULL;
 		}
 	}
@@ -34,21 +34,42 @@ void imger_del(imger *self)
 	*((imger **)self) = NULL;
 }
 
-Texture2D *imger_get(imger *self, const char *png)
+void imger_update(imger *self)
+{
+	int i;
+	assert(self);
+	for (i = 0; i < IMGS_MAX; i++) {
+		if (self->pngs[i] != NULL) {
+			anim_update(self->animations[i]);
+		}
+	}
+}
+
+anim *imger_get(imger *self, char *png)
 {
 	int i;
 	assert(self);
 	assert(png);
 	for (i = 0; i < IMGS_MAX; i++) {
-		if (self->pngs[i] == png) {
-			return &self->textures[i];
+		if (streq(self->pngs[i], png)) {
+			return self->animations[i];
 		}
-		else if (self->pngs[i] == NULL) {
+	}
+	assert(("Animation not found", i != IMGS_MAX));
+	return self->animations[i];
+}
+
+void imger_load(imger *self, char *png, int width, int height)
+{
+	int i;
+	assert(self);
+	assert(png);
+	for (i = 0; i < IMGS_MAX; i++) {
+		if (self->pngs[i] == NULL) {
 			self->pngs[i] = (char *)png;
-			self->textures[i] = LoadTexture(png);
+			self->animations[i] = anim_new(png, width, height);
 			break;
 		}
 	}
-	assert(("Too many textures loaded", i != IMGS_MAX));
-	return &self->textures[i];
+	assert(("Too many animations loaded", i != IMGS_MAX));
 }

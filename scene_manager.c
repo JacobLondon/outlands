@@ -25,10 +25,12 @@ static void take_scene(scene *other);
 
 static void init_cb_paragon(scene *self);
 static void init_cb_beetle_fleet(scene *self);
+static void init_cb_explosion(scene *self);
 
 static scene_definition defs[] = {
 	{ "Paragon", 3, init_cb_paragon },
 	{ "Beetles", 200, init_cb_beetle_fleet },
+	{ "Explosion", 1, init_cb_explosion },
 	{ NULL, 0, NULL }
 };
 
@@ -86,6 +88,7 @@ void scene_man_load(char **names)
 void scene_man_update(void)
 {
 	int i;
+	static unsigned int oof = 0;
 
 	assert(img != NULL);
 
@@ -95,6 +98,12 @@ void scene_man_update(void)
 			scene_update(active_scenes[i]);
 		}
 	}
+
+	if (oof % 4 == 0) {
+		imger_update(img);
+		oof = 0;
+	}
+	oof++;
 }
 
 void scene_man_draw(void)
@@ -185,6 +194,9 @@ static void init_cb_paragon(scene *self)
 
 	assert(img != NULL);
 
+	imger_load(img, "assets/star 3.png", 1, 1);
+	imger_load(img, "assets/Lyra Paragon.png", 1, 1);
+
 	tmp = so_new(imger_get(img, "assets/star 3.png"));
 	so_set_pos(tmp, 0, 0);
 	scene_load_object(self, tmp);
@@ -201,6 +213,8 @@ static void init_cb_beetle_fleet(scene *self)
 
 	assert(img != NULL);
 
+	imger_load(img, "assets/beetle-sml.png", 1, 1);
+
 	template = so_new(imger_get(img, "assets/beetle-sml.png"));
 	so_newmov(template, so_cb_loop_up, 10, &beetles_launch);
 	so_newmov(template, so_cb_bob_hrz, 10, &beetles_launch);
@@ -211,4 +225,18 @@ static void init_cb_beetle_fleet(scene *self)
 		so_set_pos(tmp, rand_uniform() * GetScreenWidth(), rand_uniform() * GetScreenHeight());
 		scene_load_object(self, tmp);
 	}
+}
+
+static void init_cb_explosion(scene *self)
+{
+	so *tmp;
+	assert(img != NULL);
+
+	imger_load(img, "assets/explosion.png", 4, 4);
+	tmp = so_new(imger_get(img, "assets/explosion.png"));
+	so_set_pos(tmp, 300, 300);
+	so_set_bobrate(tmp, 0.1);
+	so_newmov(tmp, so_cb_bob_hrz, 4, NULL);
+	so_newmov(tmp, so_cb_bob_vrt, 4, NULL);
+	scene_load_object(self, tmp);
 }
