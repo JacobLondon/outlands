@@ -1,7 +1,13 @@
 #ifndef OUTLANDS_ANIM_H_
-#define OUTLANDS_ANIM_H
+#define OUTLANDS_ANIM_H_
 
 #include <raylib.h>
+
+/* Manage drawing Texture2D's from raylib. This
+ * includes drawing animated textures for when
+ * there are multiple frames to draw for an
+ * individual Texture2D.
+ */
 
 typedef struct anim_tag anim;
 

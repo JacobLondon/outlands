@@ -6,8 +6,8 @@ TARGET=lands.exe
 
 FILES=\
 	anim.c \
+	animanager.c \
 	globals.c \
-	imger.c \
 	main.c \
 	scene_manager.c \
 	scene_object.c \

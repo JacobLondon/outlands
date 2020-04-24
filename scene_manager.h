@@ -3,14 +3,26 @@
 
 #include "scene.h"
 
-/* All things which can be loaded.
- * Images, scenes, etc...
+/* Manage groupings of scenes. Call update
+ * and draw on many scenes at once for convenience.
+ * Scenes can still be manually manaaged however.
+ * 
+ * Instead of a struct containing the data, the
+ * scene manager has its own internal state as a
+ * file module. This module contains its own
+ * animation manager and its own data structures to
+ * manage scenes and its animation manager. This should
+ * be the highest level of hierarchy of managing background
+ * scenes, and probably shouldn't be used to manage
+ * midground and foreground scenes which will probably
+ * need differing utilities that scene manager isn't
+ * meant to handle.
  */
 
-/* Allocate imger for scene management */
+/* Allocate animan for scene management */
 void scene_man_init(void);
 
-/* Deallocate imger */
+/* Deallocate animan */
 void scene_man_cleanup(void);
 
 /* Load all given definitions by name. Each definition

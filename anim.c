@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <memory.h>
 #include "anim.h"
 #include "util.h"
 
@@ -28,7 +29,9 @@ void anim_del(anim *self)
 {
 	assert(self);
 	UnloadTexture(self->texture);
+	memset(self, 0, sizeof(anim));
 	dealloc(self);
+	*(anim **)self = NULL;
 }
 
 void anim_update(anim *self)

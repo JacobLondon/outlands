@@ -2,25 +2,25 @@
 #include <memory.h>
 #include <raylib.h>
 #include "anim.h"
-#include "imger.h"
+#include "animanager.h"
 #include "util.h"
 
 #define IMGS_MAX 64
 
-typedef struct imger_tag {
+typedef struct animan_tag {
 	char *pngs[IMGS_MAX];
 	anim *animations[IMGS_MAX];
-} imger;
+} animan;
 
-imger *imger_new(void)
+animan *animan_new(void)
 {
-	imger *self = allocate(sizeof(imger));
+	animan *self = allocate(sizeof(animan));
 	assert(self);
-	memset(self, 0, sizeof(imger));
+	memset(self, 0, sizeof(animan));
 	return self;
 }
 
-void imger_del(imger *self)
+void animan_del(animan *self)
 {
 	int i;
 	assert(self);
@@ -31,10 +31,10 @@ void imger_del(imger *self)
 		}
 	}
 	dealloc(self);
-	*((imger **)self) = NULL;
+	*((animan **)self) = NULL;
 }
 
-void imger_update(imger *self)
+void animan_update(animan *self)
 {
 	int i;
 	assert(self);
@@ -45,7 +45,7 @@ void imger_update(imger *self)
 	}
 }
 
-anim *imger_get(imger *self, char *png)
+anim *animan_get(animan *self, char *png)
 {
 	int i;
 	assert(self);
@@ -59,7 +59,7 @@ anim *imger_get(imger *self, char *png)
 	return self->animations[i];
 }
 
-void imger_load(imger *self, char *png, int width, int height)
+void animan_load(animan *self, char *png, int width, int height)
 {
 	int i;
 	assert(self);

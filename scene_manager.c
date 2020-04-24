@@ -2,7 +2,7 @@
 #include <memory.h>
 #include <stddef.h>
 #include <raylib.h>
-#include "imger.h"
+#include "animanager.h"
 #include "scene_manager.h"
 #include "util.h"
 #include "globals.h"
@@ -35,7 +35,7 @@ static scene_definition defs[] = {
 };
 
 
-static imger *img = NULL;
+static animan *img = NULL;
 static scene *active_scenes[ACTIVE_SCENES_MAX] = { NULL };
 static bool *active_visibility[ACTIVE_SCENES_MAX] = { false };
 
@@ -43,7 +43,7 @@ static bool *active_visibility[ACTIVE_SCENES_MAX] = { false };
 void scene_man_init(void)
 {
 	assert(img == NULL);
-	img = imger_new();
+	img = animan_new();
 	memset(active_scenes, 0, sizeof(active_scenes));
 }
 
@@ -59,7 +59,7 @@ void scene_man_cleanup(void)
 		}
 	}
 
-	imger_del(img);
+	animan_del(img);
 	memset(active_scenes, 0, sizeof(active_scenes));
 }
 
@@ -100,7 +100,7 @@ void scene_man_update(void)
 	}
 
 	if (oof % 4 == 0) {
-		imger_update(img);
+		animan_update(img);
 		oof = 0;
 	}
 	oof++;
@@ -178,8 +178,8 @@ static void take_scene(scene *other)
  * 
  * static void init_cb_picture1(scene *self)
  * {
- *     // note that imger_get gets the Texture2D whether it was alloc'ed before or not
- *     so *myso = so_new(imger_get(img, "assets/picture1.png"));
+ *     // note that animan_get gets the Texture2D whether it was alloc'ed before or not
+ *     so *myso = so_new(animan_get(img, "assets/picture1.png"));
  *     so_set_pos(myso, GetScreenWidth() / 2, GetScreenHeight() / 2);
  *     so_newmov(myso, so_cb_bob_hrz, 0.1, &global_variable_controlling_this);
  *     scene_load_object(self, myso);
@@ -194,14 +194,14 @@ static void init_cb_paragon(scene *self)
 
 	assert(img != NULL);
 
-	imger_load(img, "assets/star 3.png", 1, 1);
-	imger_load(img, "assets/Lyra Paragon.png", 1, 1);
+	animan_load(img, "assets/star 3.png", 1, 1);
+	animan_load(img, "assets/Lyra Paragon.png", 1, 1);
 
-	tmp = so_new(imger_get(img, "assets/star 3.png"));
+	tmp = so_new(animan_get(img, "assets/star 3.png"));
 	so_set_pos(tmp, 0, 0);
 	scene_load_object(self, tmp);
 
-	tmp = so_new(imger_get(img, "assets/Lyra Paragon.png"));
+	tmp = so_new(animan_get(img, "assets/Lyra Paragon.png"));
 	so_newmov(tmp, so_cb_loop_left, 0.1, NULL);
 	scene_load_object(self, tmp);
 }
@@ -213,9 +213,9 @@ static void init_cb_beetle_fleet(scene *self)
 
 	assert(img != NULL);
 
-	imger_load(img, "assets/beetle-sml.png", 1, 1);
+	animan_load(img, "assets/beetle-sml.png", 1, 1);
 
-	template = so_new(imger_get(img, "assets/beetle-sml.png"));
+	template = so_new(animan_get(img, "assets/beetle-sml.png"));
 	so_newmov(template, so_cb_loop_up, 10, &beetles_launch);
 	so_newmov(template, so_cb_bob_hrz, 10, &beetles_launch);
 	scene_load_object(self, template);
@@ -232,8 +232,8 @@ static void init_cb_explosion(scene *self)
 	so *tmp;
 	assert(img != NULL);
 
-	imger_load(img, "assets/explosion.png", 4, 4);
-	tmp = so_new(imger_get(img, "assets/explosion.png"));
+	animan_load(img, "assets/explosion.png", 4, 4);
+	tmp = so_new(animan_get(img, "assets/explosion.png"));
 	so_set_pos(tmp, 300, 300);
 	so_set_bobrate(tmp, 0.1);
 	so_newmov(tmp, so_cb_bob_hrz, 4, NULL);
