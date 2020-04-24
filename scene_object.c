@@ -83,15 +83,22 @@ void so_delmov(so *self, so_cb_movement movement)
 
 void so_set_pos(so *self, float x, float y)
 {
+	assert(self);
 	self->pos.x = x;
 	self->pos.y = y;
 }
 
 Vector2 so_get_pos(so *self)
 {
+	assert(self);
 	return self->pos;
 }
 
+anim *so_get_anim(so *self)
+{
+	assert(self);
+	return self->animation;
+}
 
 void so_set_bobrate(so *self, float newrate)
 {
@@ -120,6 +127,34 @@ void so_update(so *self)
 	}
 }
 
+
+// TODO: Make these centered on the mouse instead of top left corner
+void so_cb_trk_vrt(so *self, float amt, bool *trigger)
+{
+	const int y = GetMouseY();
+	if (trigger == NULL || *trigger == true) {
+		if (self->pos.y > y) {
+			self->pos.y -= abs(self->pos.y - y) / amt;
+		}
+		else if (self->pos.y < y) {
+			self->pos.y += abs(self->pos.y - y) / amt;
+		}
+	}
+}
+
+// TODO: Make these centered on the mouse instead of top left corner
+void so_cb_trk_hrz(so *self, float amt, bool *trigger)
+{
+	const int x = GetMouseX();
+	if (trigger == NULL || *trigger == true) {
+		if (self->pos.x > x) {
+			self->pos.x -= abs(self->pos.x - x) / amt;
+		}
+		else if (self->pos.x < x) {
+			self->pos.x += abs(self->pos.x - x) / amt;
+		}
+	}
+}
 
 void so_cb_left(so *self, float amt, bool *trigger)
 {

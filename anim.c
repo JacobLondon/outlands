@@ -31,7 +31,12 @@ void anim_del(anim *self)
 	UnloadTexture(self->texture);
 	memset(self, 0, sizeof(anim));
 	dealloc(self);
-	*(anim **)self = NULL;
+}
+
+void anim_reset(anim *self)
+{
+	self->i = 0;
+	self->j = 0;
 }
 
 void anim_update(anim *self)

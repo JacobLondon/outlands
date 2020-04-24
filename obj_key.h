@@ -20,7 +20,7 @@
 typedef struct object_key_tag object_key;
 
 object_key *object_key_new(void); /* object_keys are on the stack */
-void object_key_del(object_key *self); /* just memsets itself to 0 */
+void object_key_del(object_key *self); /* ref to pointer to nullilfy itself */
 object_key *object_key_copy(object_key *self);
 
 /* So the whole idea about this is that
@@ -57,8 +57,11 @@ void object_key_add_rate(object_key *self, so *object, object_key_cb cb_state, b
 #define object_key_add(ObjectKeyP, SObjP, CbState, KeyP) \
 	object_key_add_rate(ObjectKeyP, SObjP, CbState, KeyP, 1.0f)
 
-/* Make sure to check object_key exists if you're unsure if it exists */
-void object_key_update(object_key *self);
+/* Updates an object_key, returns true if done, false if still going
+ * When it is finished, it will dealloc itself! check if it finished,
+ * then reassign it as needed
+ */
+bool object_key_update(object_key *self);
 
 /* look at the key of the current state
  * this handles whether something is
@@ -74,6 +77,6 @@ bool object_key_get_key(object_key *self);
  */
 void object_key_set_key(object_key *self, bool key);
 
-float object_key_get_oof(object_key *self);
+float object_key_get_frame(object_key *self);
 
 #endif // OUTLANDS_OBJ_KEY_H_

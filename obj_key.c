@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <memory.h>
+#include <malloc.h>
 #include <raylib.h>
 #include "util.h"
 #include "obj_key.h"
@@ -29,12 +30,13 @@ typedef struct object_key_tag {
 	float rates[STATES_MAX]; /* Number of frames to animate per second per state */
 	float oof; /* Time of the current animation. If this increases past the current
 	              rate, then use the next frame of the animation */
+	int frame; /* the frame number the animation is in */
 	int state;
 } object_key;
 
 object_key *object_key_new(void)
 {
-	object_key *self = allocate(sizeof(object_key));
+	object_key *self = malloc(sizeof(object_key));
 	assert(self);
 	memset(self, 0, sizeof(object_key));
 	return self;
@@ -44,16 +46,25 @@ void object_key_del(object_key *self)
 {
 	assert(self);
 	memset(self, 0, sizeof(object_key));
-	dealloc(self);
-	*(object_key **)self = NULL;
+	free(self);
 }
 
 object_key *object_key_copy(object_key *self)
 {
+	int i;
 	assert(self);
-	object_key *other = allocate(sizeof(object_key));
+	object_key *other = malloc(sizeof(object_key));
 	assert(other);
 	memcpy(other, self, sizeof(object_key));
+
+	// visual defaults, internals copied above
+	other->frame = 0;
+	other->state = 0;
+	for (i = 0; i < STATES_MAX; i++) {
+		if (other->objects[i]) {
+			anim_reset(so_get_anim(other->objects[i]));
+		}
+	}
 	return other;
 }
 
@@ -82,7 +93,7 @@ void object_key_add_rate(object_key *self, so *object, object_key_cb cb_state, b
 	assert(("Too many object keys", i < STATES_MAX));
 }
 
-void object_key_update(object_key *self)
+bool object_key_update(object_key *self)
 {
 	assert(self);
 	object_key_cb cb = self->state_cbs[self->state];
@@ -95,18 +106,21 @@ void object_key_update(object_key *self)
 
 		if (self->state > STATES_MAX || self->objects[self->state] == NULL) {
 			object_key_del(self);
-			return;
+			return true;
 		}
 	}
 
 	so_draw(self->objects[self->state]);
 
 	// update object if necessary
+	so_update(self->objects[self->state]);
 	if (self->oof > 1.0f / self->rates[self->state]) {
-		so_update(self->objects[self->state]);
+		anim_update(so_get_anim(self->objects[self->state]));
 		self->oof = 0.0f;
+		self->frame++;
 	}
 	self->oof += GetFrameTime();
+	return false;
 }
 
 bool object_key_get_key(object_key *self)
@@ -139,8 +153,8 @@ void object_key_set_key(object_key *self, bool key)
 	}
 }
 
-float object_key_get_oof(object_key *self)
+float object_key_get_frame(object_key *self)
 {
 	assert(self);
-	return self->oof;
+	return self->frame;
 }

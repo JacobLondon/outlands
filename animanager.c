@@ -31,7 +31,6 @@ void animan_del(animan *self)
 		}
 	}
 	dealloc(self);
-	*((animan **)self) = NULL;
 }
 
 void animan_update(animan *self)
