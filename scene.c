@@ -82,7 +82,7 @@ void scene_update(scene *self)
 	assert(self);
 	for (i = 0; i < self->max_objects; i++) {
 		if (self->scene_objects[i]) {
-			so_move(self->scene_objects[i]);
+			so_update(self->scene_objects[i]);
 		}
 	}
 }

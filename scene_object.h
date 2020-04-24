@@ -10,21 +10,22 @@
  * have to do any of that. */
 typedef struct so_tag so;
 /* Move scene object if trigger == NULL or *trigger == true */
-typedef void (*so_movement)(so *self, float amt, bool *trigger);
+typedef void (*so_cb_movement)(so *self, float amt, bool *trigger);
 
 so *so_new(anim *animation);
 void so_del(so *self);
 so *so_copy(so *other);
-void so_newmov(so *self, so_movement movement, float amt, bool *trigger);
-void so_delmov(so *self, so_movement movement);
+void so_newmov(so *self, so_cb_movement movement, float amt, bool *trigger);
+void so_delmov(so *self, so_cb_movement movement);
 
 /* set the position in screen space */
 void so_set_pos(so *self, float x, float y);
+Vector2 so_get_pos(so *self);
 void so_set_bobrate(so *self, float newrate);
 
 void so_draw(so *self);
 /* move by all movement callbacks */
-void so_move(so *self);
+void so_update(so *self);
 
 /* self is already asserted... */
 

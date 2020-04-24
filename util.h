@@ -8,6 +8,14 @@ void pool_usage(void);
 void *poolloc(size_t size);
 void poolfree(void *p);
 
+/* Use allocate and dealloc for dynamic
+ * memory allocation. If pool isn't
+ * initialized, it just used malloc and
+ * free. But if pool is initialized, then
+ * poolloc and poolfree is used instad.
+ * On pool cleanup, malloc and free are
+ * retied to these pointers.
+ */
 extern void *(*allocate)(size_t size);
 extern void (*dealloc)(void *p);
 

@@ -27,6 +27,8 @@ void pool_cleanup(void)
 	assert(pool_begin);
 	memset(pool_begin, 0, pool_size);
 	free(pool_begin);
+	allocate = malloc;
+	dealloc = free;
 }
 
 void pool_usage(void)

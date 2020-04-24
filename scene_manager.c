@@ -7,8 +7,9 @@
 #include "util.h"
 #include "globals.h"
 
-/* max number of scenes to use at once */
-#define ACTIVE_SCENES_MAX 16
+
+#define ACTIVE_SCENES_MAX 16 /* max number of scenes to use at once */
+#define ANIMATION_RATE 10.0f /* animation updates per second, > 0.0 */
 
 
 /* Take ownership of scene. Remove scene on unload, draw on man_draw,
@@ -35,15 +36,15 @@ static scene_definition defs[] = {
 };
 
 
-static animan *img = NULL;
+static animan *animation_man = NULL;
 static scene *active_scenes[ACTIVE_SCENES_MAX] = { NULL };
 static bool *active_visibility[ACTIVE_SCENES_MAX] = { false };
 
 
 void scene_man_init(void)
 {
-	assert(img == NULL);
-	img = animan_new();
+	assert(animation_man == NULL);
+	animation_man = animan_new();
 	memset(active_scenes, 0, sizeof(active_scenes));
 }
 
@@ -51,7 +52,7 @@ void scene_man_cleanup(void)
 {
 	int i;
 
-	assert(img != NULL);
+	assert(animation_man != NULL);
 
 	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
 		if (active_scenes[i]) {
@@ -59,7 +60,7 @@ void scene_man_cleanup(void)
 		}
 	}
 
-	animan_del(img);
+	animan_del(animation_man);
 	memset(active_scenes, 0, sizeof(active_scenes));
 }
 
@@ -68,7 +69,7 @@ void scene_man_load(char **names)
 	scene_definition *d;
 	int i;
 	assert(names != NULL);
-	assert(img != NULL);
+	assert(animation_man != NULL);
 
 	for (i = 0; names[i] != NULL; i++) {
 		for (d = defs; d->name; d++) {
@@ -88,29 +89,29 @@ void scene_man_load(char **names)
 void scene_man_update(void)
 {
 	int i;
-	static unsigned int oof = 0;
+	static float oof = 0;
 
-	assert(img != NULL);
+	assert(animation_man != NULL);
 
 	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
-		// only update the scene if it's visible
+		// only update the scene if it's visible (NULL or deref to true means visible)
 		if (active_scenes[i] && (active_visibility[i] == NULL || *active_visibility[i])) {
 			scene_update(active_scenes[i]);
 		}
 	}
 
-	if (oof % 4 == 0) {
-		animan_update(img);
-		oof = 0;
+	if (oof > 1.0f / ANIMATION_RATE) {
+		animan_update(animation_man);
+		oof = 0.0f;
 	}
-	oof++;
+	oof += GetFrameTime();
 }
 
 void scene_man_draw(void)
 {
 	int i;
 
-	assert(img != NULL);
+	assert(animation_man != NULL);
 
 	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
 		if (!active_scenes[i]) {
@@ -128,7 +129,7 @@ void scene_man_tie_visibility(char *scene_name, bool *is_visible)
 {
 	int i;
 
-	assert(img != NULL);
+	assert(animation_man != NULL);
 	assert(scene_name != NULL);
 	assert(is_visible != NULL);
 
@@ -149,7 +150,7 @@ static void take_scene(scene *other)
 {
 	int i;
 
-	assert(img != NULL);
+	assert(animation_man != NULL);
 	assert(("Must pass an existing scene", other != NULL));
 
 	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
@@ -178,8 +179,9 @@ static void take_scene(scene *other)
  * 
  * static void init_cb_picture1(scene *self)
  * {
- *     // note that animan_get gets the Texture2D whether it was alloc'ed before or not
- *     so *myso = so_new(animan_get(img, "assets/picture1.png"));
+ *     // load a picture with one animation frame, 1 * 1 = 1
+ *     animan_load(animation_man, "assets/picture1.png", 1, 1);
+ *     so *myso = so_new(animan_get(animation_man, "assets/picture1.png"));
  *     so_set_pos(myso, GetScreenWidth() / 2, GetScreenHeight() / 2);
  *     so_newmov(myso, so_cb_bob_hrz, 0.1, &global_variable_controlling_this);
  *     scene_load_object(self, myso);
@@ -192,16 +194,16 @@ static void init_cb_paragon(scene *self)
 {
 	so *tmp;
 
-	assert(img != NULL);
+	assert(animation_man != NULL);
 
-	animan_load(img, "assets/star 3.png", 1, 1);
-	animan_load(img, "assets/Lyra Paragon.png", 1, 1);
+	animan_load(animation_man, "assets/star 3.png", 1, 1);
+	animan_load(animation_man, "assets/Lyra Paragon.png", 1, 1);
 
-	tmp = so_new(animan_get(img, "assets/star 3.png"));
+	tmp = so_new(animan_get(animation_man, "assets/star 3.png"));
 	so_set_pos(tmp, 0, 0);
 	scene_load_object(self, tmp);
 
-	tmp = so_new(animan_get(img, "assets/Lyra Paragon.png"));
+	tmp = so_new(animan_get(animation_man, "assets/Lyra Paragon.png"));
 	so_newmov(tmp, so_cb_loop_left, 0.1, NULL);
 	scene_load_object(self, tmp);
 }
@@ -211,11 +213,11 @@ static void init_cb_beetle_fleet(scene *self)
 	int i;
 	so *tmp, *template;
 
-	assert(img != NULL);
+	assert(animation_man != NULL);
 
-	animan_load(img, "assets/beetle-sml.png", 1, 1);
+	animan_load(animation_man, "assets/beetle-sml.png", 1, 1);
 
-	template = so_new(animan_get(img, "assets/beetle-sml.png"));
+	template = so_new(animan_get(animation_man, "assets/beetle-sml.png"));
 	so_newmov(template, so_cb_loop_up, 10, &beetles_launch);
 	so_newmov(template, so_cb_bob_hrz, 10, &beetles_launch);
 	scene_load_object(self, template);
@@ -230,10 +232,10 @@ static void init_cb_beetle_fleet(scene *self)
 static void init_cb_explosion(scene *self)
 {
 	so *tmp;
-	assert(img != NULL);
+	assert(animation_man != NULL);
 
-	animan_load(img, "assets/explosion.png", 4, 4);
-	tmp = so_new(animan_get(img, "assets/explosion.png"));
+	animan_load(animation_man, "assets/explosion.png", 4, 4);
+	tmp = so_new(animan_get(animation_man, "assets/explosion.png"));
 	so_set_pos(tmp, 300, 300);
 	so_set_bobrate(tmp, 0.1);
 	so_newmov(tmp, so_cb_bob_hrz, 4, NULL);

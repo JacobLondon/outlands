@@ -9,6 +9,7 @@ FILES=\
 	animanager.c \
 	globals.c \
 	main.c \
+	obj_key.c \
 	scene_manager.c \
 	scene_object.c \
 	scene.c \

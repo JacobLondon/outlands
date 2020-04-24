@@ -13,7 +13,7 @@ typedef struct so_tag {
 	float bobdelta;
 	bool is_offscreen;
 	struct {
-		so_movement movement;
+		so_cb_movement movement;
 		bool *trigger;
 		float amt;
 	} movements[MOVEMENTS_MAX];
@@ -49,7 +49,7 @@ so *so_copy(so *other)
 	return self;
 }
 
-void so_newmov(so *self, so_movement movement, float amt, bool *trigger)
+void so_newmov(so *self, so_cb_movement movement, float amt, bool *trigger)
 {
 	int i;
 	assert(self);
@@ -65,7 +65,7 @@ void so_newmov(so *self, so_movement movement, float amt, bool *trigger)
 	assert(("Too many movements", i != MOVEMENTS_MAX));
 }
 
-void so_delmov(so *self, so_movement movement)
+void so_delmov(so *self, so_cb_movement movement)
 {
 	int i;
 	assert(self);
@@ -87,6 +87,11 @@ void so_set_pos(so *self, float x, float y)
 	self->pos.y = y;
 }
 
+Vector2 so_get_pos(so *self)
+{
+	return self->pos;
+}
+
 
 void so_set_bobrate(so *self, float newrate)
 {
@@ -103,7 +108,7 @@ void so_draw(so *self)
 	anim_draw(self->animation, self->pos);
 }
 
-void so_move(so *self)
+void so_update(so *self)
 {
 	int i;
 	assert(self);

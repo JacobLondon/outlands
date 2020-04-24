@@ -4,6 +4,14 @@
 typedef struct animan_tag animan;
 typedef struct anim_tag anim;
 
+/* Manage the loading and freeing of animations
+ * through a manager. This allows you to give
+ * the name of an asset to load and use. This
+ * manages the animations themselves, so when
+ * update is called, all animations managed
+ * by the animation manager are updated
+ */
+
 animan *animan_new(void);
 void animan_del(animan *self);
 
