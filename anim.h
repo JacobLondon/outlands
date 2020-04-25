@@ -11,8 +11,9 @@
 
 typedef struct anim_tag anim;
 
-anim *anim_new(char *png, int width, int height);
+anim *anim_new(Texture2D *texture, int width, int height);
 void anim_del(anim *self);
+anim *anim_copy(anim *self);
 
 void anim_reset(anim *self); /* reset the animation to the beginning */
 void anim_update(anim *self);

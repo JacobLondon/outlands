@@ -12,16 +12,17 @@ typedef struct so_tag {
 	float bobrate;
 	float bobdelta;
 	bool is_offscreen;
+	bool owns_animation;
 	struct {
 		so_cb_movement movement;
 		bool *trigger;
 		float amt;
 	} movements[MOVEMENTS_MAX];
-	anim *animation;
+	anim *animation; /* points, doesn't own */
 } so;
 
 
-so *so_new(anim *animation)
+so *so_new_owner(anim *animation, bool own_animation)
 {
 	assert(animation);
 	so *self = allocate(sizeof(so));
@@ -29,6 +30,7 @@ so *so_new(anim *animation)
 	self->pos = (Vector2){GetScreenWidth() / 2, 0};
 	memset(self->movements, 0, sizeof(self->movements));
 	self->animation = animation;
+	self->owns_animation = own_animation;
 	self->is_offscreen = false;
 	self->bobdelta = 0;
 	self->bobrate = 0.001;
@@ -38,15 +40,22 @@ so *so_new(anim *animation)
 void so_del(so *self)
 {
 	assert(self);
+	if (self->owns_animation) {
+		dealloc(self->animation);
+	}
 	dealloc(self);
 }
 
-so *so_copy(so *other)
+so *so_copy(so *self)
 {
-	so *self = allocate(sizeof(so));
 	assert(self);
-	memcpy(self, other, sizeof(so));
-	return self;
+	so *other = allocate(sizeof(so));
+	assert(other);
+	memcpy(other, self, sizeof(so));
+	if (other->owns_animation) {
+		other->animation = anim_copy(self->animation);
+	}
+	return other;
 }
 
 void so_newmov(so *self, so_cb_movement movement, float amt, bool *trigger)

@@ -12,9 +12,11 @@ typedef struct so_tag so;
 /* Move scene object if trigger == NULL or *trigger == true */
 typedef void (*so_cb_movement)(so *self, float amt, bool *trigger);
 
-so *so_new(anim *animation);
+so *so_new_owner(anim *animation, bool own_animation); /* define ownership of the animation */
+#define so_new(AnimationP) so_new_owner(AnimationP, false) /* point to an animation */
+#define so_new_own(AnimationP) so_new_owner(AnimationP, true) /* take ownership of the animation */
 void so_del(so *self);
-so *so_copy(so *other);
+so *so_copy(so *self);
 void so_newmov(so *self, so_cb_movement movement, float amt, bool *trigger);
 void so_delmov(so *self, so_cb_movement movement);
 

@@ -3,21 +3,21 @@
 #include <malloc.h>
 #include <raylib.h>
 #include "util.h"
-#include "obj_key.h"
+#include "key_object.h"
 
-#define STATES_MAX 6 /* max number of states for an object_key to manage */
+#define STATES_MAX 6 /* max number of states for an ko to manage */
 
-typedef struct object_key_tag {
-	so *objects[STATES_MAX]; /* just point, don't own */
-	object_key_cb state_cbs[STATES_MAX];
+typedef struct ko_tag {
+	so *objects[STATES_MAX]; /* owns all of its screen objects */
+	ko_cb state_cbs[STATES_MAX];
 
 	/* So this is gonna be a weird one.
 	 * These keys are the state variables for
 	 * controlling objects. Now when
-	 * object_key add state is called, if the
+	 * ko add state is called, if the
 	 * key variable passed is NULL,
-	 * then the object_key will automatically control
-	 * that bool. If a key is passed, then the object_key
+	 * then the ko will automatically control
+	 * that bool. If a key is passed, then the ko
 	 * will have to wait on what is passed before
 	 * progressing to the next state.
 	 * 
@@ -32,43 +32,65 @@ typedef struct object_key_tag {
 	              rate, then use the next frame of the animation */
 	int frame; /* the frame number the animation is in */
 	int state;
-} object_key;
+} ko;
 
-object_key *object_key_new(void)
+ko *ko_new(void)
 {
-	object_key *self = malloc(sizeof(object_key));
+	ko *self = allocate(sizeof(ko));
 	assert(self);
-	memset(self, 0, sizeof(object_key));
+	memset(self, 0, sizeof(ko));
 	return self;
 }
 
-void object_key_del(object_key *self)
-{
-	assert(self);
-	memset(self, 0, sizeof(object_key));
-	free(self);
-}
-
-object_key *object_key_copy(object_key *self)
+void ko_del(ko *self)
 {
 	int i;
 	assert(self);
-	object_key *other = malloc(sizeof(object_key));
-	assert(other);
-	memcpy(other, self, sizeof(object_key));
-
-	// visual defaults, internals copied above
-	other->frame = 0;
-	other->state = 0;
 	for (i = 0; i < STATES_MAX; i++) {
-		if (other->objects[i]) {
-			anim_reset(so_get_anim(other->objects[i]));
+		if (self->objects[i]) {
+			so_del(self->objects[i]);
 		}
 	}
+	memset(self, 0, sizeof(ko));
+	dealloc(self);
+}
+
+void ko_reset(ko *self)
+{
+	int i;
+	assert(self);
+	self->frame = 0;
+	self->state = 0;
+	for (i = 0; i < STATES_MAX; i++) {
+		if (self->objects[i]) {
+			anim_reset(so_get_anim(self->objects[i]));
+			// I own
+			if (self->mykeys[i] == true) {
+				self->keys[i] = NULL;
+			}
+			// I don't own, global
+			else {
+				// should already be valid, objects[i] exists
+				*self->keys[i] = false;
+			}
+		}
+	}
+}
+
+ko *ko_copy(ko *self)
+{
+	int i;
+	assert(self);
+	ko *other = allocate(sizeof(ko));
+	assert(other);
+	memcpy(other, self, sizeof(ko));
+
+	// visual defaults, internals copied above
+	ko_reset(other);
 	return other;
 }
 
-void object_key_add_rate(object_key *self, so *object, object_key_cb cb_state, bool *key, float animation_rate)
+void ko_add_rate(ko *self, so *object, ko_cb cb_state, bool *key, float animation_rate)
 {
 	int i;
 
@@ -93,19 +115,19 @@ void object_key_add_rate(object_key *self, so *object, object_key_cb cb_state, b
 	assert(("Too many object keys", i < STATES_MAX));
 }
 
-bool object_key_update(object_key *self)
+bool ko_update(ko *self)
 {
 	assert(self);
-	object_key_cb cb = self->state_cbs[self->state];
+	ko_cb cb = self->state_cbs[self->state];
 	cb(self, self->objects[self->state]);
 
 	// done with state, go to next one
-	if (object_key_get_key(self)) {
+	if (ko_get_key(self)) {
 		self->oof = 0.0f;
 		self->state++;
 
 		if (self->state > STATES_MAX || self->objects[self->state] == NULL) {
-			object_key_del(self);
+			ko_reset(self);
 			return true;
 		}
 	}
@@ -123,7 +145,7 @@ bool object_key_update(object_key *self)
 	return false;
 }
 
-bool object_key_get_key(object_key *self)
+bool ko_get_key(ko *self)
 {
 	assert(self);
 
@@ -138,7 +160,7 @@ bool object_key_get_key(object_key *self)
 	}
 }
 
-void object_key_set_key(object_key *self, bool key)
+void ko_set_key(ko *self, bool key)
 {
 	assert(self);
 
@@ -153,8 +175,19 @@ void object_key_set_key(object_key *self, bool key)
 	}
 }
 
-float object_key_get_frame(object_key *self)
+float ko_get_frame(ko *self)
 {
 	assert(self);
 	return self->frame;
+}
+
+void ko_set_pos(ko *self, int x, int y)
+{
+	int i;
+	assert(self);
+	for (i = 0; i < STATES_MAX; i++) {
+		if (self->objects[i]) {
+			so_set_pos(self->objects[i], x, y);
+		}
+	}
 }

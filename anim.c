@@ -4,7 +4,7 @@
 #include "util.h"
 
 typedef struct anim_tag {
-	Texture2D texture;
+	Texture2D *texture;
 	int width;
 	int height;
 	int i;
@@ -12,12 +12,12 @@ typedef struct anim_tag {
 } anim;
 
 
-anim *anim_new(char *png, int width, int height)
+anim *anim_new(Texture2D *texture, int width, int height)
 {
 	anim *self = allocate(sizeof(anim));
-	assert(png);
+	assert(texture);
 	assert(self);
-	self->texture = LoadTexture(png);
+	self->texture = texture;
 	self->width = width;
 	self->height = height;
 	self->i = 0;
@@ -28,13 +28,23 @@ anim *anim_new(char *png, int width, int height)
 void anim_del(anim *self)
 {
 	assert(self);
-	UnloadTexture(self->texture);
 	memset(self, 0, sizeof(anim));
 	dealloc(self);
 }
 
+anim *anim_copy(anim *self)
+{
+	assert(self);
+	anim *other = allocate(sizeof(anim));
+	assert(other);
+	memcpy(other, self, sizeof(anim));
+	anim_reset(other);
+	return other;
+}
+
 void anim_reset(anim *self)
 {
+	assert(self);
 	self->i = 0;
 	self->j = 0;
 }
@@ -59,12 +69,12 @@ void anim_draw(anim *self, Vector2 pos)
 {
 	assert(self);
 	DrawTextureRec(
-		self->texture,
+		*self->texture,
 		(Rectangle){
-			self->texture.width / self->width * self->j,
-			self->texture.height / self->height * self->i,
-			self->texture.width / self->width,
-			self->texture.height / self->height
+			self->texture->width / self->width * self->j,
+			self->texture->height / self->height * self->i,
+			self->texture->width / self->width,
+			self->texture->height / self->height
 		},
 		pos, WHITE
 	);
@@ -73,11 +83,11 @@ void anim_draw(anim *self, Vector2 pos)
 int anim_get_width(anim *self)
 {
 	assert(self);
-	return self->texture.width / self->width;
+	return self->texture->width / self->width;
 }
 
 int anim_get_height(anim *self)
 {
 	assert(self);
-	return self->texture.height / self->height;
+	return self->texture->height / self->height;
 }

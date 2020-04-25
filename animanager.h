@@ -1,6 +1,8 @@
 #ifndef OUTLANDS_ANIMANAGER_H_
 #define OUTLANDS_ANIMANAGER_H_
 
+#include <raylib.h>
+
 typedef struct animan_tag animan;
 typedef struct anim_tag anim;
 
@@ -19,9 +21,11 @@ void animan_del(animan *self);
 void animan_update(animan *self);
 
 /* Get an image if it exists, assert failure if not! */
-anim *animan_get(animan *self, char *png);
+anim *animan_get(animan *self, Texture2D *texture);
 
-/* Create a new animation for animan to manage */
-void animan_load(animan *self, char *png, int width, int height);
+/* Create a new animation for animan to manage, if a png is
+ * already loaded, don't do anything
+ */
+void animan_load(animan *self, Texture2D *texture, int width, int height);
 
 #endif // OUTLANDS_ANIMANAGER_H_

@@ -8,12 +8,14 @@ FILES=\
 	anim.c \
 	animanager.c \
 	globals.c \
+	key_manager.c \
+	key_object.c \
 	main.c \
-	obj_key.c \
 	scene_manager.c \
 	scene_object.c \
-	scene.c \
 	scene_object.c \
+	scene.c \
+	texture_manager.c \
 	util.c \
 
 .PHONY: clean

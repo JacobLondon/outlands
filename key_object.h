@@ -17,11 +17,12 @@
 #include <stdbool.h>
 #include "scene_object.h"
 
-typedef struct object_key_tag object_key;
+typedef struct ko_tag ko;
 
-object_key *object_key_new(void); /* object_keys are on the stack */
-void object_key_del(object_key *self); /* ref to pointer to nullilfy itself */
-object_key *object_key_copy(object_key *self);
+ko *ko_new(void); /* kos are on the stack */
+void ko_del(ko *self); /* dealloc itself */
+ko *ko_copy(ko *self);
+void ko_reset(ko *self);
 
 /* So the whole idea about this is that
  * it has a similar interface to what
@@ -36,38 +37,38 @@ object_key *object_key_copy(object_key *self);
  * the center, change anims to a new one,
  * and start circling. Circling is bound
  * to a global variable, which once set to
- * false moves the object_key to the next state,
+ * false moves the ko to the next state,
  * where it moves below the screen.
  * 
- * Make sure to use object_key_set_key(self, true)
+ * Make sure to use ko_set_key(self, true)
  * when done, or just change the global tied to it.
  * This will make the next state happen, if there is one.
- * If there are no more states, then it will object_key_del
+ * If there are no more states, then it will ko_del
  * itself.
  * 
  * It's a good idea to make a bunch of prototypes,
  * and make copies for every one of these in the scene.
  * Don't even need to malloc, just copy right into any
- * object_key buffer!
+ * ko buffer!
  */
 
-typedef void (*object_key_cb)(object_key *self, so *object);
+typedef void (*ko_cb)(ko *self, so *object);
 
-void object_key_add_rate(object_key *self, so *object, object_key_cb cb_state, bool *key, float animation_rate);
-#define object_key_add(ObjectKeyP, SObjP, CbState, KeyP) \
-	object_key_add_rate(ObjectKeyP, SObjP, CbState, KeyP, 1.0f)
+void ko_add_rate(ko *self, so *object, ko_cb cb_state, bool *key, float animation_rate);
+#define ko_add(ObjectKeyP, SObjP, CbState, KeyP) \
+	ko_add_rate(ObjectKeyP, SObjP, CbState, KeyP, 1.0f)
 
-/* Updates an object_key, returns true if done, false if still going
+/* Updates an ko, returns true if done, false if still going
  * When it is finished, it will dealloc itself! check if it finished,
  * then reassign it as needed
  */
-bool object_key_update(object_key *self);
+bool ko_update(ko *self);
 
 /* look at the key of the current state
  * this handles whether something is
  * (void *)0 or (void *)1 or global
  */
-bool object_key_get_key(object_key *self);
+bool ko_get_key(ko *self);
 
 /* Don't use set key if you're doing
  * this with global variables... I
@@ -75,8 +76,11 @@ bool object_key_get_key(object_key *self);
  * 
  * Well I could, but if you need it here it is
  */
-void object_key_set_key(object_key *self, bool key);
+void ko_set_key(ko *self, bool key);
 
-float object_key_get_frame(object_key *self);
+float ko_get_frame(ko *self);
+
+/* Set the position of all of its screen objects */
+void ko_set_pos(ko *self, int x, int y);
 
 #endif // OUTLANDS_OBJ_KEY_H_
