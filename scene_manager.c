@@ -25,14 +25,38 @@ static void take_scene(scene *other);
 	take_scene(scene_new_def(SceneDefinition))
 
 
+static void init_cb_star1(scene *self);
+static void init_cb_star3(scene *self);
+static void init_cb_space3(scene *self);
+static void init_cb_heavy_nebula2(scene *self);
+
+static void init_cb_gluurus(scene *self);
 static void init_cb_paragon(scene *self);
-static void init_cb_beetle_fleet(scene *self);
-static void init_cb_explosion(scene *self);
+static void init_cb_skyrillis(scene *self);
+static void init_cb_reitis(scene *self);
+
+static void init_cb_beetles(scene *self);
+static void init_cb_executives(scene *self);
+static void init_cb_asteroids(scene *self);
+static void init_cb_ftl_light(scene *self);
 
 static scene_definition defs[] = {
-	{ "Paragon", 3, init_cb_paragon },
-	{ "Beetles", 200, init_cb_beetle_fleet },
-	{ "Explosion", 1, init_cb_explosion },
+	// Background
+	{ "Star1", 1, init_cb_star1 },
+	{ "Star3", 1, init_cb_star3 },
+	{ "Space3", 1, init_cb_space3 },
+	{ "Heavy Nebula 2", 1, init_cb_heavy_nebula2 },
+	// Planets
+	{ "Gluurus", 1, init_cb_gluurus },
+	{ "Paragon", 1, init_cb_paragon },
+	{ "Skyrillis", 1, init_cb_skyrillis },
+	{ "Reitis", 1, init_cb_reitis },
+	// Foreground
+	{ "Beetles", 200, init_cb_beetles },
+	{ "Asteroids", 400, init_cb_asteroids },
+	{ "Executives", 3, init_cb_executives },
+	// Ships
+	{ "FTL-Light", 1, init_cb_ftl_light },
 	{ NULL, 0, NULL }
 };
 
@@ -179,6 +203,8 @@ static void take_scene(scene *other)
  * 'so_newmov' / 'so_set_pos' / etc... Call 'scene_load_object(self, YOUR SO)'
  * This will properly insert a screen object into the system.
  * 
+ * Also, 'initialized' should have already been asserted to true.
+ * 
  * example:
  * 
  * static void init_cb_picture1(scene *self)
@@ -193,40 +219,88 @@ static void take_scene(scene *other)
  * 
  ****************************************************************************/
 
+static void init_cb_star1(scene *self)
+{
+	Texture2D *star = texman_load("assets/star 1.png");
+	anim *a = animan_load(animation_man, star, 1, 1);
+	so *s = so_new(a);
+	so_set_pos(s, 0, 0);
+	scene_load_object(self, s);
+}
+
+static void init_cb_star3(scene *self)
+{
+	Texture2D *star = texman_load("assets/star 3.png");
+	anim *a = animan_load(animation_man, star, 1, 1);
+	so *s = so_new(a);
+	so_set_pos(s, 0, 0);
+	scene_load_object(self, s);
+}
+
+static void init_cb_space3(scene *self)
+{
+	Texture2D *star = texman_load("assets/space 3.png");
+	anim *a = animan_load(animation_man, star, 1, 1);
+	so *s = so_new(a);
+	so_set_pos(s, 0, 0);
+	scene_load_object(self, s);
+}
+
+static void init_cb_heavy_nebula2(scene *self)
+{
+	Texture2D *nebula = texman_load("assets/heavynebula 2.png");
+	anim *a = animan_load(animation_man, nebula, 1, 1);
+	so *s = so_new(a);
+	so_set_pos(s, 0, 0);
+	scene_load_object(self, s);
+}
+
+static void init_cb_gluurus(scene *self)
+{
+	Texture2D *t = texman_load("assets/Gluurus.png");
+	anim *a = animan_load(animation_man, t, 1, 1);
+	so *s = so_new(a);
+	so_set_pos(s, GetScreenWidth() * 0.1, -100);
+	so_newmov(s, so_cb_bob_hrz, 0.2, NULL);
+	scene_load_object(self, s);
+}
 
 static void init_cb_paragon(scene *self)
 {
-	so *tmp;
-
-	assert(initialized == true);
-
-	texman_load("assets/star 3.png");
-	texman_load("assets/Lyra Paragon.png");
-
-	animan_load(animation_man, texman_get("assets/star 3.png"), 1, 1);
-	animan_load(animation_man, texman_get("assets/Lyra Paragon.png"), 1, 1);
-
-	tmp = so_new(animan_get(animation_man, texman_get("assets/star 3.png")));
-	so_set_pos(tmp, 0, 0);
-	scene_load_object(self, tmp);
-
-	tmp = so_new(animan_get(animation_man, texman_get("assets/Lyra Paragon.png")));
-	so_newmov(tmp, so_cb_loop_left, 0.1, NULL);
-	scene_load_object(self, tmp);
+	Texture2D *t = texman_load("assets/Lyra Paragon.png");
+	anim *a = animan_load(animation_man, t, 1, 1);
+	so *s = so_new(a);
+	so_newmov(s, so_cb_loop_left, 0.1, NULL);
+	scene_load_object(self, s);
 }
 
-static void init_cb_beetle_fleet(scene *self)
+static void init_cb_skyrillis(scene *self)
+{
+	Texture2D *t = texman_load("assets/Skyrillis.png");
+	anim *a = animan_load(animation_man, t, 1, 1);
+	so *s = so_new(a);
+	so_set_pos(s, GetScreenWidth() * 0.15, 0);
+	scene_load_object(self, s);
+}
+
+static void init_cb_reitis(scene *self)
+{
+	Texture2D *t = texman_load("assets/Reitis.png");
+	anim *a = animan_load(animation_man, t, 1, 1);
+	so *s = so_new(a);
+	so_set_pos(s, 0, 0);
+	scene_load_object(self, s);
+}
+
+static void init_cb_beetles(scene *self)
 {
 	int i;
-	so *tmp, *template;
+	so *tmp;
 
-	assert(initialized == true);
+	Texture2D *beetles = texman_load("assets/beetle-sml.png");
+	anim *a = animan_load(animation_man, beetles, 1, 1);
+	so *template = so_new(a);
 
-	texman_load("assets/beetle-sml.png");
-
-	animan_load(animation_man, texman_get("assets/beetle-sml.png"), 1, 1);
-
-	template = so_new(animan_get(animation_man, texman_get("assets/beetle-sml.png")));
 	so_newmov(template, so_cb_loop_up, 10, &beetles_launch);
 	so_newmov(template, so_cb_bob_hrz, 10, &beetles_launch);
 	scene_load_object(self, template);
@@ -238,19 +312,95 @@ static void init_cb_beetle_fleet(scene *self)
 	}
 }
 
-static void init_cb_explosion(scene *self)
+static void init_cb_asteroids(scene *self)
 {
+	#define XASTEROIDS 10
+	int i, j;
 	so *tmp;
+	so *template;
+	anim *an;
+	Texture2D *asteroids[XASTEROIDS];
 
-	assert(initialized == true);
+	int direction = rand_range(0, 2); // left or right
+	float speed = rand_uniform() * 8;
+	int num_asteroids = rand_range(10, 20); // asteroids per type
 
-	texman_load("assets/explosion.png");
+	asteroids[0] = texman_load("assets/asteroid0.png");
+	asteroids[1] = texman_load("assets/asteroid1.png");
+	asteroids[2] = texman_load("assets/asteroid2.png");
+	asteroids[3] = texman_load("assets/asteroid3.png");
+	asteroids[4] = texman_load("assets/asteroid4.png");
+	asteroids[5] = texman_load("assets/asteroid5.png");
+	asteroids[6] = texman_load("assets/asteroid6.png");
+	asteroids[7] = texman_load("assets/asteroid7.png");
+	asteroids[8] = texman_load("assets/asteroid8.png");
+	asteroids[9] = texman_load("assets/asteroid9.png");
 
-	animan_load(animation_man, texman_get("assets/explosion.png"), 4, 4);
-	tmp = so_new(animan_get(animation_man, texman_get("assets/explosion.png")));
-	so_set_pos(tmp, 300, 300);
-	so_set_bobrate(tmp, 0.1);
-	so_newmov(tmp, so_cb_bob_hrz, 4, NULL);
-	so_newmov(tmp, so_cb_bob_vrt, 4, NULL);
-	scene_load_object(self, tmp);
+	for (i = 0; i < XASTEROIDS; i++) {
+		an = animan_load(animation_man, asteroids[i], 1, 1);
+		template = so_new(an);
+
+		for (j = 0; j < num_asteroids; j++) {
+			tmp = so_copy(template);
+
+			switch (direction) {
+			case 0:
+				so_newmov(tmp, so_cb_loop_left, speed + rand_uniform() * XASTEROIDS, NULL);
+				break;
+			case 1:
+				so_newmov(tmp, so_cb_loop_right, speed + rand_uniform() * XASTEROIDS, NULL);
+				break;
+			}
+			so_set_pos(tmp, GetScreenWidth() * rand_uniform(), GetScreenHeight() * rand_uniform());
+
+			switch (rand_range(0, 4)) {
+			// bob up down
+			case 0:
+				so_newmov(tmp, so_cb_bob_vrt, 2, NULL);
+				break;
+			// slight upwards
+			case 1:
+				so_newmov(tmp, so_cb_loop_up, 2, NULL);
+				break;
+			// slight downwards
+			case 2:
+				so_newmov(tmp, so_cb_loop_down, 2, NULL);
+				break;
+			// horizontal
+			case 3:
+				break;
+			}
+			scene_load_object(self, tmp);
+		}
+	}
+
+	#undef XASTEROIDS
+}
+
+static void init_cb_executives(scene *self)
+{
+	int i;
+	so *tmp;
+	Texture2D *t = texman_load("assets/executive.png");
+	anim *a = animan_load(animation_man, t, 1, 1);
+	so *template = so_new(a);
+	so_newmov(template, so_cb_bob_vrt, 0.1, NULL);
+	so_set_bobrate(template, 0.05);
+	for (i = 0; i < 3; i++) {
+		tmp = so_copy(template);
+		so_set_pos(tmp,
+			GetScreenWidth() / 2 + GetScreenWidth() * 0.3 * rand_uniform(),
+			GetScreenHeight() / 10 + GetScreenHeight() * 0.5 * rand_uniform()
+		);
+		scene_load_object(self, tmp);
+	}
+}
+
+static void init_cb_ftl_light(scene *self)
+{
+	Texture2D *t = texman_load("assets/ftl-light.png");
+	anim *a = animan_load(animation_man, t, 1, 1);
+	so *s = so_new(a);
+	so_set_pos(s, 100, 200);
+	scene_load_object(self, s);
 }

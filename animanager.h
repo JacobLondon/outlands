@@ -24,8 +24,10 @@ void animan_update(animan *self);
 anim *animan_get(animan *self, Texture2D *texture);
 
 /* Create a new animation for animan to manage, if a png is
- * already loaded, don't do anything
+ * already loaded, don't do anything.
+ * 
+ * Return a pointer to the animation
  */
-void animan_load(animan *self, Texture2D *texture, int width, int height);
+anim *animan_load(animan *self, Texture2D *texture, int width, int height);
 
 #endif // OUTLANDS_ANIMANAGER_H_

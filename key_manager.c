@@ -20,7 +20,7 @@ typedef struct key_definition_tag {
 static void load_cb_laser(ko *self);
 
 static key_definition defs[] = {
-	{ "Laser", load_cb_laser },
+	{ "Missile", load_cb_laser },
 	{ NULL, NULL }
 };
 
@@ -133,16 +133,15 @@ static void ko_cb_laser_2(ko *self, so *object)
 static void load_cb_laser(ko *self)
 {
 	so *tmp;
-
-	texman_load("assets/balls.png");
-	texman_load("assets/explosion3.png");
-
-	tmp = so_new_own(anim_new(texman_get("assets/balls.png"), 1, 4));
+	Texture2D *missile = texman_load("assets/missile1.png");
+	Texture2D *explosion = texman_load("assets/explosion3.png");
+	
+	tmp = so_new_own(anim_new(missile, 1, 1));
 	so_set_pos(tmp, GetScreenWidth(), GetScreenHeight() / 2);
 	so_newmov(tmp, so_cb_left, 30, NULL);
 	so_newmov(tmp, so_cb_trk_vrt, 2, NULL);
 	ko_add(self, tmp, ko_cb_laser_0, NULL); // spawn on press
 	ko_add_rate(self, tmp, ko_cb_laser_1, NULL, 8); // move to mouse
-	tmp = so_new_own(anim_new(texman_get("assets/explosion3.png"), 4, 4));
+	tmp = so_new_own(anim_new(explosion, 4, 4));
 	ko_add_rate(self, tmp, ko_cb_laser_2, NULL, 20); // explode
 }

@@ -55,10 +55,10 @@ anim *animan_get(animan *self, Texture2D *texture)
 		}
 	}
 	assert(("Animation not found", i != IMGS_MAX));
-	return self->animations[i];
+	return NULL;
 }
 
-void animan_load(animan *self, Texture2D *texture, int width, int height)
+anim *animan_load(animan *self, Texture2D *texture, int width, int height)
 {
 	int i;
 	assert(self);
@@ -67,12 +67,13 @@ void animan_load(animan *self, Texture2D *texture, int width, int height)
 		if (self->textures[i] == NULL) {
 			self->textures[i] = texture;
 			self->animations[i] = anim_new(texture, width, height);
-			break;
+			return self->animations[i];
 		}
 		// texture already exists, don't need to load it again
 		else if (self->textures[i] == texture) {
-			break;
+			return self->animations[i];
 		}
 	}
 	assert(("Too many animations loaded", i != IMGS_MAX));
+	return NULL;
 }

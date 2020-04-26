@@ -7,12 +7,16 @@
 #include "texture_manager.h"
 #include "key_manager.h"
 
-static char *default_scene[] = {
-	"Paragon", "Beetles", "Explosion", NULL
+#define SCENES_MAX 3
+
+static char *default_scenes[SCENES_MAX][] = {
+	{ "Heavy Nebula 2", "Gluurus", "Beetles", "FTL-Light", NULL },
+	{ "Star1", "Skyrillis", "Asteroids", "FTL-Light", NULL },
+	{ "Space3", "Reitis", "Executives", "FTL-Light", NULL },
 };
 
 static char *key_objects[] = {
-	"Laser", NULL
+	"Missile", NULL
 };
 
 int main(void)
@@ -24,8 +28,7 @@ int main(void)
 	SetTargetFPS(DEFAULT_TARGET_FPS);
 
 	scene_man_init();
-	scene_man_load(default_scene);
-	scene_man_tie_visibility("Beetles", &beetles_visible);
+	scene_man_load(default_scenes[rand_range(0, SCENES_MAX)]);
 
 	key_man_init();
 	key_man_load(key_objects);

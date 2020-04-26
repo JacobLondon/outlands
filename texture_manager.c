@@ -34,7 +34,7 @@ void texman_cleanup(void)
 	initialized = false;
 }
 
-void texman_load(char *png)
+Texture2D *texman_load(char *png)
 {
 	int i;
 	assert(initialized == true);
@@ -42,13 +42,14 @@ void texman_load(char *png)
 		if (textures[i].png == NULL) {
 			textures[i].png = png;
 			textures[i].texture = LoadTexture(png);
-			break;
+			return &textures[i].texture;
 		}
 		else if (streq(textures[i].png, png)) {
-			break;
+			return &textures[i].texture;
 		}
 	}
 	assert(("Too many textures loaded", i < TEXTURES_MAX));
+	return NULL;
 }
 
 Texture2D *texman_get(char *png)
@@ -64,4 +65,5 @@ Texture2D *texman_get(char *png)
 		}
 	}
 	assert(("Texture not found", i < TEXTURES_MAX));
+	return NULL;
 }
