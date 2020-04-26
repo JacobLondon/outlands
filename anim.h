@@ -22,4 +22,7 @@ void anim_draw(anim *self, Vector2 pos);
 int anim_get_width(anim *self);
 int anim_get_height(anim *self);
 
+/* get the width * height for the number of animated frames */
+int anim_get_frames(anim *self);
+
 #endif // OUTLANDS_ANIM_H_

@@ -78,7 +78,11 @@ bool ko_get_key(ko *self);
  */
 void ko_set_key(ko *self, bool key);
 
+/* get the current animation frame number */
 float ko_get_frame(ko *self);
+
+/* get the maximum number of frames in the current animation */
+int ko_get_max_frames(ko *self);
 
 /* Set the position of all of its screen objects */
 void ko_set_pos(ko *self, int x, int y);

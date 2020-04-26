@@ -91,3 +91,9 @@ int anim_get_height(anim *self)
 	assert(self);
 	return self->texture->height / self->height;
 }
+
+int anim_get_frames(anim *self)
+{
+	assert(self);
+	return self->height * self->width;
+}

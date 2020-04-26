@@ -5,7 +5,7 @@
 #include "util.h"
 #include "key_object.h"
 
-#define STATES_MAX 6 /* max number of states for an ko to manage */
+#define STATES_MAX 6 /* max number of states for a ko to manage */
 
 typedef struct ko_tag {
 	so *objects[STATES_MAX]; /* owns all of its screen objects */
@@ -123,6 +123,7 @@ bool ko_update(ko *self)
 
 	// done with state, go to next one
 	if (ko_get_key(self)) {
+		self->frame = 0;
 		self->oof = 0.0f;
 		self->state++;
 
@@ -179,6 +180,12 @@ float ko_get_frame(ko *self)
 {
 	assert(self);
 	return self->frame;
+}
+
+int ko_get_max_frames(ko *self)
+{
+	assert(self);
+	return anim_get_frames(so_get_anim(self->objects[self->state]));
 }
 
 void ko_set_pos(ko *self, int x, int y)

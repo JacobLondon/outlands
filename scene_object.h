@@ -30,7 +30,10 @@ void so_draw(so *self);
 /* move by all movement callbacks */
 void so_update(so *self);
 
-/* self is already asserted... */
+/* A bunch of callbacks to pass into newmov and delmov
+ * Also self is already asserted if these are used with
+ * new/delmov
+ */
 
 void so_cb_trk_vrt(so *self, float amt, bool *trigger); /* vertical mouse track */
 void so_cb_trk_hrz(so *self, float amt, bool *trigger); /* horizontal mouse track */

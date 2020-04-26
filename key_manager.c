@@ -98,7 +98,7 @@ void key_man_update(void)
  * 
  ****************************************************************************/
 
-static void laser_cb_0(ko *self, so *object)
+static void ko_cb_laser_0(ko *self, so *object)
 {
 	//so_set_pos(object, GetScreenWidth(), GetScreenHeight() / 2);
 	ko_set_pos(self, GetScreenWidth(), GetMouseY());
@@ -108,11 +108,10 @@ static void laser_cb_0(ko *self, so *object)
 	}
 }
 
-static void laser_cb_1(ko *self, so *object)
+static void ko_cb_laser_1(ko *self, so *object)
 {
 	const Vector2 p = so_get_pos(object);
 	const int x = GetMouseX();
-	const int w = anim_get_width(so_get_anim(object));
 
 	// once to the right of, close enough, next state
 	if (p.x < x) {
@@ -120,13 +119,13 @@ static void laser_cb_1(ko *self, so *object)
 	}
 }
 
-static void laser_cb_2(ko *self, so *object)
+static void ko_cb_laser_2(ko *self, so *object)
 {
 	const int w = anim_get_width(so_get_anim(object));
 	const int h = anim_get_height(so_get_anim(object));
 	so_set_pos(object, GetMouseX() - w / 2, GetMouseY() - h / 2);
 	// just animate and stop near the end
-	if (ko_get_frame(self) > 19) {
+	if (ko_get_frame(self) >= ko_get_max_frames(self)) {
 		ko_set_key(self, true);
 	}
 }
@@ -141,9 +140,9 @@ static void load_cb_laser(ko *self)
 	tmp = so_new_own(anim_new(texman_get("assets/balls.png"), 1, 4));
 	so_set_pos(tmp, GetScreenWidth(), GetScreenHeight() / 2);
 	so_newmov(tmp, so_cb_left, 30, NULL);
-	so_newmov(tmp, so_cb_trk_vrt, 6, NULL);
-	ko_add(self, tmp, laser_cb_0, NULL); // spawn on press
-	ko_add_rate(self, tmp, laser_cb_1, NULL, 8); // move to mouse
+	so_newmov(tmp, so_cb_trk_vrt, 2, NULL);
+	ko_add(self, tmp, ko_cb_laser_0, NULL); // spawn on press
+	ko_add_rate(self, tmp, ko_cb_laser_1, NULL, 8); // move to mouse
 	tmp = so_new_own(anim_new(texman_get("assets/explosion3.png"), 4, 4));
-	ko_add_rate(self, tmp, laser_cb_2, NULL, 20); // explode
+	ko_add_rate(self, tmp, ko_cb_laser_2, NULL, 20); // explode
 }
