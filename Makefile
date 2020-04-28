@@ -7,6 +7,7 @@ TARGET=lands.exe
 FILES=\
 	anim.c \
 	animanager.c \
+	context.c \
 	globals.c \
 	key_manager.c \
 	key_object.c \

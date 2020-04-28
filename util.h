@@ -1,6 +1,8 @@
 #ifndef OUTLANDS_UTIL_H_
 #define OUTLANDS_UTIL_H_
 
+#include <stddef.h>
+
 /* definitely not thread safe lol */
 void pool_init(size_t kilobytes);
 void pool_cleanup(void);
@@ -24,5 +26,7 @@ float rand_uniform(void);
 
 /* 0 -> false, 1-> true */
 int streq(char *s1, char *s2);
+
+char *file_read(const char *fname, size_t *size);
 
 #endif // OUTLANDS_UTIL_H_

@@ -17,7 +17,7 @@ static texture_lookup textures[TEXTURES_MAX] = { 0 };
 void texman_init(void)
 {
 	assert(initialized == false);
-	memset(textures, 0, TEXTURES_MAX);
+	memset(textures, 0, sizeof(textures));
 	initialized = true;
 }
 
@@ -30,7 +30,7 @@ void texman_cleanup(void)
 			UnloadTexture(textures[i].texture);
 		}
 	}
-	memset(textures, 0, TEXTURES_MAX);
+	memset(textures, 0, sizeof(textures));
 	initialized = false;
 }
 

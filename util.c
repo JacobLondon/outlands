@@ -27,6 +27,9 @@ void pool_cleanup(void)
 	assert(pool_begin);
 	memset(pool_begin, 0, pool_size);
 	free(pool_begin);
+	pool_index = 0;
+	pool_size = 0;
+	pool_begin = NULL;
 	allocate = malloc;
 	dealloc = free;
 }
@@ -71,4 +74,34 @@ int streq(char *s1, char *s2)
 		}
 	}
 	return 1;
+}
+
+char *file_read(const char *fname, size_t *size)
+{
+	if (!fname) {
+		return NULL;
+	}
+
+	char *buf;
+	size_t bytes;
+	long length;
+
+	FILE *f = fopen(fname, "rb");
+	assert(f);
+
+	fseek(f, 0, SEEK_END);
+	length = ftell(f);
+	fseek(f, 0, SEEK_SET);
+
+	buf = malloc(length + 1);
+	assert(buf);
+	
+	bytes = fread(buf, 1, length, f);
+	buf[bytes] = '\0';
+	if (size) {
+		*size = bytes;
+	}
+
+	fclose(f);
+	return buf;
 }

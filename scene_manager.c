@@ -29,6 +29,7 @@ static void init_cb_star1(scene *self);
 static void init_cb_star3(scene *self);
 static void init_cb_space3(scene *self);
 static void init_cb_heavy_nebula2(scene *self);
+static void init_cb_star_nebula3(scene *self);
 
 static void init_cb_gluurus(scene *self);
 static void init_cb_paragon(scene *self);
@@ -39,6 +40,11 @@ static void init_cb_beetles(scene *self);
 static void init_cb_executives(scene *self);
 static void init_cb_asteroids(scene *self);
 static void init_cb_ftl_light(scene *self);
+static void init_cb_ship_ext_0(scene *self);
+static void init_cb_ship_int_0(scene *self);
+
+/* load a single asset into a scene at the coordinates */
+static void init_helper_load_at(scene *self, char *asset, float x, float y);
 
 static scene_definition defs[] = {
 	// Background
@@ -46,6 +52,7 @@ static scene_definition defs[] = {
 	{ "Star3", 1, init_cb_star3 },
 	{ "Space3", 1, init_cb_space3 },
 	{ "Heavy Nebula 2", 1, init_cb_heavy_nebula2 },
+	{ "Star Nebula 3", 1, init_cb_star_nebula3 },
 	// Planets
 	{ "Gluurus", 1, init_cb_gluurus },
 	{ "Paragon", 1, init_cb_paragon },
@@ -57,6 +64,8 @@ static scene_definition defs[] = {
 	{ "Executives", 3, init_cb_executives },
 	// Ships
 	{ "FTL-Light", 1, init_cb_ftl_light },
+	{ "Falcon Ext", 1, init_cb_ship_ext_0 },
+	{ "Falcon Int", 1, init_cb_ship_int_0 },
 	{ NULL, 0, NULL }
 };
 
@@ -90,6 +99,7 @@ void scene_man_cleanup(void)
 	animan_del(animation_man);
 	animation_man = NULL;
 	memset(active_scenes, 0, sizeof(active_scenes));
+	initialized = false;
 }
 
 void scene_man_load(char **names)
@@ -192,6 +202,15 @@ static void take_scene(scene *other)
 	assert(("Too many scenes", i != ACTIVE_SCENES_MAX));
 }
 
+static void init_helper_load_at(scene *self, char *asset, float x, float y)
+{
+	Texture2D *t = texman_load(asset);
+	anim *a = animan_load(animation_man, t, 1, 1);
+	so *s = so_new(a);
+	so_set_pos(s, x, y);
+	scene_load_object(self, s);
+}
+
 
 /*****************************************************************************
  * 
@@ -221,38 +240,27 @@ static void take_scene(scene *other)
 
 static void init_cb_star1(scene *self)
 {
-	Texture2D *star = texman_load("assets/star 1.png");
-	anim *a = animan_load(animation_man, star, 1, 1);
-	so *s = so_new(a);
-	so_set_pos(s, 0, 0);
-	scene_load_object(self, s);
+	init_helper_load_at(self, "assets/star 1.png", 0, 0);
 }
 
 static void init_cb_star3(scene *self)
 {
-	Texture2D *star = texman_load("assets/star 3.png");
-	anim *a = animan_load(animation_man, star, 1, 1);
-	so *s = so_new(a);
-	so_set_pos(s, 0, 0);
-	scene_load_object(self, s);
+	init_helper_load_at(self, "assets/star 3.png", 0, 0);
 }
 
 static void init_cb_space3(scene *self)
 {
-	Texture2D *star = texman_load("assets/space 3.png");
-	anim *a = animan_load(animation_man, star, 1, 1);
-	so *s = so_new(a);
-	so_set_pos(s, 0, 0);
-	scene_load_object(self, s);
+	init_helper_load_at(self, "assets/space 3.png", 0, 0);
 }
 
 static void init_cb_heavy_nebula2(scene *self)
 {
-	Texture2D *nebula = texman_load("assets/heavynebula 2.png");
-	anim *a = animan_load(animation_man, nebula, 1, 1);
-	so *s = so_new(a);
-	so_set_pos(s, 0, 0);
-	scene_load_object(self, s);
+	init_helper_load_at(self, "assets/heavynebula 2.png", 0, 0);
+}
+
+static void init_cb_star_nebula3(scene *self)
+{
+	init_helper_load_at(self, "assets/starnebula 3.png", 0, 0);
 }
 
 static void init_cb_gluurus(scene *self)
@@ -301,8 +309,8 @@ static void init_cb_beetles(scene *self)
 	anim *a = animan_load(animation_man, beetles, 1, 1);
 	so *template = so_new(a);
 
-	so_newmov(template, so_cb_loop_up, 10, &beetles_launch);
-	so_newmov(template, so_cb_bob_hrz, 10, &beetles_launch);
+	so_newmov(template, so_cb_loop_up, 10, NULL);
+	so_newmov(template, so_cb_bob_hrz, 10, NULL);
 	scene_load_object(self, template);
 	for (i = 0; i < 50; i++) {
 		tmp = so_copy(template);
@@ -322,7 +330,7 @@ static void init_cb_asteroids(scene *self)
 	Texture2D *asteroids[XASTEROIDS];
 
 	int direction = rand_range(0, 2); // left or right
-	float speed = rand_uniform() * 8;
+	float speed = rand_uniform() * 3;
 	int num_asteroids = rand_range(10, 20); // asteroids per type
 
 	asteroids[0] = texman_load("assets/asteroid0.png");
@@ -398,9 +406,15 @@ static void init_cb_executives(scene *self)
 
 static void init_cb_ftl_light(scene *self)
 {
-	Texture2D *t = texman_load("assets/ftl-light.png");
-	anim *a = animan_load(animation_man, t, 1, 1);
-	so *s = so_new(a);
-	so_set_pos(s, 100, 200);
-	scene_load_object(self, s);
+	init_helper_load_at(self, "assets/ftl-light.png", 100, 200);
+}
+
+static void init_cb_ship_ext_0(scene *self)
+{
+	init_helper_load_at(self, "assets/falcon-exterior.png", 0, 0);
+}
+
+static void init_cb_ship_int_0(scene *self)
+{
+	init_helper_load_at(self, "assets/falcon-interior.png", 0, 0);
 }
