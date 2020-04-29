@@ -1,6 +1,8 @@
 #include <assert.h>
 #include <memory.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 #include "util.h"
 #include "texture_manager.h"
 
