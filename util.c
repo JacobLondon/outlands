@@ -1,7 +1,9 @@
 #include <assert.h>
-#include <memory.h>
+#include <ctype.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "util.h"
 
 void *(*allocate)(size_t size) = malloc;
@@ -104,4 +106,28 @@ char *file_read(const char *fname, size_t *size)
 
 	fclose(f);
 	return buf;
+}
+
+int file_write(const char *fname, const char *str)
+{
+	FILE *f = fopen(fname, "wb");
+	if (!f) {
+		return 0;
+	}
+
+	fputs(str, f);
+	fclose(f);
+	return 1;
+}
+
+int file_append(const char *fname, const char *str)
+{
+	FILE *f = fopen(fname, "ab");
+	if (!f) {
+		return 0;
+	}
+
+	fputs(str, f);
+	fclose(f);
+	return 1;
 }

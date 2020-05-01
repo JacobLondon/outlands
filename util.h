@@ -28,5 +28,7 @@ float rand_uniform(void);
 int streq(char *s1, char *s2);
 
 char *file_read(const char *fname, size_t *size);
+int file_write(const char *fname, const char *str);
+int file_append(const char *fname, const char *str);
 
 #endif // OUTLANDS_UTIL_H_
