@@ -13,4 +13,10 @@ Texture2D *texman_load(char *png);
 /* Extract a texture. If it's not there, assertion */
 Texture2D *texman_get(char *png);
 
+/* Test drawing routine
+ * Only use for test drawing or if animation will not
+ * be necessary.
+*/
+void texman_test_draw(Texture2D *texture, int x, int y);
+
 #endif // OUTLANDS_TEXTURE_MANAGER_H_

@@ -19,3 +19,7 @@ typedef struct ship_tag {
 	tile *tiles[SHIP_SIZE_Y_MAX * SHIP_SIZE_X_MAX]; // a 2D indexed array of tiles for the ship to take up
 
 } ship;
+
+ship *ship_new(void);
+void ship_del(ship *self);
+void ship_draw(ship *self);

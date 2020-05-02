@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "util.h"
+#include "ship_tile.h"
+#include "texture_manager.h"
 
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 800
@@ -10,6 +12,7 @@
 #define GRID_HEIGHT 20
 #define GRID_PIX_WIDTH (SCREEN_WIDTH / GRID_WIDTH)
 #define GRID_PIX_HEIGHT (SCREEN_HEIGHT / GRID_HEIGHT)
+#define TEXTURES_MAX 128
 #define SIZE(array) (sizeof(array) / sizeof(array[0]))
 
 enum mode {
@@ -30,9 +33,11 @@ int main(int argc, char **argv)
 {
 	char *arg;
 	int i, j;
-	Texture2D textures[3];
+	int ci, cj;
 	static char number[8];
 	int increment = 1;
+	Texture2D *textures[TEXTURES_MAX] = { 0 };
+	Texture2D *scene[3];
 
 	/* 
 	 * Arg Parsing
@@ -64,10 +69,15 @@ int main(int argc, char **argv)
 
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ship Maker");
 	SetTargetFPS(60);
-	
-	textures[0] = LoadTexture("assets/star 3.png");
-	textures[1] = LoadTexture("assets/Skyrillis.png");
-	textures[2] = LoadTexture(ship_path);
+
+	texman_init();
+
+	scene[0] = texman_load("assets/star 3.png");
+	scene[1] = texman_load("assets/Skyrillis.png");
+	scene[2] = texman_load(ship_path);
+	for (i = 1; i < ship_tile_get_count() && i < TEXTURES_MAX; i++) {
+		textures[i] = texman_load(ship_tile_get_png(i));
+	}
 
 	while (!WindowShouldClose()) {
 
@@ -79,12 +89,17 @@ int main(int argc, char **argv)
 			increment = 5;
 		}
 
+		ci = GetMouseY() / GRID_PIX_HEIGHT;
+		cj = GetMouseX() / GRID_PIX_WIDTH;
+
 		if (IsMouseButtonPressed(0)) {
-			tiles[GetMouseY() / GRID_PIX_HEIGHT][GetMouseX() / GRID_PIX_WIDTH] += increment;
+			if (tiles[ci][cj] + increment < ship_tile_get_count()) {
+				tiles[ci][cj] += increment;
+			}
 		}
 		else if (IsMouseButtonPressed(1)) {
-			if (tiles[GetMouseY() / GRID_PIX_HEIGHT][GetMouseX() / GRID_PIX_WIDTH] - increment >= 0) {
-				tiles[GetMouseY() / GRID_PIX_HEIGHT][GetMouseX() / GRID_PIX_WIDTH] -= increment;
+			if (tiles[ci][cj] - increment >= 0) {
+				tiles[ci][cj] -= increment;
 			}
 		}
 
@@ -94,22 +109,23 @@ int main(int argc, char **argv)
 
 		BeginDrawing();
 
-		for (i = 0; i < SIZE(textures); i++) {
-			DrawTexture(textures[i], 0, 0, WHITE);
+		for (i = 0; i < SIZE(scene); i++) {
+			DrawTexture(*scene[i], 0, 0, WHITE);
 		}
 		
 		// draw that grid
 		for (i = 0; i < GRID_HEIGHT; i++) {
 			for (j = 0; j < GRID_WIDTH; j++) {
 				if (tiles[i][j] > 0) {
-					memset(number, 0, sizeof(number));
-					DrawRectangle(
+					/*DrawRectangle(
 						j * GRID_PIX_WIDTH,
 						i * GRID_PIX_HEIGHT,
 						GRID_PIX_WIDTH,
 						GRID_PIX_HEIGHT,
 						(Color){255, 0, 0, 50}
-					);
+					);*/
+					texman_test_draw(textures[tiles[i][j]], j * GRID_PIX_WIDTH, i * GRID_PIX_HEIGHT);
+					memset(number, 0, sizeof(number));
 					sprintf(number, "%d", tiles[i][j]);
 					number[sizeof(number) - 1] = 0;
 					DrawText(number, j * GRID_PIX_WIDTH, i * GRID_PIX_HEIGHT, 16, BLACK);
@@ -122,10 +138,7 @@ int main(int argc, char **argv)
 		EndDrawing();
 	}
 
-	for (i = 0; i < SIZE(tiles); i++) {
-		UnloadTexture(textures[i]);
-	}
-
+	texman_cleanup();
 	CloseWindow();
 
 	return 0;
@@ -142,15 +155,6 @@ static void save(void)
 	if (!f) {
 		fprintf(stderr, "Cannot open file %s", result);
 		exit(2);
-	}
-	fprintf(f, "");
-	fclose(f);
-
-	// write the data
-	f = fopen(result, "ab");
-	if (!f) {
-		fprintf(stderr, "Cannot open file %s", result);
-		exit(3);
 	}
 	for (i = 0; i < GRID_HEIGHT; i++) {
 		for (j = 0; j < GRID_WIDTH; j++) {
@@ -179,7 +183,7 @@ static void load(void)
 		end = strcspn(p, "\n");
 		if (sscanf(p, "%d%d%d", &i, &j, &id) != 3) {
 			fprintf(stderr, "Failed reading line at %s\n", p);
-			exit(4);
+			exit(3);
 		}
 		tiles[i][j] = id;
 

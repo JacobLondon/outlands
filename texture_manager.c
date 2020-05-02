@@ -69,3 +69,9 @@ Texture2D *texman_get(char *png)
 	assert(("Texture not found", i < TEXTURES_MAX));
 	return NULL;
 }
+
+void texman_test_draw(Texture2D *texture, int x, int y)
+{
+	assert(texture);
+	DrawTexture(*texture, x, y, WHITE);
+}
