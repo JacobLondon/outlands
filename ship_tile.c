@@ -10,13 +10,6 @@
 #define HEALTH_DEFAULT 100
 #define HEALTH_INVINCIBLE 255
 
-enum tile_id {
-	TILE_NONE,
-	TILE_FLOOR,
-	TILE_DOOR,
-	TILE_COUNT
-};
-
 typedef struct tile_def_tag {
 	char *png;
 	int width;
@@ -25,6 +18,24 @@ typedef struct tile_def_tag {
 	bool is_blockable;
 	unsigned char health;
 } tile_def;
+
+#define TILE_DEF_NONE() { NULL }
+#define TILE_DEF_UNBREAKABLE(Png) { \
+	.png = Png, \
+	.width = 1, \
+	.height = 1, \
+	.is_lightable = false, \
+	.is_blockable = true, \
+	.health = HEALTH_INVINCIBLE \
+}
+#define TILE_DEF_LIGHTABLE(Png) { \
+	.png = Png, \
+	.width = 1, \
+	.height = 1, \
+	.is_lightable = false, \
+	.is_blockable = false, \
+	.health = HEALTH_INVINCIBLE \
+}
 
 typedef struct tile_tag {
 	bool is_burning;
@@ -37,29 +48,40 @@ typedef struct tile_tag {
 	entity *standing_entity; // NULL of no entity is standing
 } tile;
 
+enum tile_id {
+	TILE_NONE,
+	TILE_FLOOR,
+	TILE_DOOR,
+	TILE_BOX,
+	TILE_CRATE,
+	TILE_VENTBOX,
+	TILE_FAN0,
+	TILE_FAN1,
+	TILE_CONTROLS0,
+	TILE_CONTROLS1,
+	TILE_WEAPONS0,
+	TILE_WEAPONS1,
+	TILE_WEAPONS2,
+	TILE_WEAPONS3,
+	TILE_COUNT
+};
+
 static tile_def tile_definitions[] = {
-	[TILE_NONE] = {
-		NULL
-	},
-	[TILE_FLOOR] = { 
-		.png = "assets/tiles/floor.png",
-		.width = 1,
-		.height = 1,
-		.is_lightable = true,
-		.is_blockable = false,
-		.health = HEALTH_INVINCIBLE
-	},
-	[TILE_DOOR] = {
-		.png = "assets/tiles/door.png",
-		.width = 1,
-		.height = 1,
-		.is_lightable = true,
-		.is_blockable = true,
-		.health = HEALTH_DEFAULT
-	},
-	[TILE_COUNT] = {
-		NULL
-	}
+	[TILE_NONE]      = TILE_DEF_NONE(),
+	[TILE_FLOOR]     = TILE_DEF_LIGHTABLE("assets/tiles/floor.png"),
+	[TILE_DOOR]      = TILE_DEF_UNBREAKABLE("assets/tiles/door.png"),
+	[TILE_BOX]       = TILE_DEF_UNBREAKABLE("assets/tiles/box.png"),
+	[TILE_CRATE]     = TILE_DEF_UNBREAKABLE("assets/tiles/crate.png"),
+	[TILE_VENTBOX]   = TILE_DEF_UNBREAKABLE("assets/tiles/ventbox.png"),
+	[TILE_FAN0]      = TILE_DEF_UNBREAKABLE("assets/tiles/fan0.png"),
+	[TILE_FAN1]      = TILE_DEF_UNBREAKABLE("assets/tiles/fan1.png"),
+	[TILE_CONTROLS0] = TILE_DEF_UNBREAKABLE("assets/tiles/controls0.png"),
+	[TILE_CONTROLS1] = TILE_DEF_UNBREAKABLE("assets/tiles/controls1.png"),
+	[TILE_WEAPONS0]  = TILE_DEF_UNBREAKABLE("assets/tiles/weapons0.png"),
+	[TILE_WEAPONS1]  = TILE_DEF_UNBREAKABLE("assets/tiles/weapons1.png"),
+	[TILE_WEAPONS2]  = TILE_DEF_UNBREAKABLE("assets/tiles/weapons2.png"),
+	[TILE_WEAPONS3]  = TILE_DEF_UNBREAKABLE("assets/tiles/weapons3.png"),
+	[TILE_COUNT]     = TILE_DEF_NONE()
 };
 
 

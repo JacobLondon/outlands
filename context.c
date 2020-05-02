@@ -10,7 +10,7 @@
 
 // copied or unique key objects
 #define KEYS_MAX 32
-#define SCENES_MAX 3
+#define SCENES_MAX 5
 #define SHIPS_MAX 32
 #define POOL_MAX 100 /* kilobytes for visuals management */
 
@@ -19,6 +19,8 @@ static char *scene_defs[SCENES_MAX][] = {
 	{ "Star Nebula 3", "Gluurus", "Beetles", NULL },
 	{ "Star1", "Skyrillis", "Asteroids", NULL },
 	{ "Space3", "Reitis", "Executives", NULL },
+	{ "Star3", "Paragon", NULL },
+	{ "Star2", "Altaira", NULL },
 };
 
 static char *key_defs[] = {

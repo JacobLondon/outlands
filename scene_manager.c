@@ -26,6 +26,7 @@ static void take_scene(scene *other);
 
 
 static void init_cb_star1(scene *self);
+static void init_cb_star2(scene *self);
 static void init_cb_star3(scene *self);
 static void init_cb_space3(scene *self);
 static void init_cb_heavy_nebula2(scene *self);
@@ -35,13 +36,11 @@ static void init_cb_gluurus(scene *self);
 static void init_cb_paragon(scene *self);
 static void init_cb_skyrillis(scene *self);
 static void init_cb_reitis(scene *self);
+static void init_cb_altaira(scene *self);
 
 static void init_cb_beetles(scene *self);
 static void init_cb_executives(scene *self);
 static void init_cb_asteroids(scene *self);
-static void init_cb_ftl_light(scene *self);
-static void init_cb_ship_ext_0(scene *self);
-static void init_cb_ship_int_0(scene *self);
 
 /* load a single asset into a scene at the coordinates */
 static void init_helper_load_at(scene *self, char *asset, float x, float y);
@@ -49,6 +48,7 @@ static void init_helper_load_at(scene *self, char *asset, float x, float y);
 static scene_definition defs[] = {
 	// Background
 	{ "Star1", 1, init_cb_star1 },
+	{ "Star2", 1, init_cb_star2 },
 	{ "Star3", 1, init_cb_star3 },
 	{ "Space3", 1, init_cb_space3 },
 	{ "Heavy Nebula 2", 1, init_cb_heavy_nebula2 },
@@ -58,14 +58,11 @@ static scene_definition defs[] = {
 	{ "Paragon", 1, init_cb_paragon },
 	{ "Skyrillis", 1, init_cb_skyrillis },
 	{ "Reitis", 1, init_cb_reitis },
+	{ "Altaira", 1, init_cb_altaira },
 	// Foreground
 	{ "Beetles", 200, init_cb_beetles },
 	{ "Asteroids", 400, init_cb_asteroids },
 	{ "Executives", 3, init_cb_executives },
-	// Ships
-	{ "FTL-Light", 1, init_cb_ftl_light },
-	{ "Falcon Ext", 1, init_cb_ship_ext_0 },
-	{ "Falcon Int", 1, init_cb_ship_int_0 },
 	{ NULL, 0, NULL }
 };
 
@@ -243,6 +240,11 @@ static void init_cb_star1(scene *self)
 	init_helper_load_at(self, "assets/star 1.png", 0, 0);
 }
 
+static void init_cb_star2(scene *self)
+{
+	init_helper_load_at(self, "assets/star 2.png", 0, 0);
+}
+
 static void init_cb_star3(scene *self)
 {
 	init_helper_load_at(self, "assets/star 3.png", 0, 0);
@@ -294,6 +296,15 @@ static void init_cb_skyrillis(scene *self)
 static void init_cb_reitis(scene *self)
 {
 	Texture2D *t = texman_load("assets/Reitis.png");
+	anim *a = animan_load(animation_man, t, 1, 1);
+	so *s = so_new(a);
+	so_set_pos(s, 0, 0);
+	scene_load_object(self, s);
+}
+
+static void init_cb_altaira(scene *self)
+{
+	Texture2D *t = texman_load("assets/Altaira.png");
 	anim *a = animan_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_set_pos(s, 0, 0);
@@ -402,19 +413,4 @@ static void init_cb_executives(scene *self)
 		);
 		scene_load_object(self, tmp);
 	}
-}
-
-static void init_cb_ftl_light(scene *self)
-{
-	init_helper_load_at(self, "assets/ftl-light.png", 100, 200);
-}
-
-static void init_cb_ship_ext_0(scene *self)
-{
-	init_helper_load_at(self, "assets/falcon-exterior.png", 0, 0);
-}
-
-static void init_cb_ship_int_0(scene *self)
-{
-	init_helper_load_at(self, "assets/falcon-interior.png", 0, 0);
 }
