@@ -2,12 +2,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "texture_manager.h"
+#include "scene_object.h"
 #include "ship_tile.h"
 #include "ship.h"
 #include "util.h"
+#include "globals.h"
 
 /**
- * A ship is a grouping of cells where each cell is 32x32 pixels.
+ * A ship is a grouping of cells where each cell is 40x40 pixels.
  * 
  * A ship has 'tiles' which are things that the people in the
  * ship can interact with. These tiles allow things to happen
@@ -17,27 +20,119 @@
  * on, or it may be plain walkable and have no other feature.
  */
 
-#define SHIP_SIZE_X_MAX 30
-#define SHIP_SIZE_Y_MAX 25
+typedef struct ship_def_tag {
+	char *name;
+	char *rpg; /* what tiles go where in the ship */
+	char *png; /* the image of the ship */
+	int width; /* animation dims */
+	int height; /* animation dims */
+} ship_def;
 
 typedef struct ship_tag {
-	tile *tiles[SHIP_SIZE_Y_MAX * SHIP_SIZE_X_MAX]; // a 2D indexed array of tiles for the ship to take up
-
+	tile *tiles[GRIDS_TALL][GRIDS_WIDE]; // a 2D indexed array of tiles for the ship to take up
+	so *object; // the scene object itself
+	ship_def *def;
 } ship;
 
-ship *ship_new(void)
-{
 
+ship_def ship_definitions[] = {
+	{
+		.name = "Falcon",
+		.rpg = "rpgs/test.rpg",
+		.png = "assets/falcon-exterior.png",
+		.width = 1,
+		.height = 1
+	},
+	{
+		NULL
+	}
+};
+
+
+ship *ship_new(char *name)
+{
+	int i, j;
+	int idmx[GRIDS_TALL][GRIDS_WIDE] = { 0 };
+	ship_def *def = NULL;
+	Texture2D *t;
+	anim *a;
+	ship *self = malloc(sizeof(ship));
+	memset(self, 0, sizeof(ship));
+
+	assert(self);
+	assert(name);
+
+	for (i = 0; ship_definitions[i].name != NULL; i++) {
+		if (streq(name, ship_definitions[i].name)) {
+			def = &ship_definitions[i];
+			break;
+		}
+	}
+	assert(("Ship definition not found", def != NULL));
+
+	// load the rpg into the id matrix
+	ship_load_rpg(def->rpg, (int *)idmx, GRIDS_WIDE, GRIDS_TALL);
+
+	// convert the id matrix to actual tiles
+	for (i = 0; i < GRIDS_TALL; i++) {
+		for (j = 0; j < GRIDS_WIDE; j++) {
+			if (idmx[i][j] > 0) {
+				self->tiles[i][j] = ship_tile_new(idmx[i][j], j * GRID_PIX_WIDTH, i * GRID_PIX_HEIGHT);
+			}
+		}
+	}
+
+	t = texman_load(def->png);
+	a = anim_new(t, def->width, def->height);
+	self->object = so_new_own(a);
+	so_set_pos(self->object, 0, 0);
+	self->def = def;
+
+	return self;
 }
 
 void ship_del(ship *self)
 {
-
+	int i, j;
+	assert(self);
+	so_del(self->object);
+	for (i = 0; i < GRIDS_TALL; i++) {
+		for (j = 0; j < GRIDS_WIDE; j++) {
+			if (self->tiles[i][j] != NULL) {
+				ship_tile_del(self->tiles[i][j]);
+			}
+		}
+	}
 }
 
 void ship_draw(ship *self)
 {
+	int i, j;
+	assert(self);
 
+	so_draw(self->object);
+	for (i = 0; i < GRIDS_TALL; i++) {
+		for (j = 0; j < GRIDS_WIDE; j++) {
+			if (self->tiles[i][j] != NULL) {
+				ship_tile_draw(self->tiles[i][j]);
+			}
+		}
+	}
+}
+
+void ship_update(ship *self)
+{
+	int i, j;
+	
+	assert(self);
+	so_update(self->object);
+	for (i = 0; i < GRIDS_TALL; i++) {
+		for (j = 0; j < GRIDS_WIDE; j++) {
+			if (self->tiles[i][j] != NULL) {
+				ship_tile_update(self->tiles[i][j]);
+			}
+		}
+	}
 }
 
 void ship_load_rpg(char *rpg, int *idmx, int width, int height)

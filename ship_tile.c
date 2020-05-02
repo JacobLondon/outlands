@@ -63,31 +63,24 @@ static tile_def tile_definitions[] = {
 };
 
 
-tile *ship_tile_new(char *png)
+tile *ship_tile_new(int id, float x, float y)
 {
-	int i;
 	Texture2D *t;
 	anim *a;
 
-	assert(png);
+	assert(("Tile not defined", id > 0 && id < TILE_COUNT));
 	tile *self = allocate(sizeof(tile));
 	assert(self);
 	memset(self, 0, sizeof(tile));
 
-	for (i = 0; tile_definitions[i].png != NULL; i++) {
-		if (streq(png, tile_definitions[i].png)) {
-			self->health = tile_definitions[i].health;
-			self->def = &tile_definitions[i];
+	self->health = tile_definitions[id].health;
+	self->def = &tile_definitions[id];
+	t = texman_load(tile_definitions[id].png);
+	a = anim_new(t, tile_definitions[id].width, tile_definitions[id].height);
+	self->object = so_new_own(a);
+	so_set_pos(self->object, x, y);
 
-			t = texman_load(png);
-			a = anim_new(t, tile_definitions[i].width, tile_definitions[i].height);
-			self->object = so_new_own(a);
-			return self;
-		}
-	}
-
-	assert(("Tile asset not defined", 0));
-	return NULL;
+	return self;
 }
 
 void ship_tile_del(tile *self)
@@ -103,6 +96,12 @@ void ship_tile_draw(tile *self)
 {
 	assert(self);
 	so_draw(self->object);
+}
+
+void ship_tile_update(tile *self)
+{
+	assert(self);
+	so_update(self->object);
 }
 
 char *ship_tile_get_png(int id)

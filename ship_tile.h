@@ -3,10 +3,11 @@
 
 typedef struct tile_tag tile;
 
-/* Give an asset path and get a tile back */
-tile *ship_tile_new(char *png);
+/* Give a tile id and get a tile back */
+tile *ship_tile_new(int id, float x, float y);
 void ship_tile_del(tile *self);
 void ship_tile_draw(tile *self);
+void ship_tile_update(tile *self);
 
 char *ship_tile_get_png(int id);
 

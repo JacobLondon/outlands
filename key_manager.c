@@ -133,8 +133,8 @@ static void ko_cb_laser_2(ko *self, so *object)
 static void load_cb_laser(ko *self)
 {
 	so *tmp;
-	Texture2D *missile = texman_load("missile1");
-	Texture2D *explosion = texman_load("explosion3");
+	Texture2D *missile = texman_load("assets/missile1.png");
+	Texture2D *explosion = texman_load("assets/explosion3.png");
 	
 	tmp = so_new_own(anim_new(missile, 1, 1));
 	so_set_pos(tmp, GetScreenWidth(), GetScreenHeight() / 2);
