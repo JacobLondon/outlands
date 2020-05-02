@@ -1,7 +1,7 @@
 #include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include "util.h"
 
 #define SCREEN_WIDTH 1600
@@ -12,25 +12,55 @@
 #define GRID_PIX_HEIGHT (SCREEN_HEIGHT / GRID_HEIGHT)
 #define SIZE(array) (sizeof(array) / sizeof(array[0]))
 
+enum mode {
+	NO_MODE,
+	EDIT_MODE,
+	NEW_MODE
+};
+
 int tiles[GRID_HEIGHT][GRID_WIDTH] = { 0 };
 char *ship_path = NULL;
 char *result = NULL;
+enum mode editor_mode = NO_MODE;
 
 static void save(void);
+static void load(void);
 
 int main(int argc, char **argv)
 {
+	char *arg;
 	int i, j;
 	Texture2D textures[3];
 	static char number[8];
 	int increment = 1;
 
-	if (argc != 3) {
-		fprintf(stderr, "Usage: maker.exe {rpgs/<ship>.rpg} {assets/<ship_path>.png}\n");
+	/* 
+	 * Arg Parsing
+	 */
+
+	if (arg = arg_get(argc, argv, "open")) {
+		ship_path = arg;
+	}
+	if ((editor_mode == NO_MODE) && (arg = arg_get(argc, argv, "new"))) {
+		result = arg;
+		editor_mode = NEW_MODE;
+	}
+	if ((editor_mode == NO_MODE) && (arg = arg_get(argc, argv, "edit"))) {
+		result = arg;
+		editor_mode = EDIT_MODE;
+	}
+	if (!ship_path || !result || editor_mode == NO_MODE) {
+		fprintf(stderr, "Usage: maker.exe open {assets/<ship_path>.png} [new|edit] {rpgs/<ship>.rpg}\n");
 		exit(1);
 	}
-	result = argv[1];
-	ship_path = argv[2];
+
+	if (editor_mode == EDIT_MODE) {
+		load();
+	}
+
+	/* 
+	 * Editor
+	 */
 
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ship Maker");
 	SetTargetFPS(60);
@@ -132,4 +162,29 @@ static void save(void)
 	}
 
 	fclose(f);
+}
+
+static void load(void)
+{
+	char *rpg;
+	char *p;
+	int end;
+	size_t size;
+	int i, j, id;
+
+	memset(tiles, 0, sizeof(tiles));
+	p = rpg = file_read(result, &size);
+
+	while (p - rpg < size) {
+		end = strcspn(p, "\n");
+		if (sscanf(p, "%d%d%d", &i, &j, &id) != 3) {
+			fprintf(stderr, "Failed reading line at %s\n", p);
+			exit(4);
+		}
+		tiles[i][j] = id;
+
+		// bypass the \n to get to next line so strcspn != 0 forever
+		p += end + 1;
+	}
+	free(rpg);
 }

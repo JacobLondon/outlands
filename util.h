@@ -31,4 +31,7 @@ char *file_read(const char *fname, size_t *size);
 int file_write(const char *fname, const char *str);
 int file_append(const char *fname, const char *str);
 
+int arg_check(int argc, char **argv, const char *arg);
+char *arg_get(int argc, char **argv, const char *arg);
+
 #endif // OUTLANDS_UTIL_H_
