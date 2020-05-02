@@ -17,6 +17,7 @@ FILES=\
 	scene_object.c \
 	scene.c \
 	ship_tile.c \
+	ship.c \
 	texture_manager.c \
 	util.c \
 
