@@ -196,6 +196,8 @@ bool ship_is_walkable(ship *self, int x, int y)
 	assert(self);
 	assert(0 <= x && x < GRIDS_WIDE);
 	assert(0 <= y && y < GRIDS_TALL);
-	assert(self->tiles[y][x]);
+	if (self->tiles[y][x] == NULL) {
+		return false;
+	}
 	return ship_tile_get_walkable(self->tiles[y][x]);
 }
