@@ -1,6 +1,8 @@
 #ifndef OUTLANDS_SHIP_MODULE_H_
 #define OUTLANDS_SHIP_MODULE_H_
 
+#include <stdbool.h>
+
 typedef struct tile_tag tile;
 
 /* Give a tile id and get a tile back */
@@ -13,5 +15,7 @@ char *ship_tile_get_png(int id);
 
 /* get how many tile definitions there are */
 int ship_tile_get_count(void);
+
+bool ship_tile_get_walkable(tile *self);
 
 #endif // OUTLANDS_SHIP_MODULE_H_

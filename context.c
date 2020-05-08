@@ -4,6 +4,7 @@
 #include "texture_manager.h"
 #include "key_manager.h"
 #include "ship.h"
+#include "dude.h"
 #include "globals.h"
 #include "util.h"
 #include "context.h"
@@ -12,7 +13,7 @@
 #define KEYS_MAX 32
 #define SCENES_MAX 5
 #define SHIPS_MAX 32
-#define POOL_MAX 100 /* kilobytes for visuals management */
+#define POOL_MAX 60 /* kilobytes for visuals management */
 
 
 static char *scene_defs[SCENES_MAX][] = {
@@ -28,6 +29,7 @@ static char *key_defs[] = {
 };
 
 static ship *player_ship = NULL;
+static ship *enemy_ship  = NULL;
 
 static char **loaded_scene = NULL;
 static char *loaded_keys[KEYS_MAX] = { NULL };
@@ -54,11 +56,14 @@ static void def_init(void)
 	key_man_load(key_defs);
 
 	player_ship = ship_new("Falcon");
+	dude_load(5, "Humans", player_ship);
+
 	pool_usage();
 }
 
 static void def_cleanup(void)
 {
+	dude_unload();
 	ship_del(player_ship);
 	key_man_cleanup();
 	scene_man_cleanup();
@@ -94,12 +99,16 @@ void context_update(void)
 	}
 	scene_man_update();
 	ship_update(player_ship);
+	dude_select_update(player_ship);
+	dude_update();
 }
 
 void context_draw(void)
 {
 	scene_man_draw();
 	ship_draw(player_ship);
+	dude_draw();
 	key_man_update();
+	dude_select_draw();
 	DrawFPS(0, 0);
 }

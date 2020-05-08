@@ -29,8 +29,8 @@ typedef struct ship_def_tag {
 } ship_def;
 
 typedef struct ship_tag {
+	so *object; // the scene object of the ship texture
 	tile *tiles[GRIDS_TALL][GRIDS_WIDE]; // a 2D indexed array of tiles for the ship to take up
-	so *object; // the scene object itself
 	ship_def *def;
 } ship;
 
@@ -160,4 +160,42 @@ void ship_load_rpg(char *rpg, int *idmx, int width, int height)
 		p += end + 1;
 	}
 	free(text);
+}
+
+size_t ship_find_walkable_batch(ship *self, int **xs, int **ys)
+{
+	int i, j;
+	size_t count = 0;
+	static int x[GRIDS_TALL * GRIDS_WIDE] = { 0 };
+	static int y[GRIDS_TALL * GRIDS_WIDE] = { 0 };
+
+	assert(self);
+	assert(xs);
+	assert(ys);
+
+	memset(x, 0, sizeof(x));
+	memset(y, 0, sizeof(y));
+	*xs = x;
+	*ys = y;
+
+	// make sure there are enough walkable tiles
+	for (i = 0; i < GRIDS_TALL; i++) {
+		for (j = 0; j < GRIDS_WIDE; j++) {
+			if (self->tiles[i][j] && ship_tile_get_walkable(self->tiles[i][j])) {
+				x[count] = j;
+				y[count] = i;
+				count++;
+			}
+		}
+	}
+	return count;
+}
+
+bool ship_is_walkable(ship *self, int x, int y)
+{
+	assert(self);
+	assert(0 <= x && x < GRIDS_WIDE);
+	assert(0 <= y && y < GRIDS_TALL);
+	assert(self->tiles[y][x]);
+	return ship_tile_get_walkable(self->tiles[y][x]);
 }

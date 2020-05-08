@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <stdbool.h>
 #include <memory.h>
 #include "ship_tile.h"
 #include "entity.h"
@@ -138,4 +137,18 @@ char *ship_tile_get_png(int id)
 int ship_tile_get_count(void)
 {
 	return TILE_COUNT;
+}
+
+bool ship_tile_get_walkable(tile *self)
+{
+	assert(self);
+
+	if (self->def == &tile_definitions[TILE_FLOOR] ||
+	    self->def == &tile_definitions[TILE_DOOR])
+	{
+		if (self->is_blocked == false) {
+			return true;
+		}
+	}
+	return false;
 }

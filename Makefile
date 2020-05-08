@@ -9,6 +9,7 @@ FILES=\
 	anim.c \
 	animanager.c \
 	context.c \
+	dude.c \
 	globals.c \
 	key_manager.c \
 	key_object.c \
