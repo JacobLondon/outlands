@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "util.h"
-#include "ship_tile.h"
-#include "ship.h"
-#include "texture_manager.h"
-#include "globals.h"
+#include "../src/util.h"
+#include "../src/ship_tile.h"
+#include "../src/ship.h"
+#include "../src/texture_manager.h"
+#include "../src/globals.h"
 
 #define TEXTURES_MAX 128
 #define SIZE(array) (sizeof(array) / sizeof(array[0]))

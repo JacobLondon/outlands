@@ -1,6 +1,5 @@
-#include "context.h"
-#include "globals.h"
 #include <raylib.h>
+#include <outlands.h>
 
 int main(void)
 {
