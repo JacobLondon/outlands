@@ -6,8 +6,8 @@ TARGET_LANDS=lands.exe
 TARGET_MAKER=maker.exe
 
 SOURCES = $(wildcard src/*.c)
-SOURCES_LANDS = $(SOURCES) util/lands.c
-SOURCES_MAKER = $(SOURCES) util/maker.c
+SOURCES_LANDS = $(SOURCES) tools/lands.c
+SOURCES_MAKER = $(SOURCES) tools/maker.c
 
 .PHONY: clean
 
