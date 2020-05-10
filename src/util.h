@@ -34,4 +34,6 @@ int file_append(const char *fname, const char *str);
 int arg_check(int argc, char **argv, const char *arg);
 char *arg_get(int argc, char **argv, const char *arg);
 
+float fast_sqrtf(float number);
+
 #endif // OUTLANDS_UTIL_H_
