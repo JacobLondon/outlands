@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "scene_object.h"
 #include "texture_manager.h"
+#include "astar.h"
 #include "globals.h"
 #include "ship.h"
 #include "util.h"
@@ -36,7 +37,8 @@
  * Everything else will be done here internally.
  */
 
-#define DUDES_MAX ((unsigned char)128) // 2^7
+#define DUDES_MAX ((unsigned char)32)
+#define PATH_MAX 50
 
 // TODO: Dude's, when selected, should be highlighted, gotta record whether selected or not
 typedef struct dude_tag {
@@ -58,9 +60,10 @@ typedef struct dude_def_tag {
 typedef struct job_tag {
 	unsigned char id;
 	bool done;
+	unsigned char state;
 	int x; // target x position
 	int y; // target y position
-	int state;
+	int step;
 } job;
 
 static dude_def dude_definitions[] = {
@@ -76,6 +79,8 @@ static unsigned char num_dudes = 0; // no. of dudes
 // so dude 0-63 is team 0 while dude 64-127 is team 1
 static job jobs[DUDES_MAX] = { 0 };
 static dude dudes[DUDES_MAX] = { 0 };
+static int paths_x[DUDES_MAX][PATH_MAX]; // record all x path finding for each dude
+static int paths_y[DUDES_MAX][PATH_MAX]; // record all y path finding for each dude
 static const job NO_JOB = { 0 };
 
 static int sel_start_x = 0;
@@ -143,6 +148,8 @@ void dude_load(size_t numberof, char *name, ship *other)
 		a = anim_new(t, d->width, d->height);
 		dudes[num_dudes].object = so_new_own(a);
 		dudes[num_dudes].health = d->health;
+		memset(paths_x[num_dudes], 0, sizeof(paths_x[num_dudes]));
+		memset(paths_y[num_dudes], 0, sizeof(paths_y[num_dudes]));
 	}
 }
 
@@ -348,6 +355,11 @@ static bool is_available(int x, int y)
 
 static void work_on_job(int id)
 {
+	enum {
+		STATE_START,
+		STATE_WALK,
+		STATE_DONE,
+	};
 	assert(0 <= id && id < DUDES_MAX);
 	// TODO: A-Star to path find to location
 
@@ -355,12 +367,43 @@ static void work_on_job(int id)
 		jobs[id] = NO_JOB;
 		return;
 	}
-	if (jobs[id].state == 0) {
-		printf("%d working\n", id);
+
+	switch (jobs[id].state) {
+		case STATE_WALK:
+			if (is_available(paths_x[id][jobs[id].step], paths_y[id][jobs[id].step])) {
+				dudes[id].x = paths_x[id][jobs[id].step];
+				dudes[id].y = paths_y[id][jobs[id].step];
+				jobs[id].step--;
+				if (jobs[id].step < 0) {
+					jobs[id].state = STATE_DONE;
+				}
+			}
+			// nowhere to go mate
+			// TODO: Need to make is_available public, and ships not be independent to themselves, but sit on the entire grid so I can poke that
+			// This will allow for pathfinding to inspect where the dudes are as well, then if there is a dude in the way, repathfind
+			// around the dude.
+			else {
+				jobs[id].state = STATE_DONE;
+			}
+			break;
+		case STATE_START:
+			// quick escape, no pathfind if nowhere to go!
+			if (dudes[id].x == jobs[id].x && dudes[id].y == jobs[id].y) {
+				jobs[id].state = STATE_DONE;
+				break;
+			}
+			jobs[id].step = astar_path(paths_x[id], paths_y[id], PATH_MAX, dudes[id].y, dudes[id].x, jobs[id].y, jobs[id].x);
+			jobs[id].step--;
+			jobs[id].state = STATE_WALK;
+			break;
+		case STATE_DONE:
+			jobs[id].done = true;
+			jobs[id].state = STATE_START;
+			jobs[id].step = 0;
+			memset(paths_x[id], 0, sizeof(paths_x[id]));
+			memset(paths_y[id], 0, sizeof(paths_y[id]));
+			break;
+		default:
+			assert(("Bad path", 0));
 	}
-	else if (jobs[id].state == 60) {
-		jobs[id].done = true;
-		return;
-	}
-	jobs[id].state++;
 }

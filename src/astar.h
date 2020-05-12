@@ -1,19 +1,10 @@
 #ifndef OUTLANDS_ASTAR_H_
 #define OUTLANDS_ASTAR_H_
 
-#define NEIGHBORS_MAX 4
-
-typedef struct node_tag {
-	float global_goal;
-	float local_goal;
-	int x;
-	int y;
-	bool obstacle;
-	bool visited;
-	struct node_tag *neighbors[NEIGHBORS_MAX];
-	struct node_tag *parent;
-} node;
-
+/**
+ * Give the width and height of the walkable area.
+ * @param check_obstacle_cb returns true if the item at i and j is an obstacle, or NOT walkable
+ */
 void astar_init(size_t width, size_t height, bool (*check_obstacle_cb)(int i, int j));
 void astar_cleanup(void);
 /**

@@ -7,23 +7,42 @@
 #include "globals.h"
 #include "astar.h"
 
+/**
+ * TODO: A* is not very memory efficient. It should be given a list of coordinates,
+ * and generate a node map from that. Right now it is a grid, taking up a LOT of
+ * memory. Many of these extra nodes will never be used.
+ */
+
+#define NEIGHBORS_MAX 4
+
+typedef struct node_tag {
+	float global_goal;
+	float local_goal;
+	int x;
+	int y;
+	bool obstacle;
+	bool visited;
+	struct node_tag *neighbors[NEIGHBORS_MAX];
+	struct node_tag *parent;
+} node;
+
 // non-resizeable, max size sets in stone
 // does NOT own items in buf
-typedef struct deque_tag {
+typedef struct queue_tag {
 	void **buf;
 	void **front;
 	size_t size;
 	size_t cap;
 	size_t item_size;
-} deque;
+} queue;
 
-deque *deque_new(size_t size, size_t count);
-void deque_del(deque *self);
-void deque_clear(deque *self);
-bool deque_empty(deque *self);
-void deque_push_back(deque *self, void *n);
-void *deque_front(deque *self);
-void deque_pop_front(deque *self);
+queue *queue_new(size_t size, size_t count);
+void queue_del(queue *self);
+void queue_clear(queue *self);
+bool queue_empty(queue *self);
+void queue_enq(queue *self, void *n);
+void *queue_front(queue *self);
+void queue_deq(queue *self);
 
 
 static bool node_dist(const node *a, const node *b);
@@ -36,33 +55,34 @@ static void astar_solve(int si, int sj, int ei, int ej);
 static size_t astar_width = 0;
 static size_t astar_height = 0;
 static node *astar_nodes = NULL;
-static deque *astar_untested = NULL;
+static queue *astar_untested = NULL;
 static bool (*astar_check_obstacle)(int i, int j) = NULL; /* return true if the coordinate is an obstacle */
+static bool initialized = false;
 
 
-deque *deque_new(size_t size, size_t count)
+queue *queue_new(size_t size, size_t count)
 {
-	deque *self = allocate(sizeof(deque));
+	queue *self = allocate(sizeof(queue));
 	assert(self);
 	self->buf = allocate(size * count * 2);
 	assert(self->buf);
 	memset(self->buf, 0, size * size * 2);
-	self->front = &self->buf[count];
+	self->front = self->buf;
 	self->size = 0;
 	self->item_size = size;
 	self->cap = count * 2;
 	return self;
 }
 
-void deque_del(deque *self)
+void queue_del(queue *self)
 {
 	assert(self);
 	dealloc(self->buf);
 	dealloc(self);
-	memset(self, 0, sizeof(deque));
+	memset(self, 0, sizeof(queue));
 }
 
-void deque_clear(deque *self)
+void queue_clear(queue *self)
 {
 	size_t i;
 	assert(self);
@@ -73,13 +93,13 @@ void deque_clear(deque *self)
 	self->size = 0;
 }
 
-bool deque_empty(deque *self)
+bool queue_empty(queue *self)
 {
 	assert(self);
 	return self->size == 0;
 }
 
-void deque_push_back(deque *self, void *n)
+void queue_enq(queue *self, void *n)
 {
 	assert(self);
 	assert(n);
@@ -88,13 +108,13 @@ void deque_push_back(deque *self, void *n)
 	self->size++;
 }
 
-void *deque_front(deque *self)
+void *queue_front(queue *self)
 {
 	assert(self);
 	return self->front[0];
 }
 
-void deque_pop_front(deque *self)
+void queue_deq(queue *self)
 {
 	assert(self);
 	assert(&self->front[1] < &self->buf[self->cap]);
@@ -128,6 +148,7 @@ void astar_init(size_t width, size_t height, bool (*check_obstacle_cb)(int i, in
 {
 	int i, j;
 	assert(check_obstacle_cb);
+	initialized = true;
 
 	astar_width = width;
 	astar_height = height;
@@ -137,7 +158,7 @@ void astar_init(size_t width, size_t height, bool (*check_obstacle_cb)(int i, in
 	memset(astar_nodes, 0, width * height * sizeof(node));
 
 	// needs to be more than longest possible path as the front moves
-	astar_untested = deque_new(sizeof(node), 2 * width * height);
+	astar_untested = queue_new(sizeof(node), 2 * width * height);
 
 	for (i = 0; i < height; i++) {
 		for (j = 0; j < width; j++) {
@@ -163,10 +184,11 @@ void astar_cleanup(void)
 {
 	assert(astar_nodes);
 	assert(astar_untested);
+	initialized = false;
 	memset(astar_nodes, 0, astar_width * astar_height * sizeof(node));
 	dealloc(astar_nodes);
 	astar_nodes = NULL;
-	deque_del(astar_untested);
+	queue_del(astar_untested);
 	astar_untested = NULL;
 	astar_width = 0;
 	astar_height = 0;
@@ -190,7 +212,7 @@ static void astar_reset(void)
 			astar_nodes[i * astar_width + j].local_goal = INFINITY;
 		}
 	}
-	deque_clear(astar_untested);
+	queue_clear(astar_untested);
 }
 
 static void astar_solve(int si, int sj, int ei, int ej)
@@ -208,18 +230,18 @@ static void astar_solve(int si, int sj, int ei, int ej)
 	current = start;
 	current->local_goal = 0.0f;
 	current->global_goal = node_dist(start, end);
-	deque_push_back(astar_untested, start);
+	queue_enq(astar_untested, start);
 
-	while (!deque_empty(astar_untested)) {
+	while (!queue_empty(astar_untested)) {
 		// ignore visited nodes
-		while (!deque_empty(astar_untested) && ((node *)astar_untested->front[0])->visited) {
-			deque_pop_front(astar_untested);
+		while (!queue_empty(astar_untested) && ((node *)astar_untested->front[0])->visited) {
+			queue_deq(astar_untested);
 		}
 		// popped last node
-		if (deque_empty(astar_untested)) {
+		if (queue_empty(astar_untested)) {
 			break;
 		}
-		current = deque_front(astar_untested);
+		current = queue_front(astar_untested);
 		current->visited = true;
 
 		// check neighbors
@@ -227,7 +249,7 @@ static void astar_solve(int si, int sj, int ei, int ej)
 		{
 			// record the neighbor if it wasn't visited yet
 			if (!current->neighbors[i]->visited && !current->neighbors[i]->obstacle) {
-				deque_push_back(astar_untested, current->neighbors[i]);
+				queue_enq(astar_untested, current->neighbors[i]);
 			}
 			// find local goals
 			possible_goal = current->local_goal + node_dist(current, current->neighbors[i]);
@@ -244,6 +266,7 @@ size_t astar_path(int *xs, int *ys, size_t size, int si, int sj, int ei, int ej)
 {
 	size_t count = 0;
 	node *n;
+	assert(initialized);
 	assert(xs);
 	assert(ys);
 	assert(0 <= si && si < astar_height);

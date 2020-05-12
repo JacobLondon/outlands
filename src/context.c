@@ -3,6 +3,7 @@
 #include "scene_manager.h"
 #include "texture_manager.h"
 #include "key_manager.h"
+#include "astar.h"
 #include "ship.h"
 #include "dude.h"
 #include "globals.h"
@@ -13,7 +14,7 @@
 #define KEYS_MAX 32
 #define SCENES_MAX 5
 #define SHIPS_MAX 32
-#define POOL_MAX 60 /* kilobytes for visuals management */
+#define POOL_MAX 500 /* kilobytes for visuals management */
 
 
 static char *scene_defs[SCENES_MAX][] = {
@@ -38,10 +39,16 @@ static char *loaded_keys[KEYS_MAX] = { NULL };
 static void def_init(void);
 static void def_cleanup(void);
 static void def_select(int idx);
+static bool player_ship_astar_cb(int i, int j);
 
 /* 
  * Static Function Definitions
  */
+
+static bool player_ship_astar_cb(int i, int j)
+{
+	return !ship_is_walkable(player_ship, j, i);
+}
 
 static void def_init(void)
 {
@@ -57,12 +64,14 @@ static void def_init(void)
 
 	player_ship = ship_new("Falcon");
 	dude_load(5, "Humans", player_ship);
+	astar_init(GRIDS_WIDE, GRIDS_TALL, player_ship_astar_cb);
 
 	pool_usage();
 }
 
 static void def_cleanup(void)
 {
+	astar_cleanup();
 	dude_unload();
 	ship_del(player_ship);
 	key_man_cleanup();
