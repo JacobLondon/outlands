@@ -5,7 +5,7 @@
 #include "texture_manager.h"
 #include "astar.h"
 #include "globals.h"
-#include "ship.h"
+#include "ship_manager.h"
 #include "util.h"
 #include "dude.h"
 
@@ -42,7 +42,7 @@
 
 // TODO: Dude's, when selected, should be highlighted, gotta record whether selected or not
 typedef struct dude_tag {
-	// add name?
+	unsigned char glbl_id;
 	int x;
 	int y;
 	int health;
@@ -228,18 +228,16 @@ void dude_job_assign(unsigned char id, int x, int y)
 	jobs[id].done = false;
 }
 
-void dude_select_update(ship *other)
+void dude_select_update(void)
 {
 	static int state = 0;
 	static unsigned char selected[DUDES_MAX] = { 0 };
 	static unsigned char idx = 0;
 	int i, tmp;
 
-	assert(other);
-
 	switch (state) {
 		case 0: { // wait for a selection to start
-			if (IsMouseButtonDown(1)) {
+			if (IsMouseButtonDown(0)) {
 				sel_start_x = GetMouseX();
 				sel_start_y = GetMouseY();
 				sel_curr_x = sel_start_x;
@@ -255,12 +253,12 @@ void dude_select_update(ship *other)
 			break;
 		}
 		case 1: { // selection just started
-			if (IsMouseButtonDown(1)) {
+			if (IsMouseButtonDown(0)) {
 				// still being pressed, update current
 				sel_curr_x = GetMouseX();
 				sel_curr_y = GetMouseY();
 			}
-			else if (IsMouseButtonUp(1)) {
+			else if (IsMouseButtonUp(0)) {
 				// selection complete.
 				sel_curr_x = GetMouseX();
 				sel_curr_y = GetMouseY();
@@ -293,12 +291,18 @@ void dude_select_update(ship *other)
 			break;
 		}
 		case 3: { // dudes are selected, click on spot to move them there
+			// left click again to cancel selection
+			if (IsMouseButtonDown(0)) {
+				state = 4;
+				break;
+			}
 			if (IsMouseButtonDown(1)) {
 				sel_curr_x = GetMouseX();
 				sel_curr_y = GetMouseY();
-				if (ship_is_walkable(other, sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT)) {
+				if (ship_manager_is_walkable(sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT)) {
 					for (i = 0; i < idx; i++) {
 						dude_job_assign(selected[i], sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT);
+						// TODO: commander_send(INSTRUCTION_DUDE_JOB_ASSIGN, id, x, y)
 					}
 				}
 				sel_curr_x = 0;
@@ -308,6 +312,8 @@ void dude_select_update(ship *other)
 			break;
 		}
 		case 4: { // reset
+			// TODO: Reset only if escape is pressed or the user lclicks somewhere else,
+			// keeps a dude selected so you can keep moving them
 			if (IsMouseButtonUp(1)) {
 				memset(selected, 0, sizeof(selected));
 				idx = 0;
@@ -361,7 +367,6 @@ static void work_on_job(int id)
 		STATE_DONE,
 	};
 	assert(0 <= id && id < DUDES_MAX);
-	// TODO: A-Star to path find to location
 
 	if (jobs[id].done) {
 		jobs[id] = NO_JOB;

@@ -30,10 +30,10 @@ typedef struct ship_def_tag {
 
 typedef struct ship_tag {
 	so *object; // the scene object of the ship texture
-	tile *tiles[GRIDS_TALL][GRIDS_WIDE]; // a 2D indexed array of tiles for the ship to take up
 	ship_def *def;
+	tile *tiles[GRIDS_TALL][GRIDS_WIDE];
+	size_t tile_count;
 } ship;
-
 
 ship_def ship_definitions[] = {
 	{
@@ -87,6 +87,7 @@ ship *ship_new(char *name)
 	self->object = so_new_own(a);
 	so_set_pos(self->object, 0, 0);
 	self->def = def;
+	self->tile_count = GRIDS_TALL * GRIDS_WIDE;
 
 	return self;
 }
@@ -200,4 +201,13 @@ bool ship_is_walkable(ship *self, int x, int y)
 		return false;
 	}
 	return ship_tile_get_walkable(self->tiles[y][x]);
+}
+
+tile **ship_get_tiles(ship *self, size_t *size)
+{
+	assert(self);
+	if (size != NULL) {
+		*size = self->tile_count;
+	}
+	return self->tiles;
 }

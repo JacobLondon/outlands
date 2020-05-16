@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+
 /* definitely not thread safe lol */
 void pool_init(size_t kilobytes);
 void pool_cleanup(void);

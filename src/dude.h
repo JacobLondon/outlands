@@ -20,7 +20,7 @@ void dude_draw(void);
 
 // this is a big problem, we need to get all available tiles
 // regardless of which ship owns them
-void dude_select_update(ship *other);
+void dude_select_update(void);
 void dude_select_draw(void);
 
 void dude_job_assign(unsigned char id, int x, int y);

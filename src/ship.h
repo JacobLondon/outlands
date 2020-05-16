@@ -2,6 +2,7 @@
 #define OUTLANDS_SHIP_H_
 
 #include <stdbool.h>
+#include "ship_tile.h"
 
 typedef struct ship_tag ship;
 
@@ -24,5 +25,8 @@ void ship_load_rpg(char *rpg, int *idmx, int width, int height);
 size_t ship_find_walkable_batch(ship *self, int **xs, int **ys);
 
 bool ship_is_walkable(ship *self, int x, int y);
+
+/* return pointer to tiles, assign size if not null */
+tile **ship_get_tiles(ship *self, size_t *size);
 
 #endif // OUTLANDS_SHIP_H_

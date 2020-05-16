@@ -4,7 +4,7 @@
 #include "texture_manager.h"
 #include "key_manager.h"
 #include "astar.h"
-#include "ship.h"
+#include "ship_manager.h"
 #include "dude.h"
 #include "globals.h"
 #include "util.h"
@@ -14,7 +14,7 @@
 #define KEYS_MAX 32
 #define SCENES_MAX 5
 #define SHIPS_MAX 32
-#define POOL_MAX 500 /* kilobytes for visuals management */
+#define POOL_MAX 500 /* kilobytes for visuals management, also the map size of nodes for A* is like 150kB */
 
 
 static char *scene_defs[SCENES_MAX][] = {
@@ -29,41 +29,55 @@ static char *key_defs[] = {
 	"Missile", NULL
 };
 
-static ship *player_ship = NULL;
-static ship *enemy_ship  = NULL;
+static char *ship_defs[] = {
+	"Falcon", NULL
+};
 
 static char **loaded_scene = NULL;
 static char *loaded_keys[KEYS_MAX] = { NULL };
 
+/**
+ * TODO: Need a bunch of public functions for each instruction
+ */
 
 static void def_init(void);
 static void def_cleanup(void);
 static void def_select(int idx);
 static bool player_ship_astar_cb(int i, int j);
 
-/* 
+/*
  * Static Function Definitions
  */
 
 static bool player_ship_astar_cb(int i, int j)
 {
-	return !ship_is_walkable(player_ship, j, i);
+	return !ship_manager_is_walkable(j, i);
 }
 
 static void def_init(void)
 {
+	ship *tmp;
 	pool_init(POOL_MAX);
 	texman_init();
+	//commander_init(&context_state, SERVER_IPV4/NULL)
+	// this also needs to set the glbl id
 
 	scene_man_init();
 	def_select(rand_range(0, SCENES_MAX));
 	scene_man_load(loaded_scene);
+	//commander_send(INSTRUCTION_SCENE_LOAD, <index>)
 
 	key_man_init();
 	key_man_load(key_defs);
+	//commander_send(INSTRUCTION_KEY_LOAD, )
 
-	player_ship = ship_new("Falcon");
-	dude_load(5, "Humans", player_ship);
+	ship_manager_init();
+	tmp = ship_manager_load("Falcon", SHIP_PLAYER);
+	// what needs to happen:
+	//commander_send(INSTRUCTION_SHIP_LOAD, "Falcon")
+	dude_load(5, "Humans", tmp);
+	//commander_send(INSTRUCTION_DUDE_LOAD, "Falcon", "Humans", 5)
+	
 	astar_init(GRIDS_WIDE, GRIDS_TALL, player_ship_astar_cb);
 
 	pool_usage();
@@ -73,7 +87,7 @@ static void def_cleanup(void)
 {
 	astar_cleanup();
 	dude_unload();
-	ship_del(player_ship);
+	ship_manager_cleanup();
 	key_man_cleanup();
 	scene_man_cleanup();
 	texman_cleanup();
@@ -102,20 +116,23 @@ void context_cleanup(void)
 
 void context_update(void)
 {
+	if (IsKeyPressed(KEY_F)) {
+		ToggleFullscreen();
+	}
 	if (IsKeyPressed(KEY_R)) {
 		def_cleanup();
 		def_init();
 	}
 	scene_man_update();
-	ship_update(player_ship);
-	dude_select_update(player_ship);
+	ship_manager_update();
+	dude_select_update();
 	dude_update();
 }
 
 void context_draw(void)
 {
 	scene_man_draw();
-	ship_draw(player_ship);
+	ship_manager_draw();
 	dude_draw();
 	key_man_update();
 	dude_select_draw();
