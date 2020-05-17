@@ -62,9 +62,9 @@ static bool initialized = false;
 
 queue *queue_new(size_t size, size_t count)
 {
-	queue *self = allocate(sizeof(queue));
+	queue *self = malloc(sizeof(queue));
 	assert(self);
-	self->buf = allocate(size * count * 2);
+	self->buf = malloc(size * count * 2);
 	assert(self->buf);
 	memset(self->buf, 0, size * size * 2);
 	self->front = self->buf;
@@ -77,8 +77,8 @@ queue *queue_new(size_t size, size_t count)
 void queue_del(queue *self)
 {
 	assert(self);
-	dealloc(self->buf);
-	dealloc(self);
+	free(self->buf);
+	free(self);
 	memset(self, 0, sizeof(queue));
 }
 
@@ -153,7 +153,7 @@ void astar_init(size_t width, size_t height, bool (*check_obstacle_cb)(int i, in
 	astar_width = width;
 	astar_height = height;
 	astar_check_obstacle = check_obstacle_cb;
-	astar_nodes = allocate(width * height * sizeof(node));
+	astar_nodes = malloc(width * height * sizeof(node));
 	assert(astar_nodes);
 	memset(astar_nodes, 0, width * height * sizeof(node));
 
@@ -186,7 +186,7 @@ void astar_cleanup(void)
 	assert(astar_untested);
 	initialized = false;
 	memset(astar_nodes, 0, astar_width * astar_height * sizeof(node));
-	dealloc(astar_nodes);
+	free(astar_nodes);
 	astar_nodes = NULL;
 	queue_del(astar_untested);
 	astar_untested = NULL;

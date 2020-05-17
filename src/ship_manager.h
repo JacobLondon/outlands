@@ -17,5 +17,6 @@ void ship_manager_update(void);
 ship *ship_manager_load(char *name, ship_type type);
 
 bool ship_manager_is_walkable(int x, int y);
+ship *ship_manager_get(ship_type type);
 
 #endif // OUTLANDS_SHIP_MANAGER_H_

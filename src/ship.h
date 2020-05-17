@@ -2,6 +2,7 @@
 #define OUTLANDS_SHIP_H_
 
 #include <stdbool.h>
+#include <stddef.h>
 #include "ship_tile.h"
 
 typedef struct ship_tag ship;

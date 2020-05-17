@@ -9,12 +9,13 @@
 #include "globals.h"
 #include "util.h"
 #include "context.h"
+#include "commander.h"
 
 // copied or unique key objects
 #define KEYS_MAX 32
 #define SCENES_MAX 5
 #define SHIPS_MAX 32
-#define POOL_MAX 500 /* kilobytes for visuals management, also the map size of nodes for A* is like 150kB */
+#define POOL_MAX 60 /* kilobytes for visuals management, also the map size of nodes for A* is like 150kB */
 
 
 static char *scene_defs[SCENES_MAX][] = {
@@ -37,12 +38,11 @@ static char **loaded_scene = NULL;
 static char *loaded_keys[KEYS_MAX] = { NULL };
 
 /**
- * TODO: Need a bunch of public functions for each instruction
+ * TODO: Config file describing current player setup
  */
 
 static void def_init(void);
 static void def_cleanup(void);
-static void def_select(int idx);
 static bool player_ship_astar_cb(int i, int j);
 
 /*
@@ -60,32 +60,22 @@ static void def_init(void)
 	pool_init(POOL_MAX);
 	texman_init();
 	//commander_init(&context_state, SERVER_IPV4/NULL)
-	// this also needs to set the glbl id
+	commander_init();
 
 	scene_man_init();
-	def_select(rand_range(0, SCENES_MAX));
-	scene_man_load(loaded_scene);
-	//commander_send(INSTRUCTION_SCENE_LOAD, <index>)
-
 	key_man_init();
-	key_man_load(key_defs);
-	//commander_send(INSTRUCTION_KEY_LOAD, )
-
 	ship_manager_init();
-	tmp = ship_manager_load("Falcon", SHIP_PLAYER);
-	// what needs to happen:
-	//commander_send(INSTRUCTION_SHIP_LOAD, "Falcon")
-	dude_load(5, "Humans", tmp);
-	//commander_send(INSTRUCTION_DUDE_LOAD, "Falcon", "Humans", 5)
-	
-	astar_init(GRIDS_WIDE, GRIDS_TALL, player_ship_astar_cb);
+
+	commander_send(INSTRUCTION_SCENE_SELECT, rand_range(0, SCENES_MAX));
+	commander_send(INSTRUCTION_KEY_LOAD, key_defs);
+	commander_send(INSTRUCTION_SHIP_LOAD, "Falcon", SHIP_PLAYER);
+	commander_send(INSTRUCTION_DUDES_LOAD, SHIP_PLAYER, "Humans", 5);
 
 	pool_usage();
 }
 
 static void def_cleanup(void)
 {
-	astar_cleanup();
 	dude_unload();
 	ship_manager_cleanup();
 	key_man_cleanup();
@@ -94,10 +84,11 @@ static void def_cleanup(void)
 	pool_cleanup();
 }
 
-static void def_select(int idx)
+void context_set_scene(unsigned idx)
 {
-	assert(idx >= 0 && idx < SCENES_MAX);
+	assert(idx < SCENES_MAX);
 	loaded_scene = scene_defs[idx];
+	scene_man_load(loaded_scene);
 }
 
 /* 
@@ -107,11 +98,19 @@ static void def_select(int idx)
 void context_init(void)
 {
 	def_init();
+	astar_init(GRIDS_WIDE, GRIDS_TALL, player_ship_astar_cb);
 }
 
 void context_cleanup(void)
 {
+	astar_cleanup();
 	def_cleanup();
+}
+
+void context_reload(void)
+{
+	def_cleanup();
+	def_init();
 }
 
 void context_update(void)
@@ -120,9 +119,9 @@ void context_update(void)
 		ToggleFullscreen();
 	}
 	if (IsKeyPressed(KEY_R)) {
-		def_cleanup();
-		def_init();
+		commander_send(INSTRUCTION_RELOAD);
 	}
+	commander_update();
 	scene_man_update();
 	ship_manager_update();
 	dude_select_update();

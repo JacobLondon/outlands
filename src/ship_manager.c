@@ -79,3 +79,15 @@ bool ship_manager_is_walkable(int x, int y)
 	}
 	return ship_tile_get_walkable(tiles[y][x]);
 }
+
+ship *ship_manager_get(ship_type type)
+{
+	switch (type) {
+		case SHIP_PLAYER:
+		case SHIP_ENEMY: // fallthrough
+			return ships[type];
+		default:
+			assert(("Invalid ship type", 0));
+	}
+	return NULL;
+}

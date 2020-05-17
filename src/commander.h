@@ -20,7 +20,11 @@ typedef enum instruction_tag {
 	INSTRUCTION_CONNECT,
 	INSTRUCTION_DISCONNECT,
 	INSTRUCTION_DUDES_INIT,
-	INSTRUCTION_DUDES_MOVE,
+	INSTRUCTION_DUDES_LOAD,
+	INSTRUCTION_DUDES_ASSIGN,
+	INSTRUCTION_SHIP_LOAD,
+	INSTRUCTION_SCENE_SELECT,
+	INSTRUCTION_KEY_LOAD,
 	INSTRUCTION_COUNT
 } instruction;
 
@@ -44,12 +48,12 @@ void commander_cleanup(void);
  * instruction
  */
 void commander_recv(command *cmd);
-
+void commander_recv_process(command *cmd);
 /**
  * When a send happens, it may ONLY contain
  * local state information, regarding the
  * global player id
  */
-void commander_send(instruction inst);
+void commander_send(instruction inst, ...);
 
 #endif // OUTLANDS_COMMANDER_H_

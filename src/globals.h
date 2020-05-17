@@ -16,4 +16,7 @@
 #define NETWORK_PORT 7000
 #define CLIENTS_MAX 8
 
+extern unsigned char global_id;
+extern bool global_connect_to_network;
+
 #endif // OUTLANDS_GLOBALS_H_

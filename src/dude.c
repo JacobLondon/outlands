@@ -8,6 +8,7 @@
 #include "ship_manager.h"
 #include "util.h"
 #include "dude.h"
+#include "commander.h"
 
 /* Dudes are the guys you control.
  * Dudes move based on a job array.
@@ -301,8 +302,7 @@ void dude_select_update(void)
 				sel_curr_y = GetMouseY();
 				if (ship_manager_is_walkable(sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT)) {
 					for (i = 0; i < idx; i++) {
-						dude_job_assign(selected[i], sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT);
-						// TODO: commander_send(INSTRUCTION_DUDE_JOB_ASSIGN, id, x, y)
+						commander_send(INSTRUCTION_DUDES_ASSIGN, selected[i], sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT);
 					}
 				}
 				sel_curr_x = 0;
