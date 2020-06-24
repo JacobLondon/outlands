@@ -8,7 +8,6 @@
 #include "ship_manager.h"
 #include "util.h"
 #include "dude.h"
-#include "commander.h"
 
 /* Dudes are the guys you control.
  * Dudes move based on a job array.
@@ -100,6 +99,7 @@ static void select_dudes(void);
 static void work_on_job(int id);
 
 
+// TODO: make a dude seperate from the ship they spawn at
 void dude_load(size_t numberof, char *name, ship *other)
 {
 	int i, tmp, start;
@@ -302,7 +302,7 @@ void dude_select_update(void)
 				sel_curr_y = GetMouseY();
 				if (ship_manager_is_walkable(sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT)) {
 					for (i = 0; i < idx; i++) {
-						commander_send(INSTRUCTION_DUDES_ASSIGN, selected[i], sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT);
+						dude_job_assign(selected[i], sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT);
 					}
 				}
 				sel_curr_x = 0;

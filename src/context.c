@@ -9,7 +9,6 @@
 #include "globals.h"
 #include "util.h"
 #include "context.h"
-#include "commander.h"
 
 // copied or unique key objects
 #define KEYS_MAX 32
@@ -59,17 +58,15 @@ static void def_init(void)
 	ship *tmp;
 	pool_init(POOL_MAX);
 	texman_init();
-	//commander_init(&context_state, SERVER_IPV4/NULL)
-	commander_init();
 
 	scene_man_init();
 	key_man_init();
 	ship_manager_init();
 
-	commander_send(INSTRUCTION_SCENE_SELECT, rand_range(0, SCENES_MAX));
-	commander_send(INSTRUCTION_KEY_LOAD, key_defs);
-	commander_send(INSTRUCTION_SHIP_LOAD, "Falcon", SHIP_PLAYER);
-	commander_send(INSTRUCTION_DUDES_LOAD, SHIP_PLAYER, "Humans", 5);
+	context_set_scene(rand_range(0, SCENES_MAX));
+	key_man_load(key_defs);
+	ship_manager_load("Falcon", SHIP_PLAYER);
+	dude_load(5, "Humans", ship_manager_get(SHIP_PLAYER));
 
 	pool_usage();
 }
@@ -119,9 +116,8 @@ void context_update(void)
 		ToggleFullscreen();
 	}
 	if (IsKeyPressed(KEY_R)) {
-		commander_send(INSTRUCTION_RELOAD);
+		context_reload();
 	}
-	commander_update();
 	scene_man_update();
 	ship_manager_update();
 	dude_select_update();

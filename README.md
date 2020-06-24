@@ -10,6 +10,12 @@ make maker
 ## Other
 Currently no plans for other OSes due to building difficulties.
 
+# Todo
+* VS integration?
+* User / enemy ship
+* Enemy ship reversal / flip
+* Input tasks for sending / tracking every necessary data point 
+
 # Dependencies
 1. Go to [Raylib Releases](https://github.com/raysan5/raylib/releases) and download / install `raylib_installer_v300.tcc.exe`
 2. Go to [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm) and download the `Binaries Zip`
