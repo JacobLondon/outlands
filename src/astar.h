@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_ASTAR_H_
-#define OUTLANDS_ASTAR_H_
+#ifndef OUTLANDS_ASTAR_H
+#define OUTLANDS_ASTAR_H
 
 /**
  * Give the width and height of the walkable area.
@@ -19,4 +19,4 @@ void astar_cleanup(void);
  */
 size_t astar_path(int *xs, int *ys, size_t size, int si, int sj, int ei, int ej);
 
-#endif // OUTLANDS_ASTAR_H_
+#endif // OUTLANDS_ASTAR_H

@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <stdint.h>
 #include <ctype.h>
 #include <stdarg.h>
@@ -45,7 +44,7 @@ void pool_usage(void)
 void *poolloc(size_t size)
 {
 	void *addr;
-	assert(("Not enough memory", pool_index + size < pool_size));
+	msg_assert("Not enough memory", pool_index + size < pool_size);
 	addr = (void *)&((unsigned char *)pool_begin)[pool_index];
 	pool_index += size;
 

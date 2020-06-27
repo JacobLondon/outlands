@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_COMMANDER_H_
-#define OUTLANDS_COMMANDER_H_
+#ifndef OUTLANDS_COMMANDER_H
+#define OUTLANDS_COMMANDER_H
 
 typedef struct commander_tag commander;
 typedef struct command_tag command;
@@ -56,4 +56,4 @@ void commander_recv_process(command *cmd);
  */
 void commander_send(instruction inst, ...);
 
-#endif // OUTLANDS_COMMANDER_H_
+#endif // OUTLANDS_COMMANDER_H

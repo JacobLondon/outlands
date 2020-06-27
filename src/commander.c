@@ -1,13 +1,13 @@
-#include <assert.h>
 #include <stdarg.h>
 #include <memory.h>
 #include "globals.h"
 #include "commander.h"
 #include "context.h"
-#include "ship_manager.h"
+#include "ship_man.h"
 #include "dude.h"
-#include "key_manager.h"
-#include "scene_manager.h"
+#include "key_man.h"
+#include "scene_man.h"
+#include "util.h"
 
 #define RECV_Q_MAX 32
 #define SEND_Q_MAX 32
@@ -136,7 +136,7 @@ void commander_send(instruction inst, ...)
 			args_dudes_load.type = va_arg(ap, unsigned);
 			args_dudes_load.species = va_arg(ap, char *);
 			args_dudes_load.count = va_arg(ap, unsigned);
-			dude_load(args_dudes_load.count, args_dudes_load.species, ship_manager_get(args_dudes_load.type));
+			dude_load(args_dudes_load.count, args_dudes_load.species, ship_man_get(args_dudes_load.type));
 			package(inst, &args_dudes_load, sizeof(args_dudes_load));
 			break;
 		case INSTRUCTION_DUDES_ASSIGN:
@@ -149,7 +149,7 @@ void commander_send(instruction inst, ...)
 		case INSTRUCTION_SHIP_LOAD:
 			args_ship_load.name = va_arg(ap, char *);
 			args_ship_load.type = va_arg(ap, unsigned);
-			(void)ship_manager_load(args_ship_load.name, args_ship_load.type);
+			(void)ship_man_load(args_ship_load.name, args_ship_load.type);
 			package(inst, &args_ship_load, sizeof(args_ship_load));
 			break;
 		case INSTRUCTION_SCENE_SELECT:
@@ -163,7 +163,7 @@ void commander_send(instruction inst, ...)
 			package(inst, &args_key_load, sizeof(args_key_load));
 			break;
 		default:
-			assert(("Invalid instruction", 0));
+			msg_assert("Invalid instruction", 0);
 	}
 	va_end(ap);
 }

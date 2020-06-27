@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_MANAGER_H_
-#define OUTLANDS_MANAGER_H_
+#ifndef OUTLANDS_SCENE_MAN_H
+#define OUTLANDS_SCENE_MAN_H
 
 #include "scene.h"
 
@@ -19,10 +19,10 @@
  * meant to handle.
  */
 
-/* Allocate animan for scene management */
+/* Allocate anim_man for scene management */
 void scene_man_init(void);
 
-/* Deallocate animan */
+/* Deallocate anim_man */
 void scene_man_cleanup(void);
 
 /* Load all given definitions by name. Each definition
@@ -46,4 +46,4 @@ void scene_man_draw(void);
  * just draw when told to. The manager can decide who is told. */
 void scene_man_tie_visibility(char *scene_name, bool *is_visible);
 
-#endif // OUTLANDS_MANAGER_H_
+#endif // OUTLANDS_SCENE_MAN_H

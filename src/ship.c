@@ -1,8 +1,7 @@
-#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "texture_manager.h"
+#include "texture_man.h"
 #include "scene_object.h"
 #include "ship_tile.h"
 #include "ship.h"
@@ -68,7 +67,7 @@ ship *ship_new(char *name)
 			break;
 		}
 	}
-	assert(("Ship definition not found", def != NULL));
+	msg_assert("Ship definition not found", def != NULL);
 
 	// load the rpg into the id matrix
 	ship_load_rpg(def->rpg, (int *)idmx, GRIDS_WIDE, GRIDS_TALL);
@@ -82,7 +81,7 @@ ship *ship_new(char *name)
 		}
 	}
 
-	t = texman_load(def->png);
+	t = texture_man_load(def->png);
 	a = anim_new(t, def->width, def->height);
 	self->object = so_new_own(a);
 	so_set_pos(self->object, 0, 0);
@@ -209,5 +208,5 @@ tile **ship_get_tiles(ship *self, size_t *size)
 	if (size != NULL) {
 		*size = self->tile_count;
 	}
-	return self->tiles;
+	return (tile **)self->tiles;
 }

@@ -1,14 +1,11 @@
 # Outlands
-Consists of two programs: Outlands (lands.exe) and Ship Maker (maker.exe)
+Consists of two programs: Outlands lands(.exe) and Ship Maker maker(.exe)
 
 # Building
-## Windows
 ```
 make
 make maker
 ```
-## Other
-Currently no plans for other OSes due to building difficulties.
 
 # Todo
 * VS integration?
@@ -16,13 +13,28 @@ Currently no plans for other OSes due to building difficulties.
 * Enemy ship reversal / flip
 * Input tasks for sending / tracking every necessary data point 
 
-# Dependencies
+# Windows Setup
 1. Go to [Raylib Releases](https://github.com/raysan5/raylib/releases) and download / install `raylib_installer_v300.tcc.exe`
 2. Go to [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm) and download the `Binaries Zip`
-    * Unzip the file anywhere on your computer. Copy the path to the `bin` directory in the unzipped directory
-    * Press the `Windows Key` and type `environment variables` + `Enter`
-    * Click on `environment variables...`
-    * On the bottom half, look for `Path`, click on it, then click `Edit...`
-    * Click `New` and press `ctrl+v` to paste your path from `bin`
-    * Click `Ok` then `Ok`
-    * Open a new `cmd` in this project and type `make` to generate the executable
+3. Unzip the file anywhere on your computer. Copy the path to the `bin` directory in the unzipped directory
+4. Press the `Windows Key` and type `environment variables` + `Enter`
+5. Click on `environment variables...`
+6. On the bottom half, look for `Path`, click on it, then click `Edit...`
+7. Click `New` and press `ctrl+v` to paste your path from `bin`
+8. Click `Ok` then `Ok`
+9. Open a new `cmd` in this project and type `make` to generate the executable
+
+# Linux (Ubuntu) Setup
+```bash
+sudo apt update
+# requirements
+sudo apt install make gcc git
+# dependencies
+cat requirements.txt | xargs sudo apt install -y
+# cd somewhere meaningful...
+git clone https://github.com/raysan5/raylib
+cd raylib/src
+make PLATFORM=PLATFORM_DESKTOP RAYLIB_LIBTYPE=SHARED
+sudo ln libraylib.so.3.0.0 /usr/lib/libraylib.so
+sudo ldconfig
+```

@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_SCENE_H_
-#define OUTLANDS_SCENE_H_
+#ifndef OUTLANDS_SCENE_H
+#define OUTLANDS_SCENE_H
 
 #include "scene_object.h"
 
@@ -37,4 +37,4 @@ void scene_update(scene *self);
 
 char *scene_get_name(scene *self);
 
-#endif // OUTLANDS_SCENE_H_
+#endif // OUTLANDS_SCENE_H

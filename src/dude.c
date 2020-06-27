@@ -1,11 +1,10 @@
-#include <assert.h>
 #include <memory.h>
 #include <stdio.h>
 #include "scene_object.h"
-#include "texture_manager.h"
+#include "texture_man.h"
 #include "astar.h"
 #include "globals.h"
-#include "ship_manager.h"
+#include "ship_man.h"
 #include "util.h"
 #include "dude.h"
 
@@ -95,7 +94,6 @@ static int sel_h = 0;
 
 // given x and y, return true if x and y is not taken by another dude
 static bool is_available(int x, int y);
-static void select_dudes(void);
 static void work_on_job(int id);
 
 
@@ -122,8 +120,8 @@ void dude_load(size_t numberof, char *name, ship *other)
 			break;
 		}
 	}
-	assert(("Dude definition not found", d != NULL));
-	t = texman_load(d->png);
+	msg_assert("Dude definition not found", d != NULL);
+	t = texture_man_load(d->png);
 
 	// put all of the dudes in
 	for (; num_dudes < numberof; num_dudes++) {
@@ -141,7 +139,7 @@ void dude_load(size_t numberof, char *name, ship *other)
 					break;
 				}
 			}
-			assert(("No spot for dude found", tmp != start));
+			msg_assert("No spot for dude found", tmp != start);
 		}
 
 		dudes[num_dudes].x = xs[tmp];
@@ -234,7 +232,7 @@ void dude_select_update(void)
 	static int state = 0;
 	static unsigned char selected[DUDES_MAX] = { 0 };
 	static unsigned char idx = 0;
-	int i, tmp;
+	int i;
 
 	switch (state) {
 		case 0: { // wait for a selection to start
@@ -300,7 +298,7 @@ void dude_select_update(void)
 			if (IsMouseButtonDown(1)) {
 				sel_curr_x = GetMouseX();
 				sel_curr_y = GetMouseY();
-				if (ship_manager_is_walkable(sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT)) {
+				if (ship_man_is_walkable(sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT)) {
 					for (i = 0; i < idx; i++) {
 						dude_job_assign(selected[i], sel_curr_x / GRID_PIX_WIDTH, sel_curr_y / GRID_PIX_HEIGHT);
 					}
@@ -409,6 +407,6 @@ static void work_on_job(int id)
 			memset(paths_y[id], 0, sizeof(paths_y[id]));
 			break;
 		default:
-			assert(("Bad path", 0));
+			msg_assert("Bad path", 0);
 	}
 }

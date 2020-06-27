@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_KEY_MANAGER_H_
-#define OUTLANDS_KEY_MANAGER_H_
+#ifndef OUTLANDS_KEY_MAN_H
+#define OUTLANDS_KEY_MAN_H
 
 /* Manage groupings of key objects. Call
  * update on many key objects at once
@@ -22,4 +22,4 @@ void key_man_load(char **names);
 /* call update on all key objects */
 void key_man_update(void);
 
-#endif // OUTLANDS_KEY_MANAGER_H_
+#endif // OUTLANDS_KEY_MAN_H

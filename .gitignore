@@ -1,4 +1,4 @@
-#*#
+\#*#
 *~
 .vscode
 .DS_Store
@@ -6,3 +6,7 @@
 assets/
 *.o
 *.swp
+outlands
+maker
+test
+core.*

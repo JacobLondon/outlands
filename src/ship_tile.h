@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_SHIP_MODULE_H_
-#define OUTLANDS_SHIP_MODULE_H_
+#ifndef OUTLANDS_SHIP_MODULE_H
+#define OUTLANDS_SHIP_MODULE_H
 
 #include <stdbool.h>
 
@@ -18,4 +18,4 @@ int ship_tile_get_count(void);
 
 bool ship_tile_get_walkable(tile *self);
 
-#endif // OUTLANDS_SHIP_MODULE_H_
+#endif // OUTLANDS_SHIP_MODULE_H

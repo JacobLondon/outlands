@@ -1,5 +1,5 @@
-#include <assert.h>
 #include <math.h>
+#include <stdlib.h>
 #include <memory.h>
 #include <raylib.h>
 #include "scene_object.h"
@@ -71,7 +71,7 @@ void so_newmov(so *self, so_cb_movement movement, float amt, bool *trigger)
 			break;
 		}
 	}
-	assert(("Too many movements", i != MOVEMENTS_MAX));
+	msg_assert("Too many movements", i != MOVEMENTS_MAX);
 }
 
 void so_delmov(so *self, so_cb_movement movement)
@@ -87,7 +87,7 @@ void so_delmov(so *self, so_cb_movement movement)
 			break;
 		}
 	}
-	assert(("Movement not found", i != MOVEMENTS_MAX));
+	msg_assert("Movement not found", i != MOVEMENTS_MAX);
 }
 
 void so_set_pos(so *self, float x, float y)

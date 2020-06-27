@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_SO_H_
-#define OUTLANDS_SO_H_
+#ifndef OUTLANDS_SO_H
+#define OUTLANDS_SO_H
 
 #include <stdbool.h>
 #include "anim.h"
@@ -49,4 +49,4 @@ void so_cb_loop_up(so *self, float amt, bool *trigger);
 void so_cb_loop_down(so *self, float amt, bool *trigger);
 
 
-#endif // OUTLANDS_SO_H_
+#endif // OUTLANDS_SO_H

@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_ANIM_H_
-#define OUTLANDS_ANIM_H_
+#ifndef OUTLANDS_ANIM_H
+#define OUTLANDS_ANIM_H
 
 #include <raylib.h>
 
@@ -25,4 +25,4 @@ int anim_get_height(anim *self);
 /* get the width * height for the number of animated frames */
 int anim_get_frames(anim *self);
 
-#endif // OUTLANDS_ANIM_H_
+#endif // OUTLANDS_ANIM_H

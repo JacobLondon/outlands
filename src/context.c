@@ -1,10 +1,9 @@
-#include <assert.h>
 #include <stddef.h>
-#include "scene_manager.h"
-#include "texture_manager.h"
-#include "key_manager.h"
+#include "scene_man.h"
+#include "texture_man.h"
+#include "key_man.h"
 #include "astar.h"
-#include "ship_manager.h"
+#include "ship_man.h"
 #include "dude.h"
 #include "globals.h"
 #include "util.h"
@@ -17,7 +16,7 @@
 #define POOL_MAX 60 /* kilobytes for visuals management, also the map size of nodes for A* is like 150kB */
 
 
-static char *scene_defs[SCENES_MAX][] = {
+static char *scene_defs[SCENES_MAX][8] = {
 	{ "Star Nebula 3", "Gluurus", "Beetles", NULL },
 	{ "Star1", "Skyrillis", "Asteroids", NULL },
 	{ "Space3", "Reitis", "Executives", NULL },
@@ -33,8 +32,7 @@ static char *ship_defs[] = {
 	"Falcon", NULL
 };
 
-static char **loaded_scene = NULL;
-static char *loaded_keys[KEYS_MAX] = { NULL };
+static unsigned loaded_scene_idx = 0;
 
 /**
  * TODO: Config file describing current player setup
@@ -50,23 +48,22 @@ static bool player_ship_astar_cb(int i, int j);
 
 static bool player_ship_astar_cb(int i, int j)
 {
-	return !ship_manager_is_walkable(j, i);
+	return !ship_man_is_walkable(j, i);
 }
 
 static void def_init(void)
 {
-	ship *tmp;
 	pool_init(POOL_MAX);
-	texman_init();
+	texture_man_init();
 
 	scene_man_init();
 	key_man_init();
-	ship_manager_init();
+	ship_man_init();
 
 	context_set_scene(rand_range(0, SCENES_MAX));
 	key_man_load(key_defs);
-	ship_manager_load("Falcon", SHIP_PLAYER);
-	dude_load(5, "Humans", ship_manager_get(SHIP_PLAYER));
+	ship_man_load("Falcon", SHIP_PLAYER);
+	dude_load(5, "Humans", ship_man_get(SHIP_PLAYER));
 
 	pool_usage();
 }
@@ -74,18 +71,18 @@ static void def_init(void)
 static void def_cleanup(void)
 {
 	dude_unload();
-	ship_manager_cleanup();
+	ship_man_cleanup();
 	key_man_cleanup();
 	scene_man_cleanup();
-	texman_cleanup();
+	texture_man_cleanup();
 	pool_cleanup();
 }
 
 void context_set_scene(unsigned idx)
 {
 	assert(idx < SCENES_MAX);
-	loaded_scene = scene_defs[idx];
-	scene_man_load(loaded_scene);
+	loaded_scene_idx = idx;
+	scene_man_load(scene_defs[idx]);
 }
 
 /* 
@@ -119,7 +116,7 @@ void context_update(void)
 		context_reload();
 	}
 	scene_man_update();
-	ship_manager_update();
+	ship_man_update();
 	dude_select_update();
 	dude_update();
 }
@@ -127,7 +124,7 @@ void context_update(void)
 void context_draw(void)
 {
 	scene_man_draw();
-	ship_manager_draw();
+	ship_man_draw();
 	dude_draw();
 	key_man_update();
 	dude_select_draw();

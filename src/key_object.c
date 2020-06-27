@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <memory.h>
 #include <malloc.h>
 #include <raylib.h>
@@ -79,7 +78,6 @@ void ko_reset(ko *self)
 
 ko *ko_copy(ko *self)
 {
-	int i;
 	assert(self);
 	ko *other = allocate(sizeof(ko));
 	assert(other);
@@ -112,7 +110,7 @@ void ko_add_rate(ko *self, so *object, ko_cb cb_state, bool *key, float animatio
 			break;
 		}
 	}
-	assert(("Too many object keys", i < STATES_MAX));
+	msg_assert("Too many object keys", i < STATES_MAX);
 }
 
 bool ko_update(ko *self)

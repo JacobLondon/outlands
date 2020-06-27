@@ -5,7 +5,7 @@
 #include "../src/util.h"
 #include "../src/ship_tile.h"
 #include "../src/ship.h"
-#include "../src/texture_manager.h"
+#include "../src/texture_man.h"
 #include "../src/globals.h"
 
 #define TEXTURES_MAX 128
@@ -65,13 +65,13 @@ int main(int argc, char **argv)
 	InitWindow(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT, "Ship Maker");
 	SetTargetFPS(60);
 
-	texman_init();
+	texture_man_init();
 
-	scene[0] = texman_load("assets/star 3.png");
-	scene[1] = texman_load("assets/Skyrillis.png");
-	scene[2] = texman_load(ship_png);
+	scene[0] = texture_man_load("assets/star 3.png");
+	scene[1] = texture_man_load("assets/Skyrillis.png");
+	scene[2] = texture_man_load(ship_png);
 	for (i = 1; i < ship_tile_get_count() && i < TEXTURES_MAX; i++) {
-		textures[i] = texman_load(ship_tile_get_png(i));
+		textures[i] = texture_man_load(ship_tile_get_png(i));
 	}
 
 	while (!WindowShouldClose()) {
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 		for (i = 0; i < GRIDS_TALL; i++) {
 			for (j = 0; j < GRIDS_WIDE; j++) {
 				if (ids[i][j] > 0) {
-					texman_test_draw(textures[ids[i][j]], j * GRID_PIX_WIDTH, i * GRID_PIX_HEIGHT);
+					texture_man_test_draw(textures[ids[i][j]], j * GRID_PIX_WIDTH, i * GRID_PIX_HEIGHT);
 					memset(number, 0, sizeof(number));
 					sprintf(number, "%d", ids[i][j]);
 					number[sizeof(number) - 1] = 0;
@@ -126,7 +126,7 @@ int main(int argc, char **argv)
 		EndDrawing();
 	}
 
-	texman_cleanup();
+	texture_man_cleanup();
 	CloseWindow();
 
 	return 0;

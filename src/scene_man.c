@@ -1,10 +1,9 @@
-#include <assert.h>
 #include <memory.h>
 #include <stddef.h>
 #include <raylib.h>
-#include "animanager.h"
-#include "scene_manager.h"
-#include "texture_manager.h"
+#include "anim_man.h"
+#include "scene_man.h"
+#include "texture_man.h"
 #include "util.h"
 #include "globals.h"
 
@@ -67,7 +66,7 @@ static scene_definition defs[] = {
 };
 
 static bool initialized = false;
-static animan *animation_man = NULL;
+static anim_man *animation_man = NULL;
 static scene *active_scenes[ACTIVE_SCENES_MAX] = { NULL };
 static bool *active_visibility[ACTIVE_SCENES_MAX] = { false };
 
@@ -75,7 +74,7 @@ static bool *active_visibility[ACTIVE_SCENES_MAX] = { false };
 void scene_man_init(void)
 {
 	assert(initialized == false);
-	animation_man = animan_new();
+	animation_man = anim_man_new();
 	assert(animation_man);
 	memset(active_scenes, 0, sizeof(active_scenes));
 	initialized = true;
@@ -93,7 +92,7 @@ void scene_man_cleanup(void)
 		}
 	}
 
-	animan_del(animation_man);
+	anim_man_del(animation_man);
 	animation_man = NULL;
 	memset(active_scenes, 0, sizeof(active_scenes));
 	initialized = false;
@@ -116,7 +115,7 @@ void scene_man_load(char **names)
 
 		/* should not get to the end of defs */
 		if (d->name == NULL) {
-			assert(("Scene definition not found", 0));
+			msg_assert("Scene definition not found", 0);
 		}
 	}
 }
@@ -136,7 +135,7 @@ void scene_man_update(void)
 	}
 
 	if (oof > 1.0f / ANIMATION_RATE) {
-		animan_update(animation_man);
+		anim_man_update(animation_man);
 		oof = 0.0f;
 	}
 	oof += GetFrameTime();
@@ -178,7 +177,7 @@ void scene_man_tie_visibility(char *scene_name, bool *is_visible)
 			break;
 		}
 	}
-	assert(("Cannot find scene to set visibility", i != ACTIVE_SCENES_MAX));
+	msg_assert("Cannot find scene to set visibility", i != ACTIVE_SCENES_MAX);
 }
 
 static void take_scene(scene *other)
@@ -186,7 +185,7 @@ static void take_scene(scene *other)
 	int i;
 
 	assert(initialized == true);
-	assert(("Must pass an existing scene", other != NULL));
+	msg_assert("Must pass an existing scene", other != NULL);
 
 	for (i = 0; i < ACTIVE_SCENES_MAX; i++) {
 		if (active_scenes[i] == NULL) {
@@ -196,13 +195,13 @@ static void take_scene(scene *other)
 		}
 	}
 
-	assert(("Too many scenes", i != ACTIVE_SCENES_MAX));
+	msg_assert("Too many scenes", i != ACTIVE_SCENES_MAX);
 }
 
 static void init_helper_load_at(scene *self, char *asset, float x, float y)
 {
-	Texture2D *t = texman_load(asset);
-	anim *a = animan_load(animation_man, t, 1, 1);
+	Texture2D *t = texture_man_load(asset);
+	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_set_pos(s, x, y);
 	scene_load_object(self, s);
@@ -226,8 +225,8 @@ static void init_helper_load_at(scene *self, char *asset, float x, float y)
  * static void init_cb_picture1(scene *self)
  * {
  *     // load a picture with one animation frame, 1 * 1 = 1
- *     animan_load(animation_man, "assets/picture1.png", 1, 1);
- *     so *myso = so_new(animan_get(animation_man, "assets/picture1.png"));
+ *     anim_man_load(animation_man, "assets/picture1.png", 1, 1);
+ *     so *myso = so_new(anim_man_get(animation_man, "assets/picture1.png"));
  *     so_set_pos(myso, GetScreenWidth() / 2, GetScreenHeight() / 2);
  *     so_newmov(myso, so_cb_bob_hrz, 0.1, &global_variable_controlling_this);
  *     scene_load_object(self, myso);
@@ -267,8 +266,8 @@ static void init_cb_star_nebula3(scene *self)
 
 static void init_cb_gluurus(scene *self)
 {
-	Texture2D *t = texman_load("assets/Gluurus.png");
-	anim *a = animan_load(animation_man, t, 1, 1);
+	Texture2D *t = texture_man_load("assets/Gluurus.png");
+	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_set_pos(s, GetScreenWidth() * 0.1, -100);
 	so_newmov(s, so_cb_bob_hrz, 0.2, NULL);
@@ -277,8 +276,8 @@ static void init_cb_gluurus(scene *self)
 
 static void init_cb_paragon(scene *self)
 {
-	Texture2D *t = texman_load("assets/Lyra Paragon.png");
-	anim *a = animan_load(animation_man, t, 1, 1);
+	Texture2D *t = texture_man_load("assets/Lyra Paragon.png");
+	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_newmov(s, so_cb_loop_left, 0.1, NULL);
 	scene_load_object(self, s);
@@ -286,8 +285,8 @@ static void init_cb_paragon(scene *self)
 
 static void init_cb_skyrillis(scene *self)
 {
-	Texture2D *t = texman_load("assets/Skyrillis.png");
-	anim *a = animan_load(animation_man, t, 1, 1);
+	Texture2D *t = texture_man_load("assets/Skyrillis.png");
+	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_set_pos(s, GetScreenWidth() * 0.15, 0);
 	scene_load_object(self, s);
@@ -295,8 +294,8 @@ static void init_cb_skyrillis(scene *self)
 
 static void init_cb_reitis(scene *self)
 {
-	Texture2D *t = texman_load("assets/Reitis.png");
-	anim *a = animan_load(animation_man, t, 1, 1);
+	Texture2D *t = texture_man_load("assets/Reitis.png");
+	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_set_pos(s, 0, 0);
 	scene_load_object(self, s);
@@ -304,8 +303,8 @@ static void init_cb_reitis(scene *self)
 
 static void init_cb_altaira(scene *self)
 {
-	Texture2D *t = texman_load("assets/Altaira.png");
-	anim *a = animan_load(animation_man, t, 1, 1);
+	Texture2D *t = texture_man_load("assets/Altaira.png");
+	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_set_pos(s, 0, 0);
 	scene_load_object(self, s);
@@ -316,8 +315,8 @@ static void init_cb_beetles(scene *self)
 	int i;
 	so *tmp;
 
-	Texture2D *beetles = texman_load("assets/beetle-sml.png");
-	anim *a = animan_load(animation_man, beetles, 1, 1);
+	Texture2D *beetles = texture_man_load("assets/beetle-sml.png");
+	anim *a = anim_man_load(animation_man, beetles, 1, 1);
 	so *template = so_new(a);
 
 	so_newmov(template, so_cb_loop_up, 10, NULL);
@@ -344,19 +343,19 @@ static void init_cb_asteroids(scene *self)
 	float speed = rand_uniform() * 3;
 	int num_asteroids = rand_range(10, 20); // asteroids per type
 
-	asteroids[0] = texman_load("assets/asteroid0.png");
-	asteroids[1] = texman_load("assets/asteroid1.png");
-	asteroids[2] = texman_load("assets/asteroid2.png");
-	asteroids[3] = texman_load("assets/asteroid3.png");
-	asteroids[4] = texman_load("assets/asteroid4.png");
-	asteroids[5] = texman_load("assets/asteroid5.png");
-	asteroids[6] = texman_load("assets/asteroid6.png");
-	asteroids[7] = texman_load("assets/asteroid7.png");
-	asteroids[8] = texman_load("assets/asteroid8.png");
-	asteroids[9] = texman_load("assets/asteroid9.png");
+	asteroids[0] = texture_man_load("assets/asteroid0.png");
+	asteroids[1] = texture_man_load("assets/asteroid1.png");
+	asteroids[2] = texture_man_load("assets/asteroid2.png");
+	asteroids[3] = texture_man_load("assets/asteroid3.png");
+	asteroids[4] = texture_man_load("assets/asteroid4.png");
+	asteroids[5] = texture_man_load("assets/asteroid5.png");
+	asteroids[6] = texture_man_load("assets/asteroid6.png");
+	asteroids[7] = texture_man_load("assets/asteroid7.png");
+	asteroids[8] = texture_man_load("assets/asteroid8.png");
+	asteroids[9] = texture_man_load("assets/asteroid9.png");
 
 	for (i = 0; i < XASTEROIDS; i++) {
-		an = animan_load(animation_man, asteroids[i], 1, 1);
+		an = anim_man_load(animation_man, asteroids[i], 1, 1);
 		template = so_new(an);
 
 		for (j = 0; j < num_asteroids; j++) {
@@ -400,8 +399,8 @@ static void init_cb_executives(scene *self)
 {
 	int i;
 	so *tmp;
-	Texture2D *t = texman_load("assets/executive.png");
-	anim *a = animan_load(animation_man, t, 1, 1);
+	Texture2D *t = texture_man_load("assets/executive.png");
+	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *template = so_new(a);
 	so_newmov(template, so_cb_bob_vrt, 0.1, NULL);
 	so_set_bobrate(template, 0.05);

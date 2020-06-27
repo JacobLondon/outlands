@@ -1,9 +1,8 @@
-#include <assert.h>
 #include <memory.h>
 #include "ship_tile.h"
 #include "entity.h"
 #include "scene_object.h"
-#include "texture_manager.h"
+#include "texture_man.h"
 #include "util.h"
 
 #define HEALTH_DEFAULT 100
@@ -89,14 +88,14 @@ tile *ship_tile_new(int id, float x, float y)
 	Texture2D *t;
 	anim *a;
 
-	assert(("Tile not defined", id > 0 && id < TILE_COUNT));
+	msg_assert("Tile not defined", id > 0 && id < TILE_COUNT);
 	tile *self = allocate(sizeof(tile));
 	assert(self);
 	memset(self, 0, sizeof(tile));
 
 	self->health = tile_definitions[id].health;
 	self->def = &tile_definitions[id];
-	t = texman_load(tile_definitions[id].png);
+	t = texture_man_load(tile_definitions[id].png);
 	a = anim_new(t, tile_definitions[id].width, tile_definitions[id].height);
 	self->object = so_new_own(a);
 	so_set_pos(self->object, x, y);

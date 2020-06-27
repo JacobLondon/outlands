@@ -1,10 +1,9 @@
-#include <assert.h>
 #include <memory.h>
 #include <stddef.h>
-#include "animanager.h"
+#include "anim_man.h"
 #include "key_object.h"
-#include "key_manager.h"
-#include "texture_manager.h"
+#include "key_man.h"
+#include "texture_man.h"
 #include "util.h"
 
 #define KEY_OBJECTS_MAX 32
@@ -68,7 +67,7 @@ void key_man_load(char **names)
 
 		/* should not get to the end of defs */
 		if (d->name == NULL) {
-			assert(("Key definition not found", 0));
+			msg_assert("Key definition not found", 0);
 		}
 	}
 }
@@ -93,7 +92,7 @@ void key_man_update(void)
  * 
  * No animation manager. This is because key objects taken ownership
  * of their animations, so passing an owner pointer with anim_new is
- * correct, while animan_load or something is wrong, as animation managers
+ * correct, while anim_man_load or something is wrong, as animation managers
  * own, and do not transfer ownership.
  * 
  ****************************************************************************/
@@ -133,8 +132,8 @@ static void ko_cb_laser_2(ko *self, so *object)
 static void load_cb_laser(ko *self)
 {
 	so *tmp;
-	Texture2D *missile = texman_load("assets/missile1.png");
-	Texture2D *explosion = texman_load("assets/explosion3.png");
+	Texture2D *missile = texture_man_load("assets/missile1.png");
+	Texture2D *explosion = texture_man_load("assets/explosion3.png");
 	
 	tmp = so_new_own(anim_new(missile, 1, 1));
 	so_set_pos(tmp, GetScreenWidth(), GetScreenHeight() / 2);

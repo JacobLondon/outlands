@@ -1,10 +1,9 @@
-#include <assert.h>
 #include <memory.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include "util.h"
-#include "texture_manager.h"
+#include "texture_man.h"
 
 #define TEXTURES_MAX 32
 
@@ -16,14 +15,14 @@ typedef struct texture_lookup_tag {
 static bool initialized = false;
 static texture_lookup textures[TEXTURES_MAX] = { 0 };
 
-void texman_init(void)
+void texture_man_init(void)
 {
 	assert(initialized == false);
 	memset(textures, 0, sizeof(textures));
 	initialized = true;
 }
 
-void texman_cleanup(void)
+void texture_man_cleanup(void)
 {
 	int i;
 	assert(initialized == true);
@@ -36,7 +35,7 @@ void texman_cleanup(void)
 	initialized = false;
 }
 
-Texture2D *texman_load(char *png)
+Texture2D *texture_man_load(char *png)
 {
 	int i;
 	assert(initialized == true);
@@ -50,11 +49,11 @@ Texture2D *texman_load(char *png)
 			return &textures[i].texture;
 		}
 	}
-	assert(("Too many textures loaded", i < TEXTURES_MAX));
+	msg_assert("Too many textures loaded", i < TEXTURES_MAX);
 	return NULL;
 }
 
-Texture2D *texman_get(char *png)
+Texture2D *texture_man_get(char *png)
 {
 	int i;
 	assert(initialized == true);
@@ -66,11 +65,11 @@ Texture2D *texman_get(char *png)
 			return &textures[i].texture;
 		}
 	}
-	assert(("Texture not found", i < TEXTURES_MAX));
+	msg_assert("Texture not found", i < TEXTURES_MAX);
 	return NULL;
 }
 
-void texman_test_draw(Texture2D *texture, int x, int y)
+void texture_man_test_draw(Texture2D *texture, int x, int y)
 {
 	assert(texture);
 	DrawTexture(*texture, x, y, WHITE);

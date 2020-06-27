@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_DUDE_H_
-#define OUTLANDS_DUDE_H_
+#ifndef OUTLANDS_DUDE_H
+#define OUTLANDS_DUDE_H
 
 #include "ship.h"
 
@@ -25,4 +25,4 @@ void dude_select_draw(void);
 
 void dude_job_assign(unsigned char id, int x, int y);
 
-#endif // OUTLANDS_DUDE_H_
+#endif // OUTLANDS_DUDE_H

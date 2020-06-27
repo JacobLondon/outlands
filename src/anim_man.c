@@ -1,26 +1,25 @@
-#include <assert.h>
 #include <memory.h>
 #include "anim.h"
-#include "animanager.h"
-#include "texture_manager.h"
+#include "anim_man.h"
+#include "texture_man.h"
 #include "util.h"
 
 #define IMGS_MAX 64
 
-typedef struct animan_tag {
+typedef struct anim_man_tag {
 	Texture2D *textures[IMGS_MAX];
 	anim *animations[IMGS_MAX];
-} animan;
+} anim_man;
 
-animan *animan_new(void)
+anim_man *anim_man_new(void)
 {
-	animan *self = allocate(sizeof(animan));
+	anim_man *self = allocate(sizeof(anim_man));
 	assert(self);
-	memset(self, 0, sizeof(animan));
+	memset(self, 0, sizeof(anim_man));
 	return self;
 }
 
-void animan_del(animan *self)
+void anim_man_del(anim_man *self)
 {
 	int i;
 	assert(self);
@@ -33,7 +32,7 @@ void animan_del(animan *self)
 	dealloc(self);
 }
 
-void animan_update(animan *self)
+void anim_man_update(anim_man *self)
 {
 	int i;
 	assert(self);
@@ -44,7 +43,7 @@ void animan_update(animan *self)
 	}
 }
 
-anim *animan_get(animan *self, Texture2D *texture)
+anim *anim_man_get(anim_man *self, Texture2D *texture)
 {
 	int i;
 	assert(self);
@@ -54,11 +53,11 @@ anim *animan_get(animan *self, Texture2D *texture)
 			return self->animations[i];
 		}
 	}
-	assert(("Animation not found", i != IMGS_MAX));
+	msg_assert("Animation not found", i != IMGS_MAX);
 	return NULL;
 }
 
-anim *animan_load(animan *self, Texture2D *texture, int width, int height)
+anim *anim_man_load(anim_man *self, Texture2D *texture, int width, int height)
 {
 	int i;
 	assert(self);
@@ -74,6 +73,6 @@ anim *animan_load(animan *self, Texture2D *texture, int width, int height)
 			return self->animations[i];
 		}
 	}
-	assert(("Too many animations loaded", i != IMGS_MAX));
+	msg_assert("Too many animations loaded", i != IMGS_MAX);
 	return NULL;
 }

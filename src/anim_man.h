@@ -1,9 +1,9 @@
-#ifndef OUTLANDS_ANIMANAGER_H_
-#define OUTLANDS_ANIMANAGER_H_
+#ifndef OUTLANDS_ANI_MAN_H
+#define OUTLANDS_ANI_MAN_H
 
 #include <raylib.h>
 
-typedef struct animan_tag animan;
+typedef struct anim_man_tag anim_man;
 typedef struct anim_tag anim;
 
 /* Manage the loading and freeing of animations
@@ -14,20 +14,20 @@ typedef struct anim_tag anim;
  * by the animation manager are updated
  */
 
-animan *animan_new(void);
-void animan_del(animan *self);
+anim_man *anim_man_new(void);
+void anim_man_del(anim_man *self);
 
-/* Update all animan animations */
-void animan_update(animan *self);
+/* Update all anim_man animations */
+void anim_man_update(anim_man *self);
 
 /* Get an image if it exists, assert failure if not! */
-anim *animan_get(animan *self, Texture2D *texture);
+anim *anim_man_get(anim_man *self, Texture2D *texture);
 
-/* Create a new animation for animan to manage, if a png is
+/* Create a new animation for anim_man to manage, if a png is
  * already loaded, don't do anything.
  * 
  * Return a pointer to the animation
  */
-anim *animan_load(animan *self, Texture2D *texture, int width, int height);
+anim *anim_man_load(anim_man *self, Texture2D *texture, int width, int height);
 
-#endif // OUTLANDS_ANIMANAGER_H_
+#endif // OUTLANDS_ANI_MAN_H

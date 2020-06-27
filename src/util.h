@@ -1,6 +1,7 @@
-#ifndef OUTLANDS_UTIL_H_
-#define OUTLANDS_UTIL_H_
+#ifndef OUTLANDS_UTIL_H
+#define OUTLANDS_UTIL_H
 
+#include <assert.h>
 #include <stddef.h>
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
@@ -38,4 +39,17 @@ char *arg_get(int argc, char **argv, const char *arg);
 
 float fast_sqrtf(float number);
 
-#endif // OUTLANDS_UTIL_H_
+#ifndef NDEBUG
+	#include <stdio.h>
+	#define msg_assert(Msg, Expr) do { \
+		if (!!(Expr)) {} \
+		else { \
+			fprintf(stderr, Msg "\n"); \
+			assert(Expr); \
+		} \
+	} while (0)
+#else
+	#define msg_assert(Msg, Expr) ((void)0)
+#endif // NDEBUG
+
+#endif // OUTLANDS_UTIL_H

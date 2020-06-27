@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <memory.h>
 #include "anim.h"
 #include "util.h"

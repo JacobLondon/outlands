@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_GLOBALS_H_
-#define OUTLANDS_GLOBALS_H_
+#ifndef OUTLANDS_GLOBALS_H
+#define OUTLANDS_GLOBALS_H
 
 #include <stdbool.h>
 
@@ -19,4 +19,4 @@
 extern unsigned char global_id;
 extern bool global_connect_to_network;
 
-#endif // OUTLANDS_GLOBALS_H_
+#endif // OUTLANDS_GLOBALS_H

@@ -1,5 +1,5 @@
-#ifndef OUTLANDS_SHIP_H_
-#define OUTLANDS_SHIP_H_
+#ifndef OUTLANDS_SHIP_H
+#define OUTLANDS_SHIP_H
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -30,4 +30,4 @@ bool ship_is_walkable(ship *self, int x, int y);
 /* return pointer to tiles, assign size if not null */
 tile **ship_get_tiles(ship *self, size_t *size);
 
-#endif // OUTLANDS_SHIP_H_
+#endif // OUTLANDS_SHIP_H
