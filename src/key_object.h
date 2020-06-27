@@ -14,7 +14,6 @@
  * part of the scene_manager ecosystem.
  */
 
-#include <stdbool.h>
 #include "scene_object.h"
 
 typedef struct ko_tag ko;

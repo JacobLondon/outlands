@@ -6,6 +6,19 @@
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
+#ifndef NDEBUG
+	#include <stdio.h>
+	#define msg_assert(Msg, Expr) do { \
+		if (!!(Expr)) {} \
+		else { \
+			fprintf(stderr, "assert: " Msg "\n"); \
+			assert(Expr); \
+		} \
+	} while (0)
+#else
+	#define msg_assert(Msg, Expr) ((void)0)
+#endif // NDEBUG
+
 /* definitely not thread safe lol */
 void pool_init(size_t kilobytes);
 void pool_cleanup(void);
@@ -38,18 +51,5 @@ int arg_check(int argc, char **argv, const char *arg);
 char *arg_get(int argc, char **argv, const char *arg);
 
 float fast_sqrtf(float number);
-
-#ifndef NDEBUG
-	#include <stdio.h>
-	#define msg_assert(Msg, Expr) do { \
-		if (!!(Expr)) {} \
-		else { \
-			fprintf(stderr, Msg "\n"); \
-			assert(Expr); \
-		} \
-	} while (0)
-#else
-	#define msg_assert(Msg, Expr) ((void)0)
-#endif // NDEBUG
 
 #endif // OUTLANDS_UTIL_H

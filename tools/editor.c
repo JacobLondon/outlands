@@ -2,11 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../src/util.h"
+#include <outlands.h>
+/*#include "../src/util.h"
 #include "../src/ship_tile.h"
 #include "../src/ship.h"
 #include "../src/texture_man.h"
-#include "../src/globals.h"
+#include "../src/globals.h"*/
 
 #define TEXTURES_MAX 128
 #define SIZE(array) (sizeof(array) / sizeof(array[0]))
@@ -38,7 +39,7 @@ int main(int argc, char **argv)
 	 * Arg Parsing
 	 */
 
-	if (arg = arg_get(argc, argv, "open")) {
+	if ((arg = arg_get(argc, argv, "open"))) {
 		ship_png = arg;
 	}
 	if ((editor_mode == NO_MODE) && (arg = arg_get(argc, argv, "new"))) {

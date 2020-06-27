@@ -1,6 +1,8 @@
 #ifndef OUTLANDS_COMMANDER_H
 #define OUTLANDS_COMMANDER_H
 
+#if 0
+
 typedef struct commander_tag commander;
 typedef struct command_tag command;
 
@@ -55,5 +57,7 @@ void commander_recv_process(command *cmd);
  * global player id
  */
 void commander_send(instruction inst, ...);
+
+#endif // 0
 
 #endif // OUTLANDS_COMMANDER_H

@@ -7,6 +7,6 @@ assets/
 *.o
 *.swp
 outlands
-maker
+editor
 test
 core.*

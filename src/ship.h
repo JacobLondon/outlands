@@ -1,7 +1,6 @@
 #ifndef OUTLANDS_SHIP_H
 #define OUTLANDS_SHIP_H
 
-#include <stdbool.h>
 #include <stddef.h>
 #include "ship_tile.h"
 

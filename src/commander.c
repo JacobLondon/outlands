@@ -9,6 +9,8 @@
 #include "scene_man.h"
 #include "util.h"
 
+#if 0
+
 #define RECV_Q_MAX 32
 #define SEND_Q_MAX 32
 
@@ -179,3 +181,5 @@ static void package(instruction inst, void *buf, size_t size)
 
 	send_q_idx = (send_q_idx + 1) % SEND_Q_MAX;
 }
+
+#endif // 0

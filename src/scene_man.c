@@ -11,7 +11,6 @@
 #define ACTIVE_SCENES_MAX 16 /* max number of scenes to use at once */
 #define ANIMATION_RATE 10.0f /* animation updates per second, > 0.0 */
 
-
 /* Take ownership of scene. Remove scene on unload, draw on man_draw,
  * update on man_update, etc... Set visible to true by default */
 static void take_scene(scene *other);
@@ -23,6 +22,10 @@ static void take_scene(scene *other);
 #define emplace_scene_def(SceneDefinition) \
 	take_scene(scene_new_def(SceneDefinition))
 
+typedef struct scene_set_tag {
+	const char *name;
+	char *scene_names[ACTIVE_SCENES_MAX];
+} scene_set;
 
 static void init_cb_star1(scene *self);
 static void init_cb_star2(scene *self);
@@ -43,6 +46,7 @@ static void init_cb_asteroids(scene *self);
 
 /* load a single asset into a scene at the coordinates */
 static void init_helper_load_at(scene *self, char *asset, float x, float y);
+static void load_names(char **names);
 
 static scene_definition defs[] = {
 	// Background
@@ -65,6 +69,16 @@ static scene_definition defs[] = {
 	{ NULL, 0, NULL }
 };
 
+static scene_set set_definitions[] = {
+	{ "Gluurus", { "Star Nebula 3", "Gluurus", "Beetles", NULL } },
+	{ "Skyrillis", { "Star1", "Skyrillis", "Asteroids", NULL } },
+	{ "Reitis", { "Space3", "Reitis", "Executives", NULL } },
+	{ "Paragon", { "Star3", "Paragon", NULL } },
+	{ "Altaira", { "Star2", "Altaira", NULL } },
+};
+
+static size_t set_count = ARRAY_SIZE(set_definitions);
+static int set_loaded_idx = 0;
 static bool initialized = false;
 static anim_man *animation_man = NULL;
 static scene *active_scenes[ACTIVE_SCENES_MAX] = { NULL };
@@ -98,7 +112,36 @@ void scene_man_cleanup(void)
 	initialized = false;
 }
 
-void scene_man_load(char **names)
+void scene_man_load_set(char *name)
+{
+	int i;
+	assert(name);
+	for (i = 0; i < set_count; i++) {
+		if (streq((char *)set_definitions[i].name, name)) {
+			load_names(set_definitions[i].scene_names);
+			set_loaded_idx = i;
+			break;
+		}
+	}
+	msg_assert("Scene set name not found", 0);
+}
+
+void scene_man_load_idx(int idx)
+{
+	assert(0 <= idx && idx < set_count);
+	load_names(set_definitions[idx].scene_names);
+	set_loaded_idx = idx;
+}
+
+void scene_man_load_rand(void)
+{
+	int idx = rand_range(0, set_count);
+	load_names(set_definitions[idx].scene_names);
+	set_loaded_idx = idx;
+
+}
+
+static void load_names(char **names)
 {
 	scene_definition *d;
 	int i;

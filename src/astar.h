@@ -1,6 +1,9 @@
 #ifndef OUTLANDS_ASTAR_H
 #define OUTLANDS_ASTAR_H
 
+#include <stdbool.h>
+#include <stddef.h>
+
 /**
  * Give the width and height of the walkable area.
  * @param check_obstacle_cb returns true if the item at i and j is an obstacle, or NOT walkable

@@ -1,7 +1,5 @@
-#include <stddef.h>
-#include <stdbool.h>
 #include <stdio.h>
-#include "../src/astar.h"
+#include <outlands.h>
 
 char myarray[10][10] = {
 	"          ",
@@ -44,4 +42,6 @@ int main(void)
 	}
 
 	astar_cleanup();
+
+	return 0;
 }

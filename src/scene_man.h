@@ -29,7 +29,9 @@ void scene_man_cleanup(void);
  * statically exists inside the corresponding *.c file
  * 'names' must be NULL terminated and all names MUST
  * exist */
-void scene_man_load(char **names);
+void scene_man_load_set(char *name);
+void scene_man_load_idx(int idx);
+void scene_man_load_rand(void);
 
 /* call update on all scenes */
 void scene_man_update(void);

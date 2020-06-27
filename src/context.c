@@ -15,24 +15,14 @@
 #define SHIPS_MAX 32
 #define POOL_MAX 60 /* kilobytes for visuals management, also the map size of nodes for A* is like 150kB */
 
-
-static char *scene_defs[SCENES_MAX][8] = {
-	{ "Star Nebula 3", "Gluurus", "Beetles", NULL },
-	{ "Star1", "Skyrillis", "Asteroids", NULL },
-	{ "Space3", "Reitis", "Executives", NULL },
-	{ "Star3", "Paragon", NULL },
-	{ "Star2", "Altaira", NULL },
-};
-
 static char *key_defs[] = {
 	"Missile", NULL
 };
 
-static char *ship_defs[] = {
+// TODO: ship manager utility instead
+/*static char *ship_defs[] = {
 	"Falcon", NULL
-};
-
-static unsigned loaded_scene_idx = 0;
+};*/
 
 /**
  * TODO: Config file describing current player setup
@@ -60,7 +50,7 @@ static void def_init(void)
 	key_man_init();
 	ship_man_init();
 
-	context_set_scene(rand_range(0, SCENES_MAX));
+	scene_man_load_rand();
 	key_man_load(key_defs);
 	ship_man_load("Falcon", SHIP_PLAYER);
 	dude_load(5, "Humans", ship_man_get(SHIP_PLAYER));
@@ -76,13 +66,6 @@ static void def_cleanup(void)
 	scene_man_cleanup();
 	texture_man_cleanup();
 	pool_cleanup();
-}
-
-void context_set_scene(unsigned idx)
-{
-	assert(idx < SCENES_MAX);
-	loaded_scene_idx = idx;
-	scene_man_load(scene_defs[idx]);
 }
 
 /* 

@@ -1,4 +1,3 @@
-#include <raylib.h>
 #include <outlands.h>
 
 int main(void)

@@ -1,5 +1,5 @@
 # Outlands
-Consists of two programs: Outlands lands(.exe) and Ship Maker maker(.exe)
+Consists of two programs: Outlands outlands(.exe) and Ship Editor editor(.exe)
 
 # Building
 ```
