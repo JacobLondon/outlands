@@ -4,6 +4,7 @@
 #include "scene_object.h"
 #include "texture_man.h"
 #include "util.h"
+#include "globals.h"
 
 #define HEALTH_DEFAULT 100
 #define HEALTH_INVINCIBLE 255
@@ -66,19 +67,19 @@ enum tile_id {
 
 static tile_def tile_definitions[] = {
 	[TILE_NONE]      = TILE_DEF_NONE(),
-	[TILE_FLOOR]     = TILE_DEF_LIGHTABLE("assets/tiles/floor.png"),
-	[TILE_DOOR]      = TILE_DEF_UNBREAKABLE("assets/tiles/door.png"),
-	[TILE_BOX]       = TILE_DEF_UNBREAKABLE("assets/tiles/box.png"),
-	[TILE_CRATE]     = TILE_DEF_UNBREAKABLE("assets/tiles/crate.png"),
-	[TILE_VENTBOX]   = TILE_DEF_UNBREAKABLE("assets/tiles/ventbox.png"),
-	[TILE_FAN0]      = TILE_DEF_UNBREAKABLE("assets/tiles/fan0.png"),
-	[TILE_FAN1]      = TILE_DEF_UNBREAKABLE("assets/tiles/fan1.png"),
-	[TILE_CONTROLS0] = TILE_DEF_UNBREAKABLE("assets/tiles/controls0.png"),
-	[TILE_CONTROLS1] = TILE_DEF_UNBREAKABLE("assets/tiles/controls1.png"),
-	[TILE_WEAPONS0]  = TILE_DEF_UNBREAKABLE("assets/tiles/weapons0.png"),
-	[TILE_WEAPONS1]  = TILE_DEF_UNBREAKABLE("assets/tiles/weapons1.png"),
-	[TILE_WEAPONS2]  = TILE_DEF_UNBREAKABLE("assets/tiles/weapons2.png"),
-	[TILE_WEAPONS3]  = TILE_DEF_UNBREAKABLE("assets/tiles/weapons3.png"),
+	[TILE_FLOOR]     = TILE_DEF_LIGHTABLE(ASSET_DIRECTORY "/tiles/floor.png"),
+	[TILE_DOOR]      = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/door.png"),
+	[TILE_BOX]       = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/box.png"),
+	[TILE_CRATE]     = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/crate.png"),
+	[TILE_VENTBOX]   = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/ventbox.png"),
+	[TILE_FAN0]      = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/fan0.png"),
+	[TILE_FAN1]      = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/fan1.png"),
+	[TILE_CONTROLS0] = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/controls0.png"),
+	[TILE_CONTROLS1] = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/controls1.png"),
+	[TILE_WEAPONS0]  = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/weapons0.png"),
+	[TILE_WEAPONS1]  = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/weapons1.png"),
+	[TILE_WEAPONS2]  = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/weapons2.png"),
+	[TILE_WEAPONS3]  = TILE_DEF_UNBREAKABLE(ASSET_DIRECTORY "/tiles/weapons3.png"),
 	[TILE_COUNT]     = TILE_DEF_NONE()
 };
 
@@ -88,7 +89,7 @@ tile *ship_tile_new(int id, float x, float y)
 	Texture2D *t;
 	anim *a;
 
-	msg_assert("Tile not defined", id > 0 && id < TILE_COUNT);
+	msg_assert(id > 0 && id < TILE_COUNT, "Tile not defined: %d", id);
 	tile *self = allocate(sizeof(tile));
 	assert(self);
 	memset(self, 0, sizeof(tile));

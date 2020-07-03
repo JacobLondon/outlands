@@ -1,7 +1,8 @@
 #ifndef OUTLANDS_OBJ_KEY_H_
 #define OUTLANDS_OBJ_KEY_H_
 
-/* A self contained animation
+/**
+ * A self contained animation
  * which goes once. Contains
  * its own state, useful for
  * things like one off animations
@@ -23,7 +24,8 @@ void ko_del(ko *self); /* dealloc itself */
 ko *ko_copy(ko *self);
 void ko_reset(ko *self);
 
-/* So the whole idea about this is that
+/**
+ * So the whole idea about this is that
  * it has a similar interface to what
  * an scenes do, but you can give it
  * requirements or states it must reach
@@ -57,19 +59,22 @@ void ko_add_rate(ko *self, so *object, ko_cb cb_state, bool *key, float animatio
 #define ko_add(ObjectKeyP, SObjP, CbState, KeyP) \
 	ko_add_rate(ObjectKeyP, SObjP, CbState, KeyP, 1.0f)
 
-/* Updates an ko, returns true if done, false if still going
+/**
+ * Updates an ko, returns true if done, false if still going
  * When it is finished, it will dealloc itself! check if it finished,
  * then reassign it as needed
  */
 bool ko_update(ko *self);
 
-/* look at the key of the current state
+/**
+ * look at the key of the current state
  * this handles whether something is
  * (void *)0 or (void *)1 or global
  */
 bool ko_get_key(ko *self);
 
-/* Don't use set key if you're doing
+/**
+ * Don't use set key if you're doing
  * this with global variables... I
  * can't stop you though...
  * 

@@ -4,7 +4,9 @@
 #include "key_object.h"
 #include "key_man.h"
 #include "texture_man.h"
+#include "music_man.h"
 #include "util.h"
+#include "globals.h"
 
 #define KEY_OBJECTS_MAX 32
 
@@ -66,9 +68,7 @@ void key_man_load(char **names)
 		}
 
 		/* should not get to the end of defs */
-		if (d->name == NULL) {
-			msg_assert("Key definition not found", 0);
-		}
+		msg_assert(d->name != NULL, "Key definition not found");
 	}
 }
 
@@ -99,7 +99,6 @@ void key_man_update(void)
 
 static void ko_cb_laser_0(ko *self, so *object)
 {
-	//so_set_pos(object, GetScreenWidth(), GetScreenHeight() / 2);
 	ko_set_pos(self, GetScreenWidth(), GetMouseY());
 	// wait until the key press, then go!
 	if (IsKeyPressed(KEY_J)) {
@@ -114,6 +113,7 @@ static void ko_cb_laser_1(ko *self, so *object)
 
 	// once to the right of, close enough, next state
 	if (p.x < x) {
+		music_man_play_sound("Thump");
 		ko_set_key(self, true);
 	}
 }
@@ -132,8 +132,9 @@ static void ko_cb_laser_2(ko *self, so *object)
 static void load_cb_laser(ko *self)
 {
 	so *tmp;
-	Texture2D *missile = texture_man_load("assets/missile1.png");
-	Texture2D *explosion = texture_man_load("assets/explosion3.png");
+	Texture2D *missile = texture_man_load(ASSET_DIRECTORY "/missile1.png");
+	Texture2D *explosion = texture_man_load(ASSET_DIRECTORY "/explosion3.png");
+	music_man_load_sound("Thump");
 	
 	tmp = so_new_own(anim_new(missile, 1, 1));
 	so_set_pos(tmp, GetScreenWidth(), GetScreenHeight() / 2);

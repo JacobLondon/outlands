@@ -44,7 +44,7 @@ void pool_usage(void)
 void *poolloc(size_t size)
 {
 	void *addr;
-	msg_assert("Not enough memory", pool_index + size < pool_size);
+	msg_assert(pool_index + size < pool_size, "Not enough memory: %zu / %zu bytes", pool_index + size, pool_size);
 	addr = (void *)&((unsigned char *)pool_begin)[pool_index];
 	pool_index += size;
 

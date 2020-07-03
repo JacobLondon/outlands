@@ -165,7 +165,7 @@ void commander_send(instruction inst, ...)
 			package(inst, &args_key_load, sizeof(args_key_load));
 			break;
 		default:
-			msg_assert("Invalid instruction", 0);
+			msg_assert(0, "Invalid instruction");
 	}
 	va_end(ap);
 }

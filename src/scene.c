@@ -48,7 +48,7 @@ void scene_load_object(scene *self, so *s)
 			break;
 		}
 	}
-	msg_assert("Too many scene objects", i != self->max_objects);
+	msg_assert(i != self->max_objects, "Too many scene objects: %d", i);
 }
 
 void scene_clear(scene *self)

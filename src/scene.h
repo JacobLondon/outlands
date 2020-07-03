@@ -3,7 +3,8 @@
 
 #include "scene_object.h"
 
-/* Manage groupings of scene objects. Call update and
+/**
+ * Manage groupings of scene objects. Call update and
  * draw on many scene objects at once for convenience.
  * Scene objects can still be manually managed however.
  */
@@ -12,7 +13,8 @@ typedef struct scene_tag scene;
 typedef void (*scene_cb)(struct scene_tag *self);
 
 
-/* Args to pass into scene_new. Can define
+/**
+ * Args to pass into scene_new. Can define
  * a scene without loading until 'new' is
  * called. An additional way to create a
  * scene */

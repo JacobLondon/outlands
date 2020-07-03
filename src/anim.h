@@ -3,7 +3,8 @@
 
 #include <raylib.h>
 
-/* Manage drawing Texture2D's from raylib. This
+/**
+ * Manage drawing Texture2D's from raylib. This
  * includes drawing animated textures for when
  * there are multiple frames to draw for an
  * individual Texture2D.
@@ -15,7 +16,8 @@ anim *anim_new(Texture2D *texture, int width, int height);
 void anim_del(anim *self);
 anim *anim_copy(anim *self);
 
-void anim_reset(anim *self); /* reset the animation to the beginning */
+/* reset the animation to the beginning */
+void anim_reset(anim *self);
 void anim_update(anim *self);
 void anim_draw(anim *self, Vector2 pos);
 

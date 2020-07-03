@@ -8,15 +8,16 @@
 
 #ifndef NDEBUG
 	#include <stdio.h>
-	#define msg_assert(Msg, Expr) do { \
+	#define msg_assert(Expr, ...) do { \
 		if (!!(Expr)) {} \
 		else { \
-			fprintf(stderr, "assert: " Msg "\n"); \
+			fprintf(stderr, "Error: " __VA_ARGS__); \
+			fprintf(stderr, "\n"); \
 			assert(Expr); \
 		} \
 	} while (0)
 #else
-	#define msg_assert(Msg, Expr) ((void)0)
+	#define msg_assert(...) ((void)0)
 #endif // NDEBUG
 
 /* definitely not thread safe lol */
@@ -26,7 +27,8 @@ void pool_usage(void);
 void *poolloc(size_t size);
 void poolfree(void *p);
 
-/* Use allocate and dealloc for dynamic
+/**
+ * Use allocate and dealloc for dynamic
  * memory allocation. If pool isn't
  * initialized, it just used malloc and
  * free. But if pool is initialized, then

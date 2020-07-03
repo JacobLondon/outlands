@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 	Texture2D *textures[TEXTURES_MAX] = { 0 };
 	Texture2D *scene[3];
 
-	/* 
+	/**
 	 * Arg Parsing
 	 */
 
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 		ship_load_rpg(ship_rpg, (int *)ids, GRIDS_WIDE, GRIDS_TALL);
 	}
 
-	/* 
+	/**
 	 * Editor
 	 */
 
@@ -68,8 +68,8 @@ int main(int argc, char **argv)
 
 	texture_man_init();
 
-	scene[0] = texture_man_load("assets/star 3.png");
-	scene[1] = texture_man_load("assets/Skyrillis.png");
+	scene[0] = texture_man_load(ASSET_DIRECTORY "/star 3.png");
+	scene[1] = texture_man_load(ASSET_DIRECTORY "/Skyrillis.png");
 	scene[2] = texture_man_load(ship_png);
 	for (i = 1; i < ship_tile_get_count() && i < TEXTURES_MAX; i++) {
 		textures[i] = texture_man_load(ship_tile_get_png(i));

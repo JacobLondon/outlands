@@ -1,7 +1,8 @@
 #ifndef OUTLANDS_KEY_MAN_H
 #define OUTLANDS_KEY_MAN_H
 
-/* Manage groupings of key objects. Call
+/**
+ * Manage groupings of key objects. Call
  * update on many key objects at once
  * for convenience.
  * Key objects can still be manually

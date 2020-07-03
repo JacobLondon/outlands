@@ -14,7 +14,8 @@ void ship_update(ship *self);
 /* load an rpg into an id matrix */
 void ship_load_rpg(char *rpg, int *idmx, int width, int height);
 
-/* Get a batch of unique walkable indices on the ship
+/**
+ * Get a batch of unique walkable indices on the ship
  * Return the maximum number of walkable spots on that ship,
  * the size of xs and ys.
  * xs and ys are pointers to func's static data indices

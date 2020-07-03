@@ -4,10 +4,12 @@
 #include <stdbool.h>
 #include "anim.h"
 
-/* Scene Object
+/**
+ * Scene Object
  * Controls all scene objects and
  * apparent animations so we don't
- * have to do any of that. */
+ * have to do any of that.
+ */
 typedef struct so_tag so;
 /* Move scene object if trigger == NULL or *trigger == true */
 typedef void (*so_cb_movement)(so *self, float amt, bool *trigger);
@@ -30,7 +32,8 @@ void so_draw(so *self);
 /* move by all movement callbacks */
 void so_update(so *self);
 
-/* A bunch of callbacks to pass into newmov and delmov
+/**
+ * A bunch of callbacks to pass into newmov and delmov
  * Also self is already asserted if these are used with
  * new/delmov
  */

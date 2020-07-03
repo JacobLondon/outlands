@@ -38,7 +38,7 @@ ship_def ship_definitions[] = {
 	{
 		.name = "Falcon",
 		.rpg = "rpgs/test.rpg",
-		.png = "assets/falcon-exterior.png",
+		.png = ASSET_DIRECTORY "/falcon-exterior.png",
 		.width = 1,
 		.height = 1
 	},
@@ -67,7 +67,7 @@ ship *ship_new(char *name)
 			break;
 		}
 	}
-	msg_assert("Ship definition not found", def != NULL);
+	msg_assert(def != NULL, "Ship definition not found: %s", name);
 
 	// load the rpg into the id matrix
 	ship_load_rpg(def->rpg, (int *)idmx, GRIDS_WIDE, GRIDS_TALL);

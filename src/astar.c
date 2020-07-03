@@ -17,8 +17,8 @@
 typedef struct node_tag {
 	float global_goal;
 	float local_goal;
-	int x;
-	int y;
+	unsigned short x;
+	unsigned short y;
 	bool obstacle;
 	bool visited;
 	struct node_tag *neighbors[NEIGHBORS_MAX];

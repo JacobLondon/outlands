@@ -49,7 +49,7 @@ Texture2D *texture_man_load(char *png)
 			return &textures[i].texture;
 		}
 	}
-	msg_assert("Too many textures loaded", i < TEXTURES_MAX);
+	msg_assert(i < TEXTURES_MAX, "Too many textures loaded: %d", i);
 	return NULL;
 }
 
@@ -65,7 +65,7 @@ Texture2D *texture_man_get(char *png)
 			return &textures[i].texture;
 		}
 	}
-	msg_assert("Texture not found", i < TEXTURES_MAX);
+	msg_assert(i < TEXTURES_MAX, "Texture not found: %s", png);
 	return NULL;
 }
 

@@ -3,7 +3,8 @@
 
 #include "scene.h"
 
-/* Manage groupings of scenes. Call update
+/**
+ * Manage groupings of scenes. Call update
  * and draw on many scenes at once for convenience.
  * Scenes can still be manually manaaged however.
  * 
@@ -25,7 +26,8 @@ void scene_man_init(void);
 /* Deallocate anim_man */
 void scene_man_cleanup(void);
 
-/* Load all given definitions by name. Each definition
+/**
+ * Load all given definitions by name. Each definition
  * statically exists inside the corresponding *.c file
  * 'names' must be NULL terminated and all names MUST
  * exist */
@@ -39,7 +41,8 @@ void scene_man_update(void);
 /* call draw on all scenes */
 void scene_man_draw(void);
 
-/* Bind visibility to a local variable,
+/**
+ * Bind visibility to a local variable,
  * is_visible == NULL means always draw
  * 
  * Control scene visibility at the manager level. Scenes

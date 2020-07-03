@@ -87,7 +87,7 @@ ship *ship_man_get(ship_type type)
 		case SHIP_ENEMY: // fallthrough
 			return ships[type];
 		default:
-			msg_assert("Invalid ship type", 0);
+			msg_assert(0, "Invalid ship type: %d", type);
 	}
 	return NULL;
 }

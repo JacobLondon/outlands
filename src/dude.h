@@ -5,7 +5,8 @@
 
 typedef struct dude_tag dude;
 
-/* All dudes are stack dudes.
+/**
+ * All dudes are stack dudes.
  * You can't get them, and they
  * exist only in dude.c
  */

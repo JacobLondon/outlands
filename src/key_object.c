@@ -110,7 +110,7 @@ void ko_add_rate(ko *self, so *object, ko_cb cb_state, bool *key, float animatio
 			break;
 		}
 	}
-	msg_assert("Too many object keys", i < STATES_MAX);
+	msg_assert(i < STATES_MAX, "Too many object keys: %d", i);
 }
 
 bool ko_update(ko *self)

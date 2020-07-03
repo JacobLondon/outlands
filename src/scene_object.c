@@ -71,7 +71,7 @@ void so_newmov(so *self, so_cb_movement movement, float amt, bool *trigger)
 			break;
 		}
 	}
-	msg_assert("Too many movements", i != MOVEMENTS_MAX);
+	msg_assert(i != MOVEMENTS_MAX, "Too many movements: %d", i);
 }
 
 void so_delmov(so *self, so_cb_movement movement)
@@ -87,7 +87,7 @@ void so_delmov(so *self, so_cb_movement movement)
 			break;
 		}
 	}
-	msg_assert("Movement not found", i != MOVEMENTS_MAX);
+	msg_assert(i != MOVEMENTS_MAX, "Movement not found");
 }
 
 void so_set_pos(so *self, float x, float y)

@@ -4,7 +4,7 @@ int main(void)
 {
 	Image icon;
 	InitWindow(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT, "Outlands");
-	icon = LoadImage("assets/beetle-sml.png");
+	icon = LoadImage(ASSET_DIRECTORY "/beetle-sml.png");
 	SetWindowIcon(icon);
 	SetTargetFPS(DEFAULT_TARGET_FPS);
 	context_init();

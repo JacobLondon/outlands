@@ -8,6 +8,7 @@
 #include "globals.h"
 #include "util.h"
 #include "context.h"
+#include "music_man.h"
 
 // copied or unique key objects
 #define KEYS_MAX 32
@@ -32,7 +33,7 @@ static void def_init(void);
 static void def_cleanup(void);
 static bool player_ship_astar_cb(int i, int j);
 
-/*
+/**
  * Static Function Definitions
  */
 
@@ -45,6 +46,7 @@ static void def_init(void)
 {
 	pool_init(POOL_MAX);
 	texture_man_init();
+	music_man_load_music("Floating");
 
 	scene_man_init();
 	key_man_init();
@@ -64,24 +66,27 @@ static void def_cleanup(void)
 	ship_man_cleanup();
 	key_man_cleanup();
 	scene_man_cleanup();
+	music_man_unload();
 	texture_man_cleanup();
 	pool_cleanup();
 }
 
-/* 
+/**
  * Public Function Definitions
  */
 
 void context_init(void)
 {
-	def_init();
 	astar_init(GRIDS_WIDE, GRIDS_TALL, player_ship_astar_cb);
+	music_man_init();
+	def_init();
 }
 
 void context_cleanup(void)
 {
-	astar_cleanup();
 	def_cleanup();
+	music_man_cleanup();
+	astar_cleanup();
 }
 
 void context_reload(void)
@@ -111,5 +116,6 @@ void context_draw(void)
 	dude_draw();
 	key_man_update();
 	dude_select_draw();
+	music_man_update();
 	DrawFPS(0, 0);
 }

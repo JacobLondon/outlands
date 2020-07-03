@@ -66,7 +66,7 @@ typedef struct job_tag {
 } job;
 
 static dude_def dude_definitions[] = {
-	{ .name = "Humans", .png = "assets/human_m.png", .width = 1, .height = 1, .health = 100 },
+	{ .name = "Humans", .png = ASSET_DIRECTORY "/human_m.png", .width = 1, .height = 1, .health = 100 },
 	{ NULL, NULL, 0, 0 }
 };
 
@@ -120,7 +120,7 @@ void dude_load(size_t numberof, char *name, ship *other)
 			break;
 		}
 	}
-	msg_assert("Dude definition not found", d != NULL);
+	msg_assert(d != NULL, "Dude definition %s not found", name);
 	t = texture_man_load(d->png);
 
 	// put all of the dudes in
@@ -139,7 +139,7 @@ void dude_load(size_t numberof, char *name, ship *other)
 					break;
 				}
 			}
-			msg_assert("No spot for dude found", tmp != start);
+			msg_assert(tmp != start, "No spot for dude found");
 		}
 
 		dudes[num_dudes].x = xs[tmp];
@@ -407,6 +407,6 @@ static void work_on_job(int id)
 			memset(paths_y[id], 0, sizeof(paths_y[id]));
 			break;
 		default:
-			msg_assert("Bad path", 0);
+			msg_assert(0, "Bad path");
 	}
 }

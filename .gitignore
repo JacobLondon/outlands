@@ -4,6 +4,7 @@
 .DS_Store
 *.exe
 assets/
+audio/
 *.o
 *.swp
 outlands

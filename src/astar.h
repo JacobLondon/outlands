@@ -10,6 +10,7 @@
  */
 void astar_init(size_t width, size_t height, bool (*check_obstacle_cb)(int i, int j));
 void astar_cleanup(void);
+
 /**
  * Give an array of x and y to copy the calculated path IN REVERSE ORDER
  * size is the max you want to copy. This is problematic because if you

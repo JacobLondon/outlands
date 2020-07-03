@@ -53,7 +53,7 @@ anim *anim_man_get(anim_man *self, Texture2D *texture)
 			return self->animations[i];
 		}
 	}
-	msg_assert("Animation not found", i != IMGS_MAX);
+	msg_assert(i != IMGS_MAX, "Animation not found");
 	return NULL;
 }
 
@@ -73,6 +73,6 @@ anim *anim_man_load(anim_man *self, Texture2D *texture, int width, int height)
 			return self->animations[i];
 		}
 	}
-	msg_assert("Too many animations loaded", i != IMGS_MAX);
+	msg_assert(i != IMGS_MAX, "Too many animations loaded: %d", IMGS_MAX);
 	return NULL;
 }
