@@ -33,8 +33,14 @@ static void init_cb_star1(scene *self);
 static void init_cb_star2(scene *self);
 static void init_cb_star3(scene *self);
 static void init_cb_space3(scene *self);
-static void init_cb_heavy_nebula2(scene *self);
-static void init_cb_star_nebula3(scene *self);
+static void init_cb_nebula_star1(scene *self);
+static void init_cb_blue_rising(scene *self);
+static void init_cb_dark_blue(scene *self);
+static void init_cb_dark_rise(scene *self);
+static void init_cb_flash_fire(scene *self);
+static void init_cb_ice_water(scene *self);
+static void init_cb_nebula_blue(scene *self);
+static void init_cb_dark_side(scene *self);
 
 static void init_cb_gluurus(scene *self);
 static void init_cb_paragon(scene *self);
@@ -56,8 +62,14 @@ static scene_definition defs[] = {
 	{ "Star2", 1, init_cb_star2 },
 	{ "Star3", 1, init_cb_star3 },
 	{ "Space3", 1, init_cb_space3 },
-	{ "Heavy Nebula 2", 1, init_cb_heavy_nebula2 },
-	{ "Star Nebula 3", 1, init_cb_star_nebula3 },
+	{ "Nebula Star 1", 1, init_cb_nebula_star1 },
+	{ "Blue Rising", 1, init_cb_blue_rising },
+	{ "Dark Blue", 1, init_cb_dark_blue },
+	{ "Dark Rise", 1, init_cb_dark_rise },
+	{ "Flash Fire", 1, init_cb_flash_fire },
+	{ "Ice Water", 1, init_cb_ice_water },
+	{ "Nebula Blue", 1, init_cb_nebula_blue },
+	{ "Dark Side", 1, init_cb_dark_side },
 	// Planets
 	{ "Gluurus", 1, init_cb_gluurus },
 	{ "Paragon", 1, init_cb_paragon },
@@ -76,7 +88,10 @@ static scene_definition defs[] = {
  * NULL term the initializer list
  */
 static scene_set set_definitions[] = {
-	{ "Gluurus", { "Star Nebula 3", "Gluurus", "Beetles", NULL } },
+	{ "Gluurus", { "Nebula Star 1", "Gluurus", "Beetles", NULL } },
+	{ "Dark", { "Dark Rise", "Beetles", NULL } },
+	{ "Blue", { "Blue Rising", "Executives", NULL } },
+	{ "Icy", { "Ice Water", "Executives", NULL } },
 	{ "Skyrillis", { "Star1", "Skyrillis", "Asteroids", NULL } },
 	{ "Reitis", { "Space3", "Reitis", "Executives", NULL } },
 	{ "Paragon", { "Star3", "Paragon", NULL } },
@@ -283,37 +298,67 @@ static void init_helper_load_at(scene *self, char *asset, float x, float y)
 
 static void init_cb_star1(scene *self)
 {
-	init_helper_load_at(self, ASSET_DIRECTORY "/star 1.png", 0, 0);
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_star1.png", 0, 0);
 }
 
 static void init_cb_star2(scene *self)
 {
-	init_helper_load_at(self, ASSET_DIRECTORY "/star 2.png", 0, 0);
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_star2.png", 0, 0);
 }
 
 static void init_cb_star3(scene *self)
 {
-	init_helper_load_at(self, ASSET_DIRECTORY "/star 3.png", 0, 0);
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_star3.png", 0, 0);
 }
 
 static void init_cb_space3(scene *self)
 {
-	init_helper_load_at(self, ASSET_DIRECTORY "/space 3.png", 0, 0);
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_space1.png", 0, 0);
 }
 
-static void init_cb_heavy_nebula2(scene *self)
+static void init_cb_nebula_star1(scene *self)
 {
-	init_helper_load_at(self, ASSET_DIRECTORY "/heavynebula 2.png", 0, 0);
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_nebula_star1.png", 0, 0);
 }
 
-static void init_cb_star_nebula3(scene *self)
+static void init_cb_blue_rising(scene *self)
 {
-	init_helper_load_at(self, ASSET_DIRECTORY "/starnebula 3.png", 0, 0);
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_blue_rising.png", 0, 0);
+}
+
+static void init_cb_dark_blue(scene *self)
+{
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_dark_blue.png", 0, 0);
+}
+
+static void init_cb_dark_rise(scene *self)
+{
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_dark_rise.png", 0, 0);
+}
+
+static void init_cb_flash_fire(scene *self)
+{
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_flash_fire.png", 0, 0);
+}
+
+static void init_cb_ice_water(scene *self)
+{
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_ice_water.png", 0, 0);
+}
+
+static void init_cb_nebula_blue(scene *self)
+{
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_nebula_blue.png", 0, 0);
+}
+
+static void init_cb_dark_side(scene *self)
+{
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_dark_side.png", 0, 0);
 }
 
 static void init_cb_gluurus(scene *self)
 {
-	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/Gluurus.png");
+	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/planet_gluurus.png");
 	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_set_pos(s, GetScreenWidth() * 0.1, -100);
@@ -323,7 +368,7 @@ static void init_cb_gluurus(scene *self)
 
 static void init_cb_paragon(scene *self)
 {
-	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/Lyra Paragon.png");
+	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/planet_lyra_paragon.png");
 	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_newmov(s, so_cb_loop_left, 0.1, NULL);
@@ -332,7 +377,7 @@ static void init_cb_paragon(scene *self)
 
 static void init_cb_skyrillis(scene *self)
 {
-	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/Skyrillis.png");
+	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/planet_skyrillis.png");
 	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_set_pos(s, GetScreenWidth() * 0.15, 0);
@@ -341,7 +386,7 @@ static void init_cb_skyrillis(scene *self)
 
 static void init_cb_reitis(scene *self)
 {
-	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/Reitis.png");
+	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/planet_reitis.png");
 	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_set_pos(s, 0, 0);
@@ -350,7 +395,7 @@ static void init_cb_reitis(scene *self)
 
 static void init_cb_altaira(scene *self)
 {
-	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/Altaira.png");
+	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/planet_altaira.png");
 	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *s = so_new(a);
 	so_set_pos(s, 0, 0);
@@ -362,7 +407,7 @@ static void init_cb_beetles(scene *self)
 	int i;
 	so *tmp;
 
-	Texture2D *beetles = texture_man_load(ASSET_DIRECTORY "/beetle-sml.png");
+	Texture2D *beetles = texture_man_load(ASSET_DIRECTORY "/ship_beetle.png");
 	anim *a = anim_man_load(animation_man, beetles, 1, 1);
 	so *template = so_new(a);
 
@@ -446,7 +491,7 @@ static void init_cb_executives(scene *self)
 {
 	int i;
 	so *tmp;
-	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/executive.png");
+	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/ship_executive.png");
 	anim *a = anim_man_load(animation_man, t, 1, 1);
 	so *template = so_new(a);
 	so_newmov(template, so_cb_bob_vrt, 0.1, NULL);

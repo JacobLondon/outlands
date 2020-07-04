@@ -38,19 +38,22 @@ void texture_man_cleanup(void)
 Texture2D *texture_man_load(char *png)
 {
 	int i;
+	Texture2D *ret = NULL;
 	assert(initialized == true);
 	for (i = 0; i < TEXTURES_MAX; i++) {
 		if (textures[i].png == NULL) {
 			textures[i].png = png;
 			textures[i].texture = LoadTexture(png);
-			return &textures[i].texture;
+			ret = &textures[i].texture;
+			break;
 		}
 		else if (streq(textures[i].png, png)) {
-			return &textures[i].texture;
+			ret = &textures[i].texture;
+			break;
 		}
 	}
 	msg_assert(i < TEXTURES_MAX, "Too many textures loaded: %d", i);
-	return NULL;
+	return ret;
 }
 
 Texture2D *texture_man_get(char *png)

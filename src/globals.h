@@ -23,4 +23,5 @@
 extern unsigned char global_id;
 extern bool global_connect_to_network;
 
+
 #endif // OUTLANDS_GLOBALS_H
