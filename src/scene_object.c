@@ -11,6 +11,8 @@ typedef struct so_tag {
 	Vector2 pos;
 	float bobrate;
 	float bobdelta;
+	float rotation;
+	float scale;
 	bool is_offscreen;
 	bool owns_animation;
 	struct {
@@ -28,12 +30,14 @@ so *so_new_owner(anim *animation, bool own_animation)
 	so *self = allocate(sizeof(so));
 	assert(self);
 	self->pos = (Vector2){GetScreenWidth() / 2, 0};
-	memset(self->movements, 0, sizeof(self->movements));
+	(void)memset(self->movements, 0, sizeof(self->movements));
 	self->animation = animation;
 	self->owns_animation = own_animation;
 	self->is_offscreen = false;
-	self->bobdelta = 0;
-	self->bobrate = 0.001;
+	self->bobdelta = 0.0f;
+	self->bobrate = 0.001f;
+	self->scale = 1.0f;
+	self->rotation = 0.0f;
 	return self;
 }
 
@@ -51,7 +55,7 @@ so *so_copy(so *self)
 	assert(self);
 	so *other = allocate(sizeof(so));
 	assert(other);
-	memcpy(other, self, sizeof(so));
+	(void)memcpy(other, self, sizeof(so));
 	if (other->owns_animation) {
 		other->animation = anim_copy(self->animation);
 	}
@@ -121,7 +125,7 @@ void so_draw(so *self)
 	if (self->is_offscreen) {
 		return;
 	}
-	anim_draw(self->animation, self->pos);
+	anim_draw(self->animation, self->pos, self->scale, self->rotation);
 }
 
 void so_update(so *self)
@@ -136,6 +140,30 @@ void so_update(so *self)
 	}
 }
 
+
+void so_cb_rot_clockwise(so *self, float amt, bool *trigger)
+{
+	if (trigger == NULL || *trigger == true) {
+		self->rotation += amt;
+	}
+}
+
+void so_cb_rot_cclockwise(so *self, float amt, bool *trigger)
+{
+	if (trigger == NULL || *trigger == true) {
+		self->rotation -= amt;
+	}
+}
+
+void so_cb_scale(so *self, float amt, bool *trigger)
+{
+	if (trigger == NULL || *trigger == true) {
+		self->scale *= amt;
+		if (self->is_offscreen) {
+			self->scale = 1.0f;
+		}
+	}
+}
 
 // TODO: Make these centered on the mouse instead of top left corner
 void so_cb_trk_vrt(so *self, float amt, bool *trigger)

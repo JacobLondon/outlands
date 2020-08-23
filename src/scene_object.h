@@ -38,6 +38,9 @@ void so_update(so *self);
  * new/delmov
  */
 
+void so_cb_rot_clockwise(so *self, float amt, bool *trigger);
+void so_cb_rot_cclockwise(so *self, float amt, bool *trigger);
+void so_cb_scale(so *self, float amt, bool *trigger);
 void so_cb_trk_vrt(so *self, float amt, bool *trigger); /* vertical mouse track */
 void so_cb_trk_hrz(so *self, float amt, bool *trigger); /* horizontal mouse track */
 void so_cb_left(so *self, float amt, bool *trigger);

@@ -64,10 +64,10 @@ void anim_update(anim *self)
 	}
 }
 
-void anim_draw(anim *self, Vector2 pos)
+void anim_draw(anim *self, Vector2 pos, float scale, float rotation)
 {
 	assert(self);
-	DrawTextureRec(
+	DrawTexturePro(
 		*self->texture,
 		(Rectangle){
 			self->texture->width / self->width * self->j,
@@ -75,7 +75,14 @@ void anim_draw(anim *self, Vector2 pos)
 			self->texture->width / self->width,
 			self->texture->height / self->height
 		},
-		pos, WHITE
+		(Rectangle){
+			pos.x, pos.y,
+			self->texture->width / self->width * scale,
+			self->texture->height / self->height * scale
+		},
+		(Vector2){ 0.0f, 0.0f },
+		rotation,
+		WHITE
 	);
 }
 

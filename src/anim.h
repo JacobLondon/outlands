@@ -19,7 +19,7 @@ anim *anim_copy(anim *self);
 /* reset the animation to the beginning */
 void anim_reset(anim *self);
 void anim_update(anim *self);
-void anim_draw(anim *self, Vector2 pos);
+void anim_draw(anim *self, Vector2 pos, float scale, float rotation);
 
 int anim_get_width(anim *self);
 int anim_get_height(anim *self);

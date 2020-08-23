@@ -27,7 +27,7 @@ void pool_init(size_t kilobytes)
 void pool_cleanup(void)
 {
 	assert(pool_begin);
-	memset(pool_begin, 0, pool_size);
+	(void)memset(pool_begin, 0, pool_size);
 	free(pool_begin);
 	pool_index = 0;
 	pool_size = 0;
@@ -38,7 +38,7 @@ void pool_cleanup(void)
 
 void pool_usage(void)
 {
-	printf("%.3f KB / %.3f KB\n", pool_index / 1000.0f, pool_size / 1000.0f);
+	(void)printf("%.3f KB / %.3f KB\n", pool_index / 1000.0f, pool_size / 1000.0f);
 }
 
 void *poolloc(size_t size)
@@ -156,14 +156,14 @@ char *arg_get(int argc, char **argv, const char *arg)
 
 float fast_sqrtf(float number)
 {
-    const float x2 = number * 0.5F;
-    const float threehalfs = 1.5F;
+	const float x2 = number * 0.5F;
+	const float threehalfs = 1.5F;
 
-    union {
-        float f;
-        uint32_t i;
-    } conv = { number }; /* member 'f' set to value of 'number'. */
-    conv.i = 0x5f3759df - (conv.i >> 1);
-    conv.f *= (threehalfs - (x2 * conv.f * conv.f));
-    return 1.0f / conv.f;
+	union {
+		float f;
+		uint32_t i;
+	} conv = { number }; /* member 'f' set to value of 'number'. */
+	conv.i = 0x5f3759df - (conv.i >> 1);
+	conv.f *= (threehalfs - (x2 * conv.f * conv.f));
+	return 1.0f / conv.f;
 }

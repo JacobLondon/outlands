@@ -3,14 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <outlands.h>
-/*#include "../src/util.h"
-#include "../src/ship_tile.h"
-#include "../src/ship.h"
-#include "../src/texture_man.h"
-#include "../src/globals.h"*/
 
 #define TEXTURES_MAX 128
-#define SIZE(array) (sizeof(array) / sizeof(array[0]))
+#define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
 enum mode {
 	NO_MODE,
@@ -68,8 +63,8 @@ int main(int argc, char **argv)
 
 	texture_man_init();
 
-	scene[0] = texture_man_load(ASSET_DIRECTORY "/star 3.png");
-	scene[1] = texture_man_load(ASSET_DIRECTORY "/Skyrillis.png");
+	scene[0] = texture_man_load(ASSET_DIRECTORY "/bg_star3.png");
+	scene[1] = texture_man_load(ASSET_DIRECTORY "/planet_skyrillis.png");
 	scene[2] = texture_man_load(ship_png);
 	for (i = 1; i < ship_tile_get_count() && i < TEXTURES_MAX; i++) {
 		textures[i] = texture_man_load(ship_tile_get_png(i));
@@ -105,7 +100,7 @@ int main(int argc, char **argv)
 
 		BeginDrawing();
 
-		for (i = 0; i < SIZE(scene); i++) {
+		for (i = 0; i < ARRAY_SIZE(scene); i++) {
 			DrawTexture(*scene[i], 0, 0, WHITE);
 		}
 		

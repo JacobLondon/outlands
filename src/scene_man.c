@@ -41,6 +41,7 @@ static void init_cb_flash_fire(scene *self);
 static void init_cb_ice_water(scene *self);
 static void init_cb_nebula_blue(scene *self);
 static void init_cb_dark_side(scene *self);
+static void init_cb_black_hole(scene *self);
 
 static void init_cb_gluurus(scene *self);
 static void init_cb_paragon(scene *self);
@@ -49,8 +50,9 @@ static void init_cb_reitis(scene *self);
 static void init_cb_altaira(scene *self);
 
 static void init_cb_beetles(scene *self);
-static void init_cb_executives(scene *self);
 static void init_cb_asteroids(scene *self);
+static void init_cb_executives(scene *self);
+static void init_cb_astronauts(scene *self);
 
 /* load a single asset into a scene at the coordinates */
 static void init_helper_load_at(scene *self, char *asset, float x, float y);
@@ -70,6 +72,7 @@ static scene_definition defs[] = {
 	{ "Ice Water", 1, init_cb_ice_water },
 	{ "Nebula Blue", 1, init_cb_nebula_blue },
 	{ "Dark Side", 1, init_cb_dark_side },
+	{ "B-Hole", 1, init_cb_black_hole },
 	// Planets
 	{ "Gluurus", 1, init_cb_gluurus },
 	{ "Paragon", 1, init_cb_paragon },
@@ -80,6 +83,7 @@ static scene_definition defs[] = {
 	{ "Beetles", 200, init_cb_beetles },
 	{ "Asteroids", 400, init_cb_asteroids },
 	{ "Executives", 3, init_cb_executives },
+	{ "Astronauts", 20, init_cb_astronauts },
 	{ NULL, 0, NULL }
 };
 
@@ -96,6 +100,7 @@ static scene_set set_definitions[] = {
 	{ "Reitis", { "Space3", "Reitis", "Executives", NULL } },
 	{ "Paragon", { "Star3", "Paragon", NULL } },
 	{ "Altaira", { "Star2", "Altaira", NULL } },
+	{ "Black Hole", { "B-Hole", "Astronauts" } },
 };
 
 static size_t set_count = ARRAY_SIZE(set_definitions);
@@ -356,6 +361,11 @@ static void init_cb_dark_side(scene *self)
 	init_helper_load_at(self, ASSET_DIRECTORY "/bg_dark_side.png", 0, 0);
 }
 
+static void init_cb_black_hole(scene *self)
+{
+	init_helper_load_at(self, ASSET_DIRECTORY "/bg_black_hole.png", 0, 0);
+}
+
 static void init_cb_gluurus(scene *self)
 {
 	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/planet_gluurus.png");
@@ -502,6 +512,96 @@ static void init_cb_executives(scene *self)
 			GetScreenWidth() / 2 + GetScreenWidth() * 0.3 * rand_uniform(),
 			GetScreenHeight() / 10 + GetScreenHeight() * 0.5 * rand_uniform()
 		);
+		scene_load_object(self, tmp);
+	}
+}
+
+static void init_cb_astronauts(scene *self)
+{
+	int i;
+	int max = rand_range(10, 20);
+	so *tmp;
+	Texture2D *t = texture_man_load(ASSET_DIRECTORY "/starboi.png");
+	anim *a = anim_man_load(animation_man, t, 1, 1);
+	so *template = so_new(a);
+
+	for (i = 0; i < max; i++) {
+		tmp = so_copy(template);
+
+		// select movement profile
+		switch (rand_range(0, 8)) {
+		// bottom move up
+		case 0:
+			so_set_pos(tmp,
+				GetScreenWidth() / 4 + GetScreenWidth() * 0.5 * rand_uniform(),
+				GetScreenHeight());
+			so_newmov(tmp, so_cb_loop_up, 4, NULL);
+			break;
+		// top move bottom
+		case 1:
+			so_set_pos(tmp,
+				GetScreenWidth() / 4 + GetScreenWidth() * 0.5 * rand_uniform(),
+				0);
+			so_newmov(tmp, so_cb_loop_down, 4, NULL);
+			break;
+		// right move left
+		case 2:
+			so_set_pos(tmp,
+				GetScreenWidth(),
+				GetScreenHeight() / 4 + GetScreenHeight() * 0.5 * rand_uniform());
+			so_newmov(tmp, so_cb_loop_left, 4, NULL);
+			break;
+		// left move right
+		case 3:
+			so_set_pos(tmp,
+				0,
+				GetScreenHeight() / 4 + GetScreenHeight() * 0.5 * rand_uniform());
+			so_newmov(tmp, so_cb_loop_right, 4, NULL);
+			break;
+		// diagonal up left
+		case 4:
+			so_set_pos(tmp,
+				GetScreenWidth(),
+				GetScreenHeight());
+			so_newmov(tmp, so_cb_loop_up, 4, NULL);
+			so_newmov(tmp, so_cb_loop_left, 4, NULL);
+			break;
+		// diagonal up right
+		case 5:
+			so_set_pos(tmp,
+				0,
+				GetScreenHeight());
+			so_newmov(tmp, so_cb_loop_up, 4, NULL);
+			so_newmov(tmp, so_cb_loop_right, 4, NULL);
+			break;
+		// diagonal down left
+		case 6:
+			so_set_pos(tmp,
+				GetScreenWidth(),
+				0);
+			so_newmov(tmp, so_cb_loop_down, 4, NULL);
+			so_newmov(tmp, so_cb_loop_left, 4, NULL);
+			break;
+		// diagonal down right
+		case 7:
+			so_set_pos(tmp,
+				0,
+				0);
+			so_newmov(tmp, so_cb_loop_down, 4, NULL);
+			so_newmov(tmp, so_cb_loop_right, 4, NULL);
+			break;
+		}
+
+		switch (rand_range(0, 2)) {
+		case 0:
+			so_newmov(tmp, so_cb_rot_cclockwise, 2, NULL);
+			break;
+		case 1:
+			so_newmov(tmp, so_cb_rot_clockwise, 2, NULL);
+			break;
+		}
+
+		so_newmov(tmp, so_cb_scale, 0.97, NULL);
 		scene_load_object(self, tmp);
 	}
 }

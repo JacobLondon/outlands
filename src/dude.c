@@ -313,7 +313,7 @@ void dude_select_update(void)
 			// TODO: Reset only if escape is pressed or the user lclicks somewhere else,
 			// keeps a dude selected so you can keep moving them
 			if (IsMouseButtonUp(1)) {
-				memset(selected, 0, sizeof(selected));
+				(void)memset(selected, 0, sizeof(selected));
 				idx = 0;
 				state = 0;
 			}
