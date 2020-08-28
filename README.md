@@ -10,7 +10,7 @@ make rule_editor
 ```
 
 # Animation Library
-Build in animation library, at some point I might make it more standalone than it is now. It will only allocate memory upon initialization and works as follows:
+Built in animation library, at some point I might make it more standalone than it is now. It will only allocate memory upon initialization and works as follows:
 ```C
 // Prototype the initializers
 static void init_cb_background1(scene *self);
