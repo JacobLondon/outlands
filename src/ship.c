@@ -32,13 +32,24 @@ typedef struct ship_tag {
 	ship_def *def;
 	tile *tiles[GRIDS_TALL][GRIDS_WIDE];
 	size_t tile_count;
+	int tly;    // top left y position
+	int tlx;    // top left x position
+	int width;  // farthest right point - farthest left point in grids
+	int height; // lowest point - highest point in grids
 } ship;
 
 ship_def ship_definitions[] = {
 	{
 		.name = "Falcon",
-		.rpg = "rpgs/test.rpg",
-		.png = ASSET_DIRECTORY "/falcon-exterior.png",
+		.rpg = "rpgs/falcon.rpg",
+		.png = ASSET_DIRECTORY "/ext_falcon.png",
+		.width = 1,
+		.height = 1
+	},
+	{
+		.name = "Sword",
+		.rpg = "rpgs/sword.rpg",
+		.png = ASSET_DIRECTORY "/ext_sword.png",
 		.width = 1,
 		.height = 1
 	},
@@ -48,18 +59,25 @@ ship_def ship_definitions[] = {
 };
 
 
-ship *ship_new(char *name)
+ship *ship_new(char *name, ship_type type)
 {
-	int i, j;
+	int i, j, k;
+	// ship dimensions
+	int hi_i = 0;
+	int hi_j = 0;
+	int lo_i = -1;
+	int lo_j = -1;
+	int height, width;
+	// id matrix for rpg loading
 	int idmx[GRIDS_TALL][GRIDS_WIDE] = { 0 };
 	ship_def *def = NULL;
+	// texture for background ship
 	Texture2D *t;
 	anim *a;
 	ship *self = malloc(sizeof(ship));
-	memset(self, 0, sizeof(ship));
-
 	assert(self);
 	assert(name);
+	memset(self, 0, sizeof(ship));
 
 	for (i = 0; ship_definitions[i].name != NULL; i++) {
 		if (streq(name, ship_definitions[i].name)) {
@@ -71,6 +89,81 @@ ship *ship_new(char *name)
 
 	// load the rpg into the id matrix
 	ship_load_rpg(def->rpg, (int *)idmx, GRIDS_WIDE, GRIDS_TALL);
+
+	// save the extreme positions
+	for (i = 0; i < GRIDS_TALL; i++) {
+		for (j = 0; j < GRIDS_WIDE; j++) {
+			if (idmx[i][j] > 0) {
+				// save first found, most top left point
+				if (lo_i == -1) {
+					lo_i = i;
+				}
+				// save most right point
+				if (lo_j == -1 || j < lo_j) {
+					lo_j = j;
+				}
+				// keep saving the greatest points
+				if (i >= hi_i) {
+					hi_i = i;
+				}
+				if (j >= hi_j) {
+					hi_j = j;
+				}
+			}
+		}
+	}
+	width = hi_j - lo_j;
+	height = hi_i - lo_i;
+
+	// move ship into position, bottom left
+	if (type == SHIP_PLAYER) {
+		// move down
+		if (GRIDS_TALL - (lo_i + height) > 1) {
+			for (k = GRIDS_TALL - 2, i = lo_i + height; i >= 0; i--, k--) {
+				for (j = 0; j < GRIDS_WIDE; j++) {
+					idmx[k][j] = idmx[i][j];
+					idmx[i][j] = 0;
+				}
+			}
+		}
+		// just assume that it's at or above the needed height...
+
+		// move left
+		if (lo_j > 1) {
+			for (i = lo_i; i < GRIDS_TALL; i++) {
+				for (k = 1, j = lo_j; j < GRIDS_WIDE; j++, k++) {
+					idmx[i][k] = idmx[i][j];
+					idmx[i][j] = 0;
+				}
+			}
+		}
+	}
+	// ship ship into position, top right
+	// TODO: This is SUPER broken for the "Sword", let's find out why
+	else if (type == SHIP_ENEMY) {
+		// move up
+		if (lo_i > 1) {
+			for (k = 1, i = lo_i; i < GRIDS_TALL; i++, k++) {
+				for (j = lo_j; j < GRIDS_WIDE; j++) {
+					idmx[k][j] = idmx[i][j];
+					idmx[i][j] = 0;
+				}
+			}
+		}
+
+		// move right
+		if (lo_j + width < GRIDS_WIDE) {
+			for (i = lo_i; i < GRIDS_TALL; i++) {
+				for (k = GRIDS_WIDE - 4, j = lo_j + width; j >= 0; j--, k--) {
+					idmx[i][k] = idmx[i][j];
+					idmx[i][j] = 0;
+				}
+			}
+		}
+	}
+	else {
+		msg_assert(0, "Bad path");
+	}
 
 	// convert the id matrix to actual tiles
 	for (i = 0; i < GRIDS_TALL; i++) {
@@ -84,9 +177,20 @@ ship *ship_new(char *name)
 	t = texture_man_load(def->png);
 	a = anim_new(t, def->width, def->height);
 	self->object = so_new_own(a);
-	so_set_pos(self->object, 0, 0);
+	if (type == SHIP_PLAYER) {
+		// bottom left
+		so_set_pos(self->object, 0, GetScreenHeight() - anim_get_height(so_get_anim(self->object)));
+	}
+	else {
+		// top right
+		so_set_pos(self->object, GetScreenWidth() - anim_get_width(so_get_anim(self->object)), 0);
+	}
 	self->def = def;
 	self->tile_count = GRIDS_TALL * GRIDS_WIDE;
+	self->width = width;
+	self->height = height;
+	self->tlx = lo_j;
+	self->tly = lo_i;
 
 	return self;
 }
@@ -209,4 +313,28 @@ tile **ship_get_tiles(ship *self, size_t *size)
 		*size = self->tile_count;
 	}
 	return (tile **)self->tiles;
+}
+
+int ship_get_width(ship *self)
+{
+	assert(self);
+	return self->width;
+}
+
+int ship_get_height(ship *self)
+{
+	assert(self);
+	return self->height;
+}
+
+int ship_get_tlx(ship *self)
+{
+	assert(self);
+	return self->tlx;
+}
+
+int ship_get_tly(ship *self)
+{
+	assert(self);
+	return self->tly;
 }

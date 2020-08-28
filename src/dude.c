@@ -67,6 +67,7 @@ typedef struct job_tag {
 
 static dude_def dude_definitions[] = {
 	{ .name = "Humans", .png = ASSET_DIRECTORY "/human_m.png", .width = 1, .height = 1, .health = 100 },
+	{ .name = "Starmen", .png = ASSET_DIRECTORY "/starboi.png", .width = 1, .height = 1, .health = 100 },
 	{ NULL, NULL, 0, 0 }
 };
 
@@ -97,7 +98,7 @@ static bool is_available(int x, int y);
 static void work_on_job(int id);
 
 
-// TODO: make a dude seperate from the ship they spawn at
+// TODO: make a dude seperate from the ship they spawn at?
 void dude_load(size_t numberof, char *name, ship *other)
 {
 	int i, tmp, start;
@@ -124,7 +125,7 @@ void dude_load(size_t numberof, char *name, ship *other)
 	t = texture_man_load(d->png);
 
 	// put all of the dudes in
-	for (; num_dudes < numberof; num_dudes++) {
+	for (i = 0; i < numberof && num_dudes < DUDES_MAX; i++, num_dudes++) {
 		// generate an spot to take
 		tmp = rand_range(0, num_walkable);
 
@@ -133,7 +134,7 @@ void dude_load(size_t numberof, char *name, ship *other)
 			start = tmp;
 			for (tmp = (tmp + 1) % num_walkable;
 			     tmp != start;
-				 tmp = (tmp + 1) % num_walkable)
+			     tmp = (tmp + 1) % num_walkable)
 			{
 				if (is_available(xs[tmp], ys[tmp])) {
 					break;
@@ -398,6 +399,10 @@ static void work_on_job(int id)
 			jobs[id].step = astar_path(paths_x[id], paths_y[id], PATH_MAX, dudes[id].y, dudes[id].x, jobs[id].y, jobs[id].x);
 			jobs[id].step--;
 			jobs[id].state = STATE_WALK;
+			// unreachable destination
+			if (paths_x[id][jobs[id].step] == 0 && paths_y[id][jobs[id].step] == 0) {
+				jobs[id].state = STATE_DONE;
+			}
 			break;
 		case STATE_DONE:
 			jobs[id].done = true;

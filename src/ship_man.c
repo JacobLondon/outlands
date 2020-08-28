@@ -32,19 +32,23 @@ void ship_man_cleanup(void)
 // TODO: Move ship to upper/lower section depending on player/enemy
 ship *ship_man_load(char *name, ship_type type)
 {
-	tile **tmp = (tile **)tiles;
+	tile **tmp = (tile **)tiles; // pretend it's a 1D array of tile pointers, because it technically is
 	tile **ship_tiles = NULL;
 	size_t count = 0;
 	int i;
 	assert(name);
 
-	ships[type] = ship_new(name);
+	// load ship
+	ships[type] = ship_new(name, type);
 	ship_tiles = ship_get_tiles(ships[type], &count);
+
+	// load onto the main grid
 	for (i = 0; i < count; i++) {
 		if (ship_tiles[i] != NULL) {
 			tmp[i] = ship_tiles[i];
 		}
 	}
+
 	return ships[type];
 }
 

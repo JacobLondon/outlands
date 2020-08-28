@@ -5,7 +5,6 @@
 #include <outlands.h>
 
 #define TEXTURES_MAX 128
-#define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
 enum mode {
 	NO_MODE,
@@ -149,5 +148,6 @@ static void save_rpg(void)
 		}
 	}
 
+	printf("Successfully saved %s\n", ship_rpg);
 	fclose(f);
 }

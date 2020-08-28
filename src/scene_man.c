@@ -49,6 +49,7 @@ static void init_cb_skyrillis(scene *self);
 static void init_cb_reitis(scene *self);
 static void init_cb_altaira(scene *self);
 
+static void init_cb_traffic(scene *self);
 static void init_cb_beetles(scene *self);
 static void init_cb_asteroids(scene *self);
 static void init_cb_executives(scene *self);
@@ -80,6 +81,7 @@ static scene_definition defs[] = {
 	{ "Reitis", 1, init_cb_reitis },
 	{ "Altaira", 1, init_cb_altaira },
 	// Foreground
+	{ "Traffic", 100, init_cb_traffic },
 	{ "Beetles", 200, init_cb_beetles },
 	{ "Asteroids", 400, init_cb_asteroids },
 	{ "Executives", 3, init_cb_executives },
@@ -92,15 +94,15 @@ static scene_definition defs[] = {
  * NULL term the initializer list
  */
 static scene_set set_definitions[] = {
-	{ "Gluurus", { "Nebula Star 1", "Gluurus", "Beetles", NULL } },
-	{ "Dark", { "Dark Rise", "Beetles", NULL } },
-	{ "Blue", { "Blue Rising", "Executives", NULL } },
+	//{ "Gluurus", { "Nebula Star 1", "Gluurus", "Beetles", NULL } },
+	{ "Dark", { "Dark Rise", "Traffic", NULL } },
+	/*{ "Blue", { "Blue Rising", "Executives", NULL } },
 	{ "Icy", { "Ice Water", "Executives", NULL } },
 	{ "Skyrillis", { "Star1", "Skyrillis", "Asteroids", NULL } },
 	{ "Reitis", { "Space3", "Reitis", "Executives", NULL } },
 	{ "Paragon", { "Star3", "Paragon", NULL } },
 	{ "Altaira", { "Star2", "Altaira", NULL } },
-	{ "Black Hole", { "B-Hole", "Astronauts" } },
+	{ "Black Hole", { "B-Hole", "Astronauts" } },*/
 };
 
 static size_t set_count = ARRAY_SIZE(set_definitions);
@@ -144,6 +146,7 @@ void scene_man_load_set(char *name)
 	assert(name);
 	for (i = 0; i < set_count; i++) {
 		if (streq((char *)set_definitions[i].name, name)) {
+			(void)printf("Default: Scene set %s loaded\n", name);
 			load_names(set_definitions[i].scene_names);
 			set_loaded_idx = i;
 			break;
@@ -156,6 +159,7 @@ void scene_man_load_idx(int idx)
 {
 	assert(0 <= idx && idx < set_count);
 	load_names(set_definitions[idx].scene_names);
+	(void)printf("Default: Scene set %s loaded\n", set_definitions[idx].name);
 	set_loaded_idx = idx;
 }
 
@@ -163,8 +167,8 @@ void scene_man_load_rand(void)
 {
 	int idx = rand_range(0, set_count);
 	load_names(set_definitions[idx].scene_names);
+	(void)printf("Default: Scene set %s loaded\n", set_definitions[idx].name);
 	set_loaded_idx = idx;
-
 }
 
 static void load_names(char **names)
@@ -410,6 +414,50 @@ static void init_cb_altaira(scene *self)
 	so *s = so_new(a);
 	so_set_pos(s, 0, 0);
 	scene_load_object(self, s);
+}
+
+static void init_cb_traffic(scene *self)
+{
+	int i;
+	Texture2D *t1 = texture_man_load(ASSET_DIRECTORY "/ship_lakota.png");
+	Texture2D *t2 = texture_man_load(ASSET_DIRECTORY "/ship_brokenarm.png");
+	Texture2D *t3 = texture_man_load(ASSET_DIRECTORY "/ship_dreadnought.png");
+	anim *a1 = anim_man_load(animation_man, t1, 1, 1);
+	anim *a2 = anim_man_load(animation_man, t2, 1, 1);
+	anim *a3 = anim_man_load(animation_man, t3, 1, 1);
+
+	so *tmp;
+	so *s1 = so_new(a1);
+	so *s2 = so_new(a2);
+	so *s3 = so_new(a3);
+
+	so_newmov(s1, so_cb_loop_down, 2, NULL);
+	so_newmov(s1, so_cb_loop_left, 6, NULL);
+	so_set_scale(s1, 0.05);
+
+	for (i = rand_range(20, 40); i >= 0; i--) {
+		tmp = so_copy(s1);
+		so_set_pos(tmp, rand_uniform() * GetScreenWidth(), rand_uniform() * GetScreenHeight());
+		so_newmov(tmp, so_cb_bob_hrz, rand_range(3, 6), NULL);
+		scene_load_object(self, tmp);
+	}
+
+	so_newmov(s2, so_cb_loop_down, 2.5, NULL);
+	so_newmov(s2, so_cb_loop_left, 9, NULL);
+	so_set_scale(s2, 0.08);
+
+	for (i = rand_range(20, 40); i >= 0; i--) {
+		tmp = so_copy(s2);
+		so_set_pos(tmp, rand_uniform() * GetScreenWidth(), rand_uniform() * GetScreenHeight());
+		so_newmov(tmp, so_cb_bob_vrt, rand_range(4, 8), NULL);
+		scene_load_object(self, tmp);
+	}
+
+	so_newmov(s3, so_cb_loop_down, 0.9, NULL);
+	so_newmov(s3, so_cb_loop_left, 1.6, NULL);
+	so_set_scale(s3, 0.5);
+	so_set_pos(s3, GetScreenWidth(), GetScreenHeight());
+	scene_load_object(self, s3);
 }
 
 static void init_cb_beetles(scene *self)

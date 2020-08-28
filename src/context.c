@@ -54,8 +54,10 @@ static void def_init(void)
 
 	scene_man_load_rand();
 	key_man_load(key_defs);
-	ship_man_load("Falcon", SHIP_PLAYER);
+	ship_man_load("Sword", SHIP_PLAYER);
+	ship_man_load("Falcon", SHIP_ENEMY);
 	dude_load(5, "Humans", ship_man_get(SHIP_PLAYER));
+	dude_load(7, "Starmen", ship_man_get(SHIP_ENEMY));
 
 	pool_usage();
 }

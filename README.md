@@ -12,6 +12,7 @@ make maker
 * User / enemy ship
 * Enemy ship reversal / flip
 * Input tasks for sending / tracking every necessary data point 
+* Exponential movement / scaling
 
 # Windows Setup
 1. Go to [Raylib Releases](https://github.com/raysan5/raylib/releases) and download / install `raylib_installer_v300.tcc.exe`

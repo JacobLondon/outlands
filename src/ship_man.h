@@ -4,12 +4,6 @@
 #include <stdbool.h>
 #include "ship.h"
 
-typedef enum ship_type_tag {
-	SHIP_PLAYER,
-	SHIP_ENEMY,
-	SHIP_COUNT
-} ship_type;
-
 void ship_man_init(void);
 void ship_man_cleanup(void);
 void ship_man_draw(void);

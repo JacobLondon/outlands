@@ -119,6 +119,18 @@ void so_set_bobrate(so *self, float newrate)
 	self->bobrate = newrate;
 }
 
+void so_set_rotation(so *self, float rotation)
+{
+	assert(self);
+	self->rotation = rotation;
+}
+
+void so_set_scale(so *self, float scale)
+{
+	assert(self);
+	self->scale = scale;
+}
+
 void so_draw(so *self)
 {
 	assert(self);

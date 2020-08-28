@@ -27,6 +27,8 @@ void so_set_pos(so *self, float x, float y);
 Vector2 so_get_pos(so *self);
 anim *so_get_anim(so *self);
 void so_set_bobrate(so *self, float newrate);
+void so_set_rotation(so *self, float rotation);
+void so_set_scale(so *self, float scale);
 
 void so_draw(so *self);
 /* move by all movement callbacks */
