@@ -9,6 +9,42 @@ make
 make rule_editor
 ```
 
+# Animation Library
+Build in animation library, at some point I might make it more standalone than it is now. It will only allocate memory upon initialization and works as follows:
+```C
+// Prototype the initializers
+static void init_cb_background1(scene *self);
+static void init_cb_background2(scene *self);
+static void init_cb_midground1(scene *self);
+static void init_cb_midground1(scene *self);
+static void init_cb_foreground1(scene *self);
+static void init_cb_foreground2(scene *self);
+
+// Create a scene_definition array
+static scene_definition defs[] = {
+    // name, max # of scene objects, init callback
+    { "Background1", 1, init_cb_background1 },
+    { "Background2", 1, init_cb_background2 },
+    { "Midground1", 1, init_cb_midground1 },
+    { "Midground2", 1, init_cb_midground1 },
+    { "Foreground1", 1, init_cb_foreground1 },
+    { "Foreground2", 1, init_cb_foreground2 },
+};
+
+// The scenes can be loaded into sets (assuming each scene has transparency)
+// and can be loaded on top of each other, from left to right, back to front
+// respectively. These sets can be loaded with scene_man_load_... functions.
+
+static scene_set set_defs[] = {
+    { "Cool Scene 1", { "Background1", "Midground1", "Foreground2" } },
+    { "Cool Scene 2", { "Background2", "Midground1", "Foreground1" } },
+    { "Cool Scene 3", { "Background1", "Midground2", "Foreground1" } },
+    { "Cool Scene 4", { "Background2", "Midground1", "Foreground2" } },
+}
+
+// For details/examples on how to create the callbacks, see scene_man.c
+```
+
 # Todo
 * VS integration (at some point)
 * Input tasks for sending / tracking every necessary data point 
