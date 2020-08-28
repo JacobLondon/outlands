@@ -42,7 +42,18 @@ static scene_set set_defs[] = {
     { "Cool Scene 4", { "Background2", "Midground1", "Foreground2", NULL } },
 }
 
-// For details/examples on how to create the callbacks, see scene_man.c
+// For details/examples on how to create the callbacks, see scene_man.c.
+// The animations are set at load time. See key_man.c for changing which
+// animations occur at different times through a multi-function state
+// machine. One thing to note: the init callbacks all do the same thing,
+// and I'll describe how they should be set up.
+//
+// Use texture_man_load to load a Raylib texture (pointer), pass the
+// pointer to anim_man_load(animation_man, ...), then pass that value to
+// so_new(...). From there, you can add so_cb_... functions to add movements
+// to your scene objects. Once all details are set, pass the scene object ptr
+// into scene_load_object(self, ...) and that does it. All the memory is
+// managed, so don't worry about free or anything.
 ```
 
 # Todo
