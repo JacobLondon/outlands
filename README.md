@@ -36,10 +36,10 @@ static scene_definition defs[] = {
 // respectively. These sets can be loaded with scene_man_load_... functions.
 
 static scene_set set_defs[] = {
-    { "Cool Scene 1", { "Background1", "Midground1", "Foreground2" } },
-    { "Cool Scene 2", { "Background2", "Midground1", "Foreground1" } },
-    { "Cool Scene 3", { "Background1", "Midground2", "Foreground1" } },
-    { "Cool Scene 4", { "Background2", "Midground1", "Foreground2" } },
+    { "Cool Scene 1", { "Background1", "Midground1", "Foreground2", NULL } },
+    { "Cool Scene 2", { "Background2", "Midground1", "Foreground1", NULL } },
+    { "Cool Scene 3", { "Background1", "Midground2", "Foreground1", NULL } },
+    { "Cool Scene 4", { "Background2", "Midground1", "Foreground2", NULL } },
 }
 
 // For details/examples on how to create the callbacks, see scene_man.c
