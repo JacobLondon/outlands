@@ -1,16 +1,16 @@
 # Outlands
-Consists of two programs: Outlands outlands(.exe) and Ship Editor editor(.exe)
+Personal project consisting of two programs: Outlands outlands(.exe) and Ship Editor editor(.exe). As I definitely don't own any of the assets used, they will not be available for download.
+
+![Screenshot](https://cdn.discordapp.com/attachments/174372275133480960/748985374596005948/unknown.png)
 
 # Building
 ```
 make
-make maker
+make rule_editor
 ```
 
 # Todo
-* VS integration?
-* User / enemy ship
-* Enemy ship reversal / flip
+* VS integration (at some point)
 * Input tasks for sending / tracking every necessary data point 
 * Exponential movement / scaling
 
