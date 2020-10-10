@@ -1,6 +1,7 @@
 \#*#
 *~
 .vscode
+.vs
 .DS_Store
 *.exe
 assets/
@@ -11,3 +12,6 @@ outlands
 editor
 test
 core.*
+Debug/
+Release/
+x64/

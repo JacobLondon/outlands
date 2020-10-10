@@ -94,15 +94,15 @@ static scene_definition defs[] = {
  * NULL term the initializer list
  */
 static scene_set set_definitions[] = {
-	//{ "Gluurus", { "Nebula Star 1", "Gluurus", "Beetles", NULL } },
+	{ "Gluurus", { "Nebula Star 1", "Gluurus", "Beetles", NULL } },
 	{ "Dark", { "Dark Rise", "Traffic", NULL } },
-	/*{ "Blue", { "Blue Rising", "Executives", NULL } },
+	{ "Blue", { "Blue Rising", "Executives", NULL } },
 	{ "Icy", { "Ice Water", "Executives", NULL } },
 	{ "Skyrillis", { "Star1", "Skyrillis", "Asteroids", NULL } },
 	{ "Reitis", { "Space3", "Reitis", "Executives", NULL } },
 	{ "Paragon", { "Star3", "Paragon", NULL } },
 	{ "Altaira", { "Star2", "Altaira", NULL } },
-	{ "Black Hole", { "B-Hole", "Astronauts" } },*/
+	{ "Black Hole", { "B-Hole", "Astronauts" } },
 };
 
 static size_t set_count = ARRAY_SIZE(set_definitions);

@@ -4,6 +4,7 @@ Personal project consisting of two programs: Outlands outlands(.exe) and Ship Ed
 ![Screenshot](https://cdn.discordapp.com/attachments/174372275133480960/748985374596005948/unknown.png)
 
 # Building
+Linux uses the Makefile / tcc, Windows can use the Makefile / tcc, but MSVC with VS2019 lets you do socket stuff as well.
 ```
 make
 make rule_editor
